@@ -77,7 +77,7 @@ export const Btn = ({ to, children, variant = 'gold', className = '', ...rest })
   </Magnetic>
 );
 
-const links = [['heritage', 'Heritage'], ['traditions', 'Weddings'], ['menus', 'Menus'], ['gallery', 'Gallery'], ['experiences', 'Experiences']];
+const links = [['heritage', 'Our story'], ['occasions', 'Occasions'], ['traditions', 'Weddings'], ['menus', 'Menus'], ['experiences', 'Services']];
 
 export function Nav() {
   const [scrolled, setScrolled] = useState(false);
@@ -153,7 +153,7 @@ export function Footer() {
     <footer className="footer">
       <div className="wrap footer-grid">
         <div>
-          <p className="footer-lede">Fifty years of feeding the people Scotland celebrates with.</p>
+          <p className="footer-lede">Love for food, since 1975. Let's make yours memorable.</p>
           <Btn to="enquire">Start planning →</Btn>
         </div>
         <div>

@@ -1,6 +1,6 @@
 import { lazy, Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { gsap, ScrollTrigger, reducedMotion, finePointer, scrollToId, useNearView, useReveal } from '../hooks.js';
-import { traditions, menus, courses, gallery, experiences } from '../data.js';
+import { traditions, menus, courses, gallery, experiences, occasionCards, allServices } from '../data.js';
 import { Btn, Magnetic } from './Chrome.jsx';
 
 const Gallery3D = lazy(() => import('../three/Gallery3D.jsx'));
@@ -238,6 +238,87 @@ export function Experiences() {
       </div>
       <div className={`x-float ${active >= 0 ? 'show' : ''}`} ref={float} aria-hidden="true">
         {experiences.map((x, i) => <img key={x.title} src={x.img} alt="" className={active === i ? 'on' : ''} />)}
+      </div>
+    </section>
+  );
+}
+
+export function Occasions({ onOccasion }) {
+  const root = useRef();
+  useReveal(root);
+  const move = (e) => {
+    if (!finePointer() || reducedMotion()) return;
+    const el = e.currentTarget, r = el.getBoundingClientRect();
+    el.style.setProperty('--mx', `${((e.clientX - r.left) / r.width) * 100}%`);
+    el.style.setProperty('--my', `${((e.clientY - r.top) / r.height) * 100}%`);
+  };
+  return (
+    <section className="occasions section" id="occasions" ref={root}>
+      <div className="wrap">
+        <div className="head-row">
+          <div>
+            <p className="eyebrow" data-reveal>For your special day</p>
+            <h2 className="h2" data-reveal>Every chapter <em>deserves a feast.</em></h2>
+          </div>
+          <p className="muted" data-reveal>From the roka to the reception, and every birthday after: exceptional catering for the moments you'll post about for years.</p>
+        </div>
+        <div className="occ-grid">
+          {occasionCards.map((o, i) => (
+            <a
+              key={o.title}
+              href="#enquire"
+              className={`occ ${i === 2 ? 'occ-feature' : ''}`}
+              data-reveal
+              style={{ '--d': `${(i % 4) * 0.07}s` }}
+              onPointerMove={move}
+              onClick={(e) => { e.preventDefault(); onOccasion(o.occasion); scrollToId('enquire'); }}
+            >
+              <img src={o.img} alt="" loading="lazy" />
+              <span className="occ-shine" aria-hidden="true" />
+              <span className="occ-tag">{o.tag}</span>
+              <span className="occ-body">
+                <h3>{o.title}</h3>
+                <p>{o.text}</p>
+                <span className="occ-cta">Plan this <i>→</i></span>
+              </span>
+            </a>
+          ))}
+        </div>
+      </div>
+      <div className="svc-marquee" aria-label="Our services">
+        <div className="svc-track">
+          {[...allServices, ...allServices].map((x, i) => <span key={i}>{x}<i>✦</i></span>)}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export function Featured() {
+  const root = useRef();
+  useReveal(root);
+  useLayoutEffect(() => {
+    if (reducedMotion()) return;
+    const ctx = gsap.context(() => {
+      gsap.fromTo('.feat-img img', { scale: 1.25 }, { scale: 1, ease: 'none', scrollTrigger: { trigger: root.current, start: 'top bottom', end: 'bottom top', scrub: true } });
+      gsap.fromTo('.feat-img', { clipPath: 'inset(18% 18% 18% 18% round 999px 999px 8px 8px)' }, { clipPath: 'inset(0% 0% 0% 0% round 999px 999px 8px 8px)', ease: 'none', scrollTrigger: { trigger: root.current, start: 'top 85%', end: 'center center', scrub: true } });
+    }, root);
+    return () => ctx.revert();
+  }, []);
+  return (
+    <section className="featured section" ref={root}>
+      <div className="wrap feat-grid">
+        <div className="feat-img"><img src="/img/table.webp" alt="A dressed banquet table" loading="lazy" /></div>
+        <div className="feat-copy">
+          <p className="eyebrow" data-reveal>Featured event</p>
+          <h2 className="h2" data-reveal>Archana &amp; Sanjeev's <em>celebration.</em></h2>
+          <p data-reveal>One of the most exciting events we've catered was Archana and Sanjeev's wedding. We provided the full package for their celebration in an open pavilion at one of Glasgow's premier hotels.</p>
+          <ul className="feat-tags" data-reveal>
+            {['Floral', 'Lighting', 'Food', 'Bar', 'Staff'].map((t) => <li key={t}>{t}</li>)}
+          </ul>
+          <blockquote className="feat-quote" data-reveal>“Our cocktail party was a huge success due to your efficiency and the care you took with the presentation of the food.”<cite>Archana &amp; Sanjeev</cite></blockquote>
+          <div data-reveal><Btn to="enquire">Start planning yours →</Btn></div>
+        </div>
       </div>
     </section>
   );

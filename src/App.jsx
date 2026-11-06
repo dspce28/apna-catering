@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useSmoothScroll, ScrollTrigger } from './hooks.js';
 import { Preloader, Cursor, Nav, MobileBar, Footer } from './components/Chrome.jsx';
-import { Hero, StepInside, Heritage } from './components/Intro.jsx';
-import { Traditions, Menus, GallerySection, Builder, Experiences } from './components/Middle.jsx';
+import { RoyalArch, Heritage } from './components/Intro.jsx';
+import { Traditions, Menus, GallerySection, Builder, Experiences, Occasions, Featured } from './components/Middle.jsx';
 import { Stories, Process, Enquire } from './components/Closing.jsx';
 
 export default function App() {
@@ -33,14 +33,15 @@ export default function App() {
       <div className="grain" aria-hidden="true" />
       <Nav />
       <main>
-        <Hero ready={ready} />
-        <StepInside />
+        <RoyalArch ready={ready} velocity={velocity} />
         <Heritage />
+        <Occasions onOccasion={setOccasion} />
         <Traditions onOccasion={setOccasion} />
         <Menus />
         <GallerySection velocity={velocity} />
         <Builder picks={picks} setPicks={setPicks} guests={guests} setGuests={setGuests} />
         <Experiences />
+        <Featured />
         <Stories />
         <Process />
         <Enquire picks={picks} guests={guests} occasion={occasion} setOccasion={setOccasion} />

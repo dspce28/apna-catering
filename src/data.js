@@ -79,6 +79,24 @@ export const gallery = [
 ];
 
 export const occasions = [
+  ['Engagement / Roka', 'Engagement / Roka'], ['Mehndi / Sangeet', 'Mehndi / Sangeet'],
   ['Sikh wedding', 'Sikh wedding'], ['Hindu wedding', 'Hindu wedding'], ['Muslim wedding', 'Nikah / Walima'],
-  ['Mehndi / Sangeet', 'Mehndi / Sangeet'], ['Corporate event', 'Corporate'], ['Private party', 'Private party'],
+  ['Birthday', 'Birthday'], ['Anniversary', 'Anniversary'], ['Corporate event', 'Corporate'],
+  ['Other celebration', 'Something else'],
+];
+
+export const occasionCards = [
+  { title: 'Engagements & Roka', tag: 'The beginning', text: 'The first party of the journey deserves a first-class spread, from canapés to a full Punjabi table.', img: '/img/plated.webp', occasion: 'Engagement / Roka' },
+  { title: 'Mehndi & Sangeet', tag: 'The build-up', text: 'Chaat stalls, live grills and food that keeps the dance floor going all night.', img: '/img/chaat.webp', occasion: 'Mehndi / Sangeet' },
+  { title: 'Weddings', tag: 'The big day', text: 'Sikh, Hindu and Muslim weddings, catered with respect for every tradition.', img: '/img/thali.webp', occasion: 'Sikh wedding' },
+  { title: 'Walima & Receptions', tag: 'The celebration', text: 'Generous banquets and elegant plated service for the evening everyone remembers.', img: '/img/biryani.webp', occasion: 'Muslim wedding' },
+  { title: 'Birthdays', tag: 'Party hats on', text: 'Whether it\u2019s your 18th or your 30th, we\u2019ll make it delicious, enjoyable and memorable.', img: '/img/halwa.webp', occasion: 'Birthday' },
+  { title: 'Anniversaries', tag: 'Another year', text: 'Intimate dinners or the whole family: menus planned around the people you love.', img: '/img/curry.webp', occasion: 'Anniversary' },
+  { title: 'New births & reunions', tag: 'Or just because', text: 'Welcoming a little one, bringing the family together, or celebrating for no reason at all.', img: '/img/spread.webp', occasion: 'Other celebration' },
+  { title: 'Corporate events', tag: 'Impressions count', text: 'Meetings, team-building days and corporate parties, catered professionally and inventively.', img: '/img/table.webp', occasion: 'Corporate event' },
+];
+
+export const allServices = [
+  'Fruit Displays & Carvings', 'Chocolate Fountain', 'Ice Sculptures', 'Food Stations & Chaat Stalls', 'Buffet Canopies',
+  'Dessert Buffet', 'Bar', 'Beers & Spirits', 'Juice Bars', 'Drinks Fountain', 'Ice Cream Stands', 'Candyfloss & Popcorn', 'Live Cooking & Outdoor BBQ',
 ];

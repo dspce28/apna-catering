@@ -2,7 +2,7 @@ import { lazy, Suspense, useEffect, useLayoutEffect, useRef, useState } from 're
 import { gsap, ScrollTrigger, reducedMotion, useNearView, useReveal } from '../hooks.js';
 import { Btn } from './Chrome.jsx';
 
-const HeroScene = lazy(() => import('../three/HeroScene.jsx'));
+const ArchCorridor = lazy(() => import('../three/ArchCorridor.jsx'));
 
 const split = (text) => {
   let n = 0;
@@ -13,11 +13,17 @@ const split = (text) => {
   ));
 };
 
-export function Hero({ ready }) {
+/*
+ * The royal arch intro: a corridor of cusped Mughal arches in WebGL.
+ * Scrolling walks the camera through each arch until the last one opens
+ * onto the site itself.
+ */
+export function RoyalArch({ ready, velocity }) {
   const root = useRef();
-  const scroll = useRef(0);
+  const progress = useRef(0);
   const near = useNearView(root, '0px');
   const [small, setSmall] = useState(() => typeof window !== 'undefined' && innerWidth < 900);
+  const [arch, setArch] = useState(1);
 
   useEffect(() => {
     const r = () => setSmall(innerWidth < 900);
@@ -26,77 +32,71 @@ export function Hero({ ready }) {
   }, []);
 
   useLayoutEffect(() => {
-    const ctx = gsap.context(() => {
-      ScrollTrigger.create({
-        trigger: root.current, start: 'top top', end: 'bottom top', scrub: true,
-        onUpdate: (s) => { scroll.current = s.progress; },
-      });
-      if (!reducedMotion()) {
-        gsap.to('.hero-word.l', { xPercent: -30, opacity: 0, ease: 'none', scrollTrigger: { trigger: root.current, start: 'top top', end: 'bottom top', scrub: true } });
-        gsap.to('.hero-word.r', { xPercent: 30, opacity: 0, ease: 'none', scrollTrigger: { trigger: root.current, start: 'top top', end: 'bottom top', scrub: true } });
-        gsap.fromTo('.hero-foot', { y: 0, opacity: 1 }, { y: -60, opacity: 0, immediateRender: false, ease: 'none', scrollTrigger: { trigger: root.current, start: 'top top', end: '60% top', scrub: true } });
-      }
-    }, root);
-    return () => ctx.revert();
-  }, []);
-
-  return (
-    <section className={`hero ${ready ? 'is-ready' : ''}`} ref={root} id="top">
-      <div className="hero-bg" aria-hidden="true" />
-      <div className="hero-3d" aria-hidden="true">
-        <Suspense fallback={null}>
-          <HeroScene scroll={scroll} active={near} small={small} />
-        </Suspense>
-      </div>
-      <p className="eyebrow hero-eyebrow"><span>Glasgow</span><i>✦</i><span>Indian wedding &amp; event caterers</span><i>✦</i><span>Since 1975</span></p>
-      <h1 className="hero-title">
-        <span className="hero-word l">{split('Fifty years')}</span>
-        <span className="hero-word r"><em>{split('of feasts.')}</em></span>
-      </h1>
-      <div className="hero-foot">
-        <div className="hero-foot-in">
-        <p className="hero-lede">Sikh, Hindu and Muslim weddings, mehndis, walimas and milestone celebrations across Scotland, cooked with the same care for every guest.</p>
-        <div className="hero-ctas">
-          <Btn to="enquire">Check your date →</Btn>
-          <Btn to="builder" variant="ghost">Design your menu</Btn>
-        </div>
-        </div>
-      </div>
-      <div className="scroll-hint" aria-hidden="true"><span>Scroll to step inside</span><i /></div>
-    </section>
-  );
-}
-
-/* Pinned section: a jharokha (Mughal arch) window that you scroll through into the image. */
-export function StepInside() {
-  const root = useRef();
-  useLayoutEffect(() => {
     if (reducedMotion()) { root.current.classList.add('static'); return; }
     const ctx = gsap.context(() => {
-      const tl = gsap.timeline({
-        scrollTrigger: { trigger: root.current, start: 'top top', end: '+=180%', scrub: 1, pin: '.si-stage', anticipatePin: 1 },
+      ScrollTrigger.create({
+        trigger: root.current, start: 'top top', end: 'bottom bottom',
+        onUpdate: (s) => {
+          progress.current = s.progress;
+          setArch(Math.min(4, 1 + Math.floor(s.progress * 4.2)));
+        },
       });
-      tl.fromTo('.si-mask', { scale: 1 }, { scale: 14, ease: 'power2.in', duration: 1 }, 0)
-        .fromTo('.si-img', { scale: 1.35 }, { scale: 1, ease: 'power1.out', duration: 1 }, 0)
-        .to('.si-pre', { opacity: 0, y: -40, duration: 0.25 }, 0)
-        .fromTo('.si-copy > *', { opacity: 0, y: 50 }, { opacity: 1, y: 0, stagger: 0.06, duration: 0.3 }, 0.7);
+      const tl = gsap.timeline({ scrollTrigger: { trigger: root.current, start: 'top top', end: 'bottom bottom', scrub: 0.6 } });
+      tl.to('.ra-intro .hero-word.l', { xPercent: -40, opacity: 0, duration: 0.14, ease: 'power2.in' }, 0)
+        .to('.ra-intro .hero-word.r', { xPercent: 40, opacity: 0, duration: 0.14, ease: 'power2.in' }, 0)
+        .to('.ra-intro .ra-top, .ra-intro .hero-foot, .scroll-hint', { opacity: 0, y: -30, duration: 0.1 }, 0)
+        .fromTo('.ra-chapter', { opacity: 0 }, { opacity: 1, duration: 0.05 }, 0.08)
+        .to('.ra-chapter', { opacity: 0, duration: 0.05 }, 0.8)
+        .fromTo('.ra-shade', { opacity: 0 }, { opacity: 1, duration: 0.1 }, 0.78)
+        .fromTo('.ra-end > *', { opacity: 0, y: 50 }, { opacity: 1, y: 0, stagger: 0.03, duration: 0.1 }, 0.82)
+        .fromTo('.ra-veil', { opacity: 0 }, { opacity: 1, duration: 0.04 }, 0.96);
     }, root);
     return () => ctx.revert();
   }, []);
+
+  const chapters = ['', 'The welcome', 'The feast', 'The celebration', 'Step inside'];
+
   return (
-    <section className="step-inside" ref={root} aria-label="Fifty years at Scotland's finest celebrations">
-      <div className="si-stage">
-        <div className="si-img" style={{ backgroundImage: 'url(/img/hero-wide.webp)' }} role="img" aria-label="Curry in a brass handi on a gold tray" />
-        <div className="si-shade" />
-        <svg className="si-mask" viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-          <path fillRule="evenodd" d="M-2000 -2000H3000V3000H-2000Z M420 640 L420 470 C420 418 455 398 478 376 Q496 358 500 330 Q504 358 522 376 C545 398 580 418 580 470 L580 640 Z" />
-          <path className="si-outline" fill="none" d="M410 650 L410 468 C410 410 448 388 472 366 Q494 345 500 312 Q506 345 528 366 C552 388 590 410 590 468 L590 650 Z" />
-        </svg>
-        <p className="si-pre eyebrow">A family kitchen since 1975</p>
-        <div className="si-copy wrap">
-          <p className="eyebrow">Glasgow · Est. 1975</p>
-          <h2 className="display">Fifty years at Scotland's<br /><em>finest celebrations.</em></h2>
+    <section className={`royal ${ready ? 'is-ready' : ''}`} ref={root} id="top">
+      <div className="ra-stage">
+        <div className="ra-canvas" aria-hidden="true">
+          <Suspense fallback={null}>
+            <ArchCorridor progress={progress} speed={velocity} active={near} small={small} />
+          </Suspense>
         </div>
+        <div className="ra-vignette" aria-hidden="true" />
+
+        <div className="ra-intro">
+          <p className="eyebrow ra-top"><span>Glasgow</span><i>✦</i><span>Wedding &amp; event caterers</span><i>✦</i><span>Since 1975</span></p>
+          <h1 className="hero-title">
+            <span className="hero-word l">{split('Make it')}</span>
+            <span className="hero-word r"><em>{split('memorable.')}</em></span>
+          </h1>
+          <div className="hero-foot">
+            <div className="hero-foot-in">
+              <p className="hero-lede">Engagements, mehndis, weddings, walimas and birthdays. Indian &amp; Asian catering from a Glasgow family kitchen.</p>
+              <div className="hero-ctas">
+                <Btn to="enquire">Check your date →</Btn>
+                <Btn to="occasions" variant="ghost">Explore occasions</Btn>
+              </div>
+            </div>
+          </div>
+          <div className="scroll-hint" aria-hidden="true"><span>Scroll to step inside</span><i /></div>
+        </div>
+
+        <div className="ra-chapter" aria-hidden="true">
+          <span className="ra-num">0{arch}</span>
+          <span className="ra-line"><b style={{ transform: `scaleX(${arch / 4})` }} /></span>
+          <span className="ra-name" key={arch}>{chapters[arch]}</span>
+        </div>
+
+        <div className="ra-shade" aria-hidden="true" />
+        <div className="ra-end wrap">
+          <p className="eyebrow">Discover Apna Catering</p>
+          <h2 className="display">Love for food,<br /><em>since 1975.</em></h2>
+          <p className="ra-end-sub">Glasgow's wedding &amp; event caterers, with a passion for fine food.</p>
+        </div>
+        <div className="ra-veil" aria-hidden="true" />
       </div>
     </section>
   );
@@ -108,7 +108,7 @@ function Odometer({ value, suffix = '', run }) {
     <span className="odo" aria-label={`${value}${suffix}`}>
       {digits.map((d, i) => (
         <span className="odo-col" key={i} aria-hidden="true">
-          <span className="odo-strip" style={{ transform: run ? `translateY(-${(+d + 10) * 10 / 2}%)` : 'translateY(0)', transitionDelay: `${i * 0.12}s` }}>
+          <span className="odo-strip" style={{ transform: run ? `translateY(-${(+d + 10) * 5}%)` : 'translateY(0)', transitionDelay: `${i * 0.12}s` }}>
             {[...Array(20)].map((_, k) => <span key={k}>{k % 10}</span>)}
           </span>
         </span>
@@ -141,12 +141,12 @@ export function Heritage() {
     }, root);
     return () => ctx.revert();
   }, []);
-  const statement = 'Since 1975 we have cooked for the biggest days in families’ lives. Weddings, walimas and reunions that bring three generations around one table. The recipes are handed down. The standards have never moved.';
+  const statement = 'We specialise in Sikh, Hindu and Muslim celebrations, and in anyone who simply adores Asian cuisine. Each family celebrates in its own way, and our menus honour every tradition at the table.';
   return (
     <section className="heritage section" id="heritage" ref={root}>
-      <div className="ghost ghost-heritage" aria-hidden="true">Heritage · Heritage ·</div>
+      <div className="ghost ghost-heritage" aria-hidden="true">Our story · Our story ·</div>
       <div className="wrap">
-        <p className="eyebrow" data-reveal>Our heritage</p>
+        <p className="eyebrow" data-reveal>Our story</p>
         <p className="fill-text">
           {statement.split(' ').map((w, i) => <span className="w" key={i}>{w} </span>)}
         </p>
@@ -156,8 +156,11 @@ export function Heritage() {
             <div className="h-img h-img-2 par" data-from="-14"><img src="/img/samosa.webp" alt="Golden vegetable samosas" loading="lazy" /></div>
           </div>
           <div className="h-copy">
-            <h2 className="h2" data-reveal>A family kitchen that grew up with <em>Glasgow's Asian community.</em></h2>
-            <p data-reveal>Every menu is built around your family's traditions, using fresh ingredients from suppliers we've trusted for years and served by a team that knows the difference between feeding guests and honouring them.</p>
+            <blockquote className="shaw" data-reveal>
+              “There is no sincerer love than the love of food.”
+              <cite>George Bernard Shaw</cite>
+            </blockquote>
+            <p data-reveal>Keeping Indian weddings at the standard they deserve is the mission in the Apna kitchen, bringing food to life for the couple and every one of their guests. Indian celebrations are famous for colour and vibrancy, and our food follows suit: dishes that taste as good as they look.</p>
             <div className="stats">
               <div><Odometer value={1975} run={run} /><span>Founded in Glasgow</span></div>
               <div><Odometer value={50} suffix="+" run={run} /><span>Years of celebrations</span></div>
@@ -165,6 +168,20 @@ export function Heritage() {
               <div><Odometer value={13} run={run} /><span>Live stations &amp; event extras</span></div>
             </div>
           </div>
+        </div>
+
+        <div className="pillars">
+          {[
+            ['Always fresh ingredients', 'We only work with the best food suppliers, including small local family farms, so every dish starts with the freshest ingredients.'],
+            ['Always friendly & professional', 'Our staff are our most valuable asset: warm, experienced and calm on the busiest day of your year.'],
+            ['The full package', 'Food, beverages, full china service, staff and equipment. Choose a sample menu or create your own with us.'],
+          ].map(([h, p], i) => (
+            <div className="pillar" key={h} data-reveal style={{ '--d': `${i * 0.1}s` }}>
+              <span className="pillar-no">0{i + 1}</span>
+              <h3>{h}</h3>
+              <p>{p}</p>
+            </div>
+          ))}
         </div>
       </div>
     </section>
