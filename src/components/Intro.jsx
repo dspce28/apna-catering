@@ -1,25 +1,9 @@
-import { lazy, Suspense, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { gsap, ScrollTrigger, reducedMotion, useNearView, useReveal } from '../hooks.js';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { gsap, reducedMotion, finePointer, useReveal } from '../hooks.js';
 import { Btn } from './Chrome.jsx';
 import { Img, imgSrc } from '../img.jsx';
 
-const HeroSlides = lazy(() => import('../three/HeroSlides.jsx'));
-const PetalField = lazy(() => import('../three/PetalField.jsx'));
-
-/* Set to '/video/tadka.mp4' once the clip is in public/video (see README):
-   the sizzle section then scrubs it with scroll instead of the slideshow. */
-const TADKA_VIDEO = '';
-
-const SLIDES = [
-  { n: 'karahi', cap: 'Butter chicken, served in copper' },
-  { n: 'kebab', cap: 'Off the grill, straight to the table' },
-  { n: 'brass-curry', cap: 'Slow-cooked, finished with cream' },
-  { n: 'paneer-tikka', cap: 'Paneer tikka, still sizzling' },
-  { n: 'thali-dark', cap: 'The full thali, done properly' },
-];
-
-// uv focus (y measured from the bottom in GL), used to keep faces in frame
-const FOCUS = SLIDES.map((s) => s.f || [0.5, 0.5]);
+const clamp01 = (v) => Math.min(1, Math.max(0, v));
 
 const split = (text) => {
   let n = 0;
@@ -30,125 +14,135 @@ const split = (text) => {
   ));
 };
 
-const lerp = (a, b, t) => a + (b - a) * t;
-const clamp01 = (v) => Math.min(1, Math.max(0, v));
-const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
-
+const TRAIL = ['karahi', 'bride', 'kebab', 'cake', 'chaat', 'rings', 'biryani', 'buffet', 'paneer-tikka', 'cupcakes', 'samosa', 'aisle', 'thali', 'cocktail'];
 
 /*
- * Opening moment: a carpet of rose and marigold petals over the feast.
- * Move the cursor (or a finger) to scatter them; scrolling blows them away.
+ * Hero: big, calm type on ivory. Moving the cursor (or a finger) leaves a
+ * trail of real 4K photographs that pop in and fade. It also plays on its own
+ * for a few seconds on load, so phones and still mice get the moment too.
+ * Text always sits on plain ivory, never over a busy photo.
  */
-export function PetalHero({ ready }) {
+export function TrailHero({ ready }) {
   const root = useRef();
-  const gust = useRef(0);
-  const near = useNearView(root, '0px');
-  const [revealed, setRevealed] = useState(false);
-  const [mobile] = useState(() => typeof window !== 'undefined' && innerWidth < 900);
-  const [gl, setGl] = useState(true);
+  const layer = useRef();
+  const copy = useRef();
+  const [idle, setIdle] = useState(true);
 
   useEffect(() => {
-    import('../three/HeroSlides.jsx').then((m) => setGl(m.webglAvailable() && !reducedMotion()));
-  }, []);
+    if (reducedMotion()) return;
+    const el = root.current, L = layer.current;
+    const nodes = Array.from(L.children);
+    let k = 0, last = null, auto = true, raf = 0, t0 = 0;
+    const gap = () => (innerWidth < 900 ? 70 : 95);
 
-  useEffect(() => {
-    const el = root.current;
-    let raf = 0;
-    const update = () => {
-      raf = 0;
-      const total = el.offsetHeight - innerHeight;
-      const p = clamp01(-el.getBoundingClientRect().top / Math.max(1, total));
-      gust.current = clamp01(p / 0.55);
-      el.style.setProperty('--p', p.toFixed(4));
-      if (p > 0.08) setRevealed(true);
+    // never drop a photo over the words: skip points inside the text block
+    const clearOfText = (x, y) => {
+      const c = copy.current.getBoundingClientRect();
+      const pad = (nodes[0].offsetWidth || 200) * 0.62 + 12;
+      return x < c.left - pad || x > c.right + pad || y < c.top - pad || y > c.bottom + pad;
     };
-    const on = () => { if (!raf) raf = requestAnimationFrame(update); };
-    update();
-    addEventListener('scroll', on, { passive: true });
-    return () => { removeEventListener('scroll', on); cancelAnimationFrame(raf); };
-  }, []);
+    const spawn = (x, y) => {
+      if (!clearOfText(x, y)) return;
+      const img = nodes[k % nodes.length];
+      k += 1;
+      const r = el.getBoundingClientRect();
+      gsap.killTweensOf(img);
+      gsap.set(img, { x: x - r.left, y: y - r.top, xPercent: -50, yPercent: -50, rotate: gsap.utils.random(-9, 9), zIndex: k, opacity: 1, scale: 0.4 });
+      gsap.timeline()
+        .to(img, { scale: 1, duration: 0.55, ease: 'expo.out' })
+        .to(img, { opacity: 0, scale: 0.85, y: '+=40', duration: 0.9, ease: 'power2.in' }, 0.75);
+    };
+    const feed = (x, y) => {
+      if (!last) { last = { x, y }; spawn(x, y); return; }
+      const d = Math.hypot(x - last.x, y - last.y);
+      if (d > gap()) { last = { x, y }; spawn(x, y); }
+    };
+    const inHero = (y) => { const r = el.getBoundingClientRect(); return y > r.top && y < r.bottom; };
+    const pm = (e) => {
+      if (!inHero(e.clientY)) return;
+      if (auto) { auto = false; setIdle(false); }
+      feed(e.clientX, e.clientY);
+    };
+    const tm = (e) => { const t = e.touches[0]; if (t && inHero(t.clientY)) { auto = false; setIdle(false); feed(t.clientX, t.clientY); } };
 
-  useEffect(() => { if (!gl) setRevealed(true); }, [gl]);
-  const onCleared = useCallback(() => setRevealed(true), []);
+    // autoplay: a slow figure-eight across the hero, until the visitor takes over
+    const tick = (now) => {
+      if (!t0) t0 = now;
+      const s = (now - t0) / 1000;
+      if (auto && s < 7) {
+        const r = el.getBoundingClientRect();
+        const a = s * 1.1;
+        const x = r.left + r.width / 2 + Math.cos(a) * r.width * 0.43;
+        const y = r.top + r.height * 0.5 + Math.sin(a) * r.height * 0.4;
+        feed(x, y);
+        raf = requestAnimationFrame(tick);
+      }
+    };
+    let start;
+    if (ready) start = setTimeout(() => { raf = requestAnimationFrame(tick); }, 700);
+    addEventListener('pointermove', pm, { passive: true });
+    addEventListener('touchmove', tm, { passive: true });
+    return () => {
+      clearTimeout(start); cancelAnimationFrame(raf);
+      removeEventListener('pointermove', pm); removeEventListener('touchmove', tm);
+    };
+  }, [ready]);
 
   return (
-    <section className={`petal-hero ${ready ? 'is-ready' : ''} ${revealed ? 'revealed' : ''}`} ref={root} id="top">
-      <div className="ph-stage">
-        <Img n={mobile ? 'karahi' : 'thali-dark'} className="ph-bg" sizes="100vw" eager alt="An Indian feast laid out for a celebration" />
-        <div className="ph-scrim" aria-hidden="true" />
-        <div className="ph-copy wrap">
-          <p className="eyebrow center ph-eyebrow"><span>Glasgow</span><span className="ph-mid"> · Wedding &amp; event caterers</span><span> · Since 1975</span></p>
-          <h1 className="ph-title">Make it <em>memorable.</em></h1>
-          <p className="ph-sub">Engagements, mehndis, weddings, walimas and birthdays, catered by a Glasgow family kitchen with a love for food.</p>
-          <div className="hero-ctas">
-            <Btn to="enquire">Check your date →</Btn>
-            <Btn to="occasions" variant="ghost">Explore occasions</Btn>
-          </div>
-        </div>
-        {gl && (
-          <div className="ph-petals" aria-hidden="true">
-            <Suspense fallback={null}>
-              <PetalField gust={gust} count={mobile ? 520 : 1300} active={near} breeze={ready} onCleared={onCleared} />
-            </Suspense>
-          </div>
-        )}
-        <p className="ph-hint" aria-hidden="true">{mobile ? 'Swipe to scatter the petals' : 'Move to scatter the petals'}</p>
-        <div className="scroll-hint ph-scroll" aria-hidden="true"><span>Scroll</span><i /></div>
+    <section className={`trail-hero ${ready ? 'is-ready' : ''}`} ref={root} id="top">
+      <div className="th-layer" ref={layer} aria-hidden="true">
+        {TRAIL.map((n) => <img key={n} src={imgSrc(n, 960)} alt="" className="th-img" decoding="async" />)}
       </div>
+      <div className="th-copy wrap" ref={copy}>
+        <p className="eyebrow center th-eyebrow"><span>Glasgow</span><span className="th-mid"> · Wedding &amp; event caterers</span><span> · Since 1975</span></p>
+        <h1 className="th-title">
+          <span className="th-line">{split('Make it')}</span>
+          <span className="th-line"><em>{split('memorable.')}</em></span>
+        </h1>
+        <p className="th-sub">Engagements, mehndis, weddings, walimas and birthdays, catered by a Glasgow family kitchen with a love for food.</p>
+        <div className="hero-ctas">
+          <Btn to="enquire" variant="dark">Check your date →</Btn>
+          <Btn to="occasions" variant="ghost">Explore occasions</Btn>
+        </div>
+      </div>
+      <p className={`th-hint ${idle ? '' : 'gone'}`} aria-hidden="true">{finePointer() ? 'Move your cursor' : 'Swipe across'} ✦ taste the feast</p>
     </section>
   );
 }
 
+const COLLAGE = [
+  { n: 'thali-dark', cls: 'c0' },
+  { n: 'bride', cls: 'c1' },
+  { n: 'kebab', cls: 'c2' },
+  { n: 'cake', cls: 'c3' },
+  { n: 'karahi', cls: 'c4' },
+  { n: 'buffet', cls: 'c5' },
+  { n: 'rings', cls: 'c6' },
+];
+const SCALES = [4, 5, 6, 5, 6, 8, 9];
+
 /*
- * Sizzle section: a framed window of real photography in the middle of an ivory page.
- * Scrolling grows the window until it fills the screen, then the page continues.
- * Driven by plain scroll position + clip-path, so it works with or without
- * smooth scrolling, on touch devices, and without WebGL (falls back to <img>).
+ * Zoom collage: seven photographs in a loose grid. Scrolling zooms each at its
+ * own rate until the centre dish fills the screen; then a solid card brings in
+ * the words, so text never sits on a busy image.
  */
-export function GrowHero({ ready = true }) {
-  const video = useRef();
-  const [hasVideo, setHasVideo] = useState(false);
+export function ZoomCollage() {
   const root = useRef();
-  const win = useRef();
-  const zoom = useRef(1.12);
-  const near = useNearView(root, '0px');
-  const [gl, setGl] = useState(false);
-  const [glReady, setGlReady] = useState(false);
-  const [idx, setIdx] = useState(0);
-  const [mobile, setMobile] = useState(() => typeof window !== 'undefined' && innerWidth < 900);
-
   useEffect(() => {
-    import('../three/HeroSlides.jsx').then((m) => setGl(m.webglAvailable()));
-    const r = () => setMobile(innerWidth < 900);
-    addEventListener('resize', r);
-    return () => removeEventListener('resize', r);
-  }, []);
-
-  useEffect(() => {
-    if (reducedMotion()) return;
-    const t = setInterval(() => setIdx((i) => (i + 1) % SLIDES.length), 5200);
-    return () => clearInterval(t);
-  }, []);
-
-  useEffect(() => {
-    const el = root.current, w = win.current;
+    const el = root.current;
+    const items = Array.from(el.querySelectorAll('.zc-item'));
+    const card = el.querySelector('.zc-card');
     let raf = 0;
     const update = () => {
       raf = 0;
-      const r = el.getBoundingClientRect();
       const total = el.offsetHeight - innerHeight;
-      const p = reducedMotion() ? 1 : clamp01(-r.top / Math.max(1, total));
-      const g = ease(clamp01(p / 0.78));
-      const m = innerWidth < 900;
-      const start = m ? [28, 7, 19, 7, 18] : [21, 31, 15, 31, 22]; // top right bottom left radius (%/px)
-      const ins = start.slice(0, 4).map((v) => lerp(v, 0, g));
-      const rad = lerp(start[4], 0, g);
-      w.style.clipPath = `inset(${ins[0]}% ${ins[1]}% ${ins[2]}% ${ins[3]}% round ${rad}px)`;
-      el.style.setProperty('--g', g.toFixed(4));
-      el.style.setProperty('--late', clamp01((p - 0.7) / 0.24).toFixed(4));
-      zoom.current = lerp(1.12, 1.0, g);
-      const v = video.current;
-      if (v && v.duration) v.currentTime = Math.min(v.duration - 0.05, p * v.duration);
+      const p = reducedMotion() ? 1 : clamp01(-el.getBoundingClientRect().top / Math.max(1, total));
+      const z = clamp01(p / 0.78);
+      const e = z * z * (3 - 2 * z);
+      items.forEach((it, i) => { it.style.transform = `scale(${1 + (SCALES[i] - 1) * e})`; });
+      const c = clamp01((p - 0.72) / 0.22);
+      card.style.opacity = c;
+      card.style.transform = `translateY(${(1 - c) * 60}px)`;
     };
     const on = () => { if (!raf) raf = requestAnimationFrame(update); };
     update();
@@ -156,66 +150,20 @@ export function GrowHero({ ready = true }) {
     addEventListener('resize', on);
     return () => { removeEventListener('scroll', on); removeEventListener('resize', on); cancelAnimationFrame(raf); };
   }, []);
-
-  const urls = useMemo(() => SLIDES.map((s) => imgSrc(s.n, mobile ? 960 : 1920)), [mobile]);
-  const onGlReady = useCallback(() => setGlReady(true), []);
-
   return (
-    <section className={`grow-hero ${ready ? 'is-ready' : ''} ${hasVideo ? 'has-video' : ''}`} ref={root} id="sizzle">
-      <div className="gh-stage">
-        <p className="eyebrow gh-top"><span>The sizzle</span><i>✦</i><span>Cooked fresh on the day</span></p>
-
-        <h1 className="gh-title">
-          <span className="gh-word l">{split('Cooked')}</span>
-          <span className="gh-word r"><em>{split('fresh.')}</em></span>
-        </h1>
-
-        <div className="gh-window" ref={win}>
-          <div className="gh-media">
-            {SLIDES.map((s, i) => (
-              <Img key={s.n} n={s.n} className={`gh-img ${i === idx ? 'on' : ''}`} sizes="100vw" eager={i === 0} style={s.f ? { objectPosition: `${s.f[0] * 100}% ${(1 - s.f[1]) * 100}%` } : undefined} />
-            ))}
-            {TADKA_VIDEO && <video
-              ref={video}
-              className={`gh-video ${hasVideo ? 'on' : ''}`}
-              src={TADKA_VIDEO}
-              muted
-              playsInline
-              preload="auto"
-              onLoadedMetadata={() => setHasVideo(true)}
-              onError={() => setHasVideo(false)}
-            />}
-            {gl && near && !hasVideo && (
-              <div className={`gh-gl ${glReady ? 'on' : ''}`}>
-                <Suspense fallback={null}>
-                  <HeroSlides urls={urls} focus={FOCUS} index={idx} zoom={zoom} active={near} onReady={onGlReady} />
-                </Suspense>
-              </div>
-            )}
+    <section className="zoom-collage" ref={root} aria-label="A feast for every chapter">
+      <div className="zc-stage">
+        {COLLAGE.map((c, i) => (
+          <div className={`zc-item ${c.cls}`} key={c.n}>
+            <div className="zc-frame"><Img n={c.n} sizes={i === 0 ? '100vw' : '40vw'} /></div>
           </div>
-          <div className="gh-shade" />
-          <div className="gh-inside wrap">
-            <p className="eyebrow">Always fresh ingredients</p>
-            <h2 className="display">Served hot, <em>every time.</em></h2>
-            <p className="gh-inside-sub">Kebabs, curries and breads are cooked on the day, never batch-made and reheated. That’s the difference your guests taste.</p>
-            <div className="hero-ctas">
-              <Btn to="enquire">Check your date →</Btn>
-              <Btn to="occasions" variant="ghost">Explore occasions</Btn>
-            </div>
-          </div>
-          <div className="gh-caption">
-            <span className="gh-count">0{idx + 1}<i>/0{SLIDES.length}</i></span>
-            <span className="gh-cap" key={idx}>{SLIDES[idx].cap}</span>
-          </div>
+        ))}
+        <div className="zc-card">
+          <p className="eyebrow">Love for food · Since 1975</p>
+          <h2 className="h2">Cooked fresh, <em>served beautifully.</em></h2>
+          <p>We only work with the best suppliers, including small local family farms, and cook on the day, never batch-made and reheated.</p>
+          <Btn to="menus" variant="dark">See our menus →</Btn>
         </div>
-
-        <div className="gh-foot">
-          <p className="gh-lede">We only work with the best suppliers, including small local family farms, so every dish starts with the freshest ingredients.</p>
-          <div className="hero-ctas">
-            <Btn to="menus" variant="dark">See our menus →</Btn>
-          </div>
-        </div>
-        <div className="scroll-hint" aria-hidden="true"><span>Scroll</span><i /></div>
       </div>
     </section>
   );

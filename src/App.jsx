@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useSmoothScroll, ScrollTrigger } from './hooks.js';
 import { Preloader, Cursor, Nav, MobileBar, Footer } from './components/Chrome.jsx';
-import { PetalHero, GrowHero, Heritage } from './components/Intro.jsx';
+import { TrailHero, ZoomCollage, Heritage } from './components/Intro.jsx';
 import { Traditions, Menus, GallerySection, Builder, Experiences, Occasions, Featured } from './components/Middle.jsx';
 import { Stories, Process, Enquire } from './components/Closing.jsx';
 
@@ -33,9 +33,9 @@ export default function App() {
       <div className="grain" aria-hidden="true" />
       <Nav />
       <main>
-        <PetalHero ready={ready} />
+        <TrailHero ready={ready} />
+        <ZoomCollage />
         <Heritage />
-        <GrowHero />
         <Occasions onOccasion={setOccasion} />
         <Traditions onOccasion={setOccasion} />
         <Menus />
