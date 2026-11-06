@@ -43,10 +43,10 @@ const frag = /* glsl */ `
     vec4 c = texture2D(uTex, uv);
     float g = dot(c.rgb, vec3(0.299, 0.587, 0.114));
     vec3 warm = vec3(g) * vec3(1.05, 0.95, 0.82);
-    vec3 col = mix(warm * 0.72, c.rgb, 0.35 + uHover * 0.65);
+    vec3 col = mix(warm * 0.98, c.rgb, 0.55 + uHover * 0.45);
     // edge vignette
     float v = smoothstep(0.0, 0.08, vUv.x) * smoothstep(1.0, 0.92, vUv.x);
-    gl_FragColor = vec4(col * (0.75 + 0.25 * v), 1.0);
+    gl_FragColor = vec4(col * (0.9 + 0.1 * v), 1.0);
     #include <colorspace_fragment>
   }
 `;

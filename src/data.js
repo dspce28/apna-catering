@@ -8,7 +8,7 @@ export const traditions = [
     label: 'Sikh',
     word: 'ANAND KARAJ',
     title: 'Anand Karaj & Reception',
-    img: '/img/thali.webp',
+    img: 'thali',
     body: "From the morning ceremony to the evening reception, we build a menu around your family's customs, including vegetarian-led menus for Gurdwara occasions and a full Punjabi spread for the party.",
     points: ['Punjabi classics: makki di roti, sarson, dal makhani', 'Live tandoor & mixed grill stations', 'Breakfast, ceremony & reception served by one team'],
     occasion: 'Sikh wedding',
@@ -18,7 +18,7 @@ export const traditions = [
     label: 'Hindu',
     word: 'SANGEET',
     title: 'Mehndi, Sangeet & Wedding',
-    img: '/img/paneer.webp',
+    img: 'paneer-tikka',
     body: 'Multi-day celebrations call for menus that change with every event. We plan each one, from the mehndi chaat stall to the wedding feast, so every day feels distinct.',
     points: ['Fully vegetarian menus on request', 'Chaat stalls: gol gappe, papdi chaat, aloo tikki', 'Menus planned across every day of the celebration'],
     occasion: 'Hindu wedding',
@@ -28,7 +28,7 @@ export const traditions = [
     label: 'Muslim',
     word: 'WALIMA',
     title: 'Nikah, Mehndi & Walima',
-    img: '/img/biryani.webp',
+    img: 'biryani',
     body: 'Rich, generous menus for the Nikah and Walima, with dietary and religious requirements agreed with your family at the first consultation and respected throughout.',
     points: ['Lamb rogan josh, biryani, seekh & chapli kebabs', 'Elegant plated or banquet-style service', 'Dessert buffets with rasmalai & kulfi'],
     occasion: 'Muslim wedding',
@@ -38,7 +38,7 @@ export const traditions = [
     label: 'Corporate',
     word: 'CORPORATE',
     title: 'Corporate & Private Events',
-    img: '/img/table.webp',
+    img: 'finedining',
     body: 'In business, first impressions count. We cater client dinners, team celebrations and Diwali and Eid gatherings with polished service and food people talk about afterwards.',
     points: ['Canapé receptions & bowl food', 'Office Diwali, Eid & Vaisakhi events', 'Birthdays, anniversaries & family reunions'],
     occasion: 'Corporate event',
@@ -46,10 +46,10 @@ export const traditions = [
 ];
 
 export const menus = [
-  { no: 'I', name: 'The Classic', img: '/img/curry.webp', dishes: ['Aloo papdi chaat', 'Chicken tikka & lamb seekh kebab', 'Lamb aloo curry', 'Chicken desi style', 'Mah makhni dal', 'Rasmalai'] },
-  { no: 'II', name: 'Chaat & Grill', img: '/img/chaat.webp', dishes: ['Chaat stall: gol gappe & papdi chaat', 'Mixed kebab platter', 'Lamb rogan josh', 'Chicken bhuna', 'Palak paneer', 'Fruit trifle'] },
-  { no: 'III', name: 'The Reception', img: '/img/kebab.webp', dishes: ['Canapés: Punjabi chicken, prawn tempura', 'Haryali chicken tikka', 'Amritsari fish', 'Punjabi turka chicken', 'Bread basket', 'Kulfi selection'] },
-  { no: 'IV', name: 'The Punjab Table', img: '/img/biryani2.webp', dishes: ['Bengun palak pakora', 'Chandigarh fish masala', 'Lamb saag', 'Tinda masala', 'Makki di roti & bhatura', 'Boondi raita'] },
+  { no: 'I', name: 'The Classic', img: 'palak', dishes: ['Aloo papdi chaat', 'Chicken tikka & lamb seekh kebab', 'Lamb aloo curry', 'Chicken desi style', 'Mah makhni dal', 'Rasmalai'] },
+  { no: 'II', name: 'Chaat & Grill', img: 'chaat', dishes: ['Chaat stall: gol gappe & papdi chaat', 'Mixed kebab platter', 'Lamb rogan josh', 'Chicken bhuna', 'Palak paneer', 'Fruit trifle'] },
+  { no: 'III', name: 'The Reception', img: 'kebab', dishes: ['Canapés: Punjabi chicken, prawn tempura', 'Haryali chicken tikka', 'Amritsari fish', 'Punjabi turka chicken', 'Bread basket', 'Kulfi selection'] },
+  { no: 'IV', name: 'The Punjab Table', img: 'puri-thali', dishes: ['Bengun palak pakora', 'Chandigarh fish masala', 'Lamb saag', 'Tinda masala', 'Makki di roti & bhatura', 'Boondi raita'] },
 ];
 
 export const courses = [
@@ -60,11 +60,11 @@ export const courses = [
 ];
 
 export const experiences = [
-  { title: 'Food Stations & Chaat Stalls', text: 'Gol gappe, papdi chaat and aloo tikki, made fresh in front of your guests.', img: '/img/chaat.webp' },
-  { title: 'Live Cooking & Outdoor BBQ', text: 'Tandoor and grill stations that bring the kitchen to the party.', img: '/img/kebab.webp' },
-  { title: 'Dessert Buffet', text: 'Rasmalai, kulfi, chocolate fountains and fresh fruit carvings.', img: '/img/halwa.webp' },
-  { title: 'Full Event Package', text: 'Staff, china, buffet canopies, tables, chairs and bar service, all handled for you.', img: '/img/table.webp' },
-  { title: 'Juice Bars & Drinks Fountains', text: 'Fresh lassi, mocktails and juice bars, plus ice cream, candyfloss and popcorn for younger guests.', img: '/img/naan.webp' },
+  { title: 'Food Stations & Chaat Stalls', text: 'Gol gappe, papdi chaat and aloo tikki, made fresh in front of your guests.', img: 'chaat' },
+  { title: 'Live Cooking & Outdoor BBQ', text: 'Tandoor and grill stations that bring the kitchen to the party.', img: 'kebab' },
+  { title: 'Dessert Buffet', text: 'Rasmalai, kulfi, chocolate fountains and fresh fruit carvings.', img: 'cupcakes' },
+  { title: 'Full Event Package', text: 'Staff, china, buffet canopies, tables, chairs and bar service, all handled for you.', img: 'buffet' },
+  { title: 'Juice Bars & Drinks Fountains', text: 'Fresh lassi, mocktails and juice bars, plus ice cream, candyfloss and popcorn for younger guests.', img: 'cocktail' },
 ];
 
 export const quotes = [
@@ -74,8 +74,7 @@ export const quotes = [
 ];
 
 export const gallery = [
-  '/img/plated.webp', '/img/paneer.webp', '/img/samosa.webp', '/img/thali.webp', '/img/biryani.webp',
-  '/img/naan.webp', '/img/kebab.webp', '/img/curry.webp', '/img/halwa.webp', '/img/chaat.webp',
+  'brass-curry', 'paneer-tikka', 'samosa', 'thali', 'biryani', 'palak', 'kebab', 'karahi', 'chaat', 'cake',
 ];
 
 export const occasions = [
@@ -86,14 +85,14 @@ export const occasions = [
 ];
 
 export const occasionCards = [
-  { title: 'Engagements & Roka', tag: 'The beginning', text: 'The first party of the journey deserves a first-class spread, from canapés to a full Punjabi table.', img: '/img/plated.webp', occasion: 'Engagement / Roka' },
-  { title: 'Mehndi & Sangeet', tag: 'The build-up', text: 'Chaat stalls, live grills and food that keeps the dance floor going all night.', img: '/img/chaat.webp', occasion: 'Mehndi / Sangeet' },
-  { title: 'Weddings', tag: 'The big day', text: 'Sikh, Hindu and Muslim weddings, catered with respect for every tradition.', img: '/img/thali.webp', occasion: 'Sikh wedding' },
-  { title: 'Walima & Receptions', tag: 'The celebration', text: 'Generous banquets and elegant plated service for the evening everyone remembers.', img: '/img/biryani.webp', occasion: 'Muslim wedding' },
-  { title: 'Birthdays', tag: 'Party hats on', text: 'Whether it\u2019s your 18th or your 30th, we\u2019ll make it delicious, enjoyable and memorable.', img: '/img/halwa.webp', occasion: 'Birthday' },
-  { title: 'Anniversaries', tag: 'Another year', text: 'Intimate dinners or the whole family: menus planned around the people you love.', img: '/img/curry.webp', occasion: 'Anniversary' },
-  { title: 'New births & reunions', tag: 'Or just because', text: 'Welcoming a little one, bringing the family together, or celebrating for no reason at all.', img: '/img/spread.webp', occasion: 'Other celebration' },
-  { title: 'Corporate events', tag: 'Impressions count', text: 'Meetings, team-building days and corporate parties, catered professionally and inventively.', img: '/img/table.webp', occasion: 'Corporate event' },
+  { title: 'Engagements & Roka', tag: 'The beginning', text: 'The first party of the journey deserves a first-class spread, from canapés to a full Punjabi table.', img: 'rings', occasion: 'Engagement / Roka' },
+  { title: 'Mehndi & Sangeet', tag: 'The build-up', text: 'Chaat stalls, live grills and food that keeps the dance floor going all night.', img: 'chaat', occasion: 'Mehndi / Sangeet' },
+  { title: 'Weddings', tag: 'The big day', text: 'Sikh, Hindu and Muslim weddings, catered with respect for every tradition.', img: 'bride', occasion: 'Sikh wedding' },
+  { title: 'Walima & Receptions', tag: 'The celebration', text: 'Generous banquets and elegant plated service for the evening everyone remembers.', img: 'biryani', occasion: 'Muslim wedding' },
+  { title: 'Birthdays', tag: 'Party hats on', text: 'Whether it\u2019s your 18th or your 30th, we\u2019ll make it delicious, enjoyable and memorable.', img: 'cake', occasion: 'Birthday' },
+  { title: 'Anniversaries', tag: 'Another year', text: 'Intimate dinners or the whole family: menus planned around the people you love.', img: 'cupcakes', occasion: 'Anniversary' },
+  { title: 'New births & reunions', tag: 'Or just because', text: 'Welcoming a little one, bringing the family together, or celebrating for no reason at all.', img: 'longtable', occasion: 'Other celebration' },
+  { title: 'Corporate events', tag: 'Impressions count', text: 'Meetings, team-building days and corporate parties, catered professionally and inventively.', img: 'buffet', occasion: 'Corporate event' },
 ];
 
 export const allServices = [

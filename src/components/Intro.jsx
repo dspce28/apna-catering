@@ -1,8 +1,20 @@
-import { lazy, Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { gsap, ScrollTrigger, reducedMotion, useNearView, useReveal } from '../hooks.js';
 import { Btn } from './Chrome.jsx';
+import { Img, imgSrc } from '../img.jsx';
 
-const ArchCorridor = lazy(() => import('../three/ArchCorridor.jsx'));
+const HeroSlides = lazy(() => import('../three/HeroSlides.jsx'));
+
+const SLIDES = [
+  { n: 'karahi', cap: 'Butter chicken, served in copper' },
+  { n: 'bride', cap: 'Engagements & weddings', f: [0.5, 0.8] },
+  { n: 'buffet', cap: 'Catering for hundreds of guests' },
+  { n: 'thali-dark', cap: 'The full thali, done properly' },
+  { n: 'cake', cap: 'Birthdays & parties' },
+];
+
+// uv focus (y measured from the bottom in GL), used to keep faces in frame
+const FOCUS = SLIDES.map((s) => s.f || [0.5, 0.5]);
 
 const split = (text) => {
   let n = 0;
@@ -13,90 +25,113 @@ const split = (text) => {
   ));
 };
 
+const lerp = (a, b, t) => a + (b - a) * t;
+const clamp01 = (v) => Math.min(1, Math.max(0, v));
+const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+
 /*
- * The royal arch intro: a corridor of cusped Mughal arches in WebGL.
- * Scrolling walks the camera through each arch until the last one opens
- * onto the site itself.
+ * Hero: a framed window of real photography in the middle of an ivory page.
+ * Scrolling grows the window until it fills the screen, then the page continues.
+ * Driven by plain scroll position + clip-path, so it works with or without
+ * smooth scrolling, on touch devices, and without WebGL (falls back to <img>).
  */
-export function RoyalArch({ ready, velocity }) {
+export function GrowHero({ ready }) {
   const root = useRef();
-  const progress = useRef(0);
+  const win = useRef();
+  const zoom = useRef(1.12);
   const near = useNearView(root, '0px');
-  const [small, setSmall] = useState(() => typeof window !== 'undefined' && innerWidth < 900);
-  const [arch, setArch] = useState(1);
+  const [gl, setGl] = useState(false);
+  const [glReady, setGlReady] = useState(false);
+  const [idx, setIdx] = useState(0);
+  const [mobile, setMobile] = useState(() => typeof window !== 'undefined' && innerWidth < 900);
 
   useEffect(() => {
-    const r = () => setSmall(innerWidth < 900);
+    import('../three/HeroSlides.jsx').then((m) => setGl(m.webglAvailable()));
+    const r = () => setMobile(innerWidth < 900);
     addEventListener('resize', r);
     return () => removeEventListener('resize', r);
   }, []);
 
-  useLayoutEffect(() => {
-    if (reducedMotion()) { root.current.classList.add('static'); return; }
-    const ctx = gsap.context(() => {
-      ScrollTrigger.create({
-        trigger: root.current, start: 'top top', end: 'bottom bottom',
-        onUpdate: (s) => {
-          progress.current = s.progress;
-          setArch(Math.min(4, 1 + Math.floor(s.progress * 4.2)));
-        },
-      });
-      const tl = gsap.timeline({ scrollTrigger: { trigger: root.current, start: 'top top', end: 'bottom bottom', scrub: 0.6 } });
-      tl.to('.ra-intro .hero-word.l', { xPercent: -40, opacity: 0, duration: 0.14, ease: 'power2.in' }, 0)
-        .to('.ra-intro .hero-word.r', { xPercent: 40, opacity: 0, duration: 0.14, ease: 'power2.in' }, 0)
-        .to('.ra-intro .ra-top, .ra-intro .hero-foot, .scroll-hint', { opacity: 0, y: -30, duration: 0.1 }, 0)
-        .fromTo('.ra-chapter', { opacity: 0 }, { opacity: 1, duration: 0.05 }, 0.08)
-        .to('.ra-chapter', { opacity: 0, duration: 0.05 }, 0.8)
-        .fromTo('.ra-shade', { opacity: 0 }, { opacity: 1, duration: 0.1 }, 0.78)
-        .fromTo('.ra-end > *', { opacity: 0, y: 50 }, { opacity: 1, y: 0, stagger: 0.03, duration: 0.1 }, 0.82)
-        .fromTo('.ra-veil', { opacity: 0 }, { opacity: 1, duration: 0.04 }, 0.96);
-    }, root);
-    return () => ctx.revert();
+  useEffect(() => {
+    if (reducedMotion()) return;
+    const t = setInterval(() => setIdx((i) => (i + 1) % SLIDES.length), 5200);
+    return () => clearInterval(t);
   }, []);
 
-  const chapters = ['', 'The welcome', 'The feast', 'The celebration', 'Step inside'];
+  useEffect(() => {
+    const el = root.current, w = win.current;
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      const r = el.getBoundingClientRect();
+      const total = el.offsetHeight - innerHeight;
+      const p = reducedMotion() ? 1 : clamp01(-r.top / Math.max(1, total));
+      const g = ease(clamp01(p / 0.78));
+      const m = innerWidth < 900;
+      const start = m ? [28, 7, 19, 7, 18] : [21, 31, 15, 31, 22]; // top right bottom left radius (%/px)
+      const ins = start.slice(0, 4).map((v) => lerp(v, 0, g));
+      const rad = lerp(start[4], 0, g);
+      w.style.clipPath = `inset(${ins[0]}% ${ins[1]}% ${ins[2]}% ${ins[3]}% round ${rad}px)`;
+      el.style.setProperty('--g', g.toFixed(4));
+      el.style.setProperty('--late', clamp01((p - 0.7) / 0.24).toFixed(4));
+      zoom.current = lerp(1.12, 1.0, g);
+    };
+    const on = () => { if (!raf) raf = requestAnimationFrame(update); };
+    update();
+    addEventListener('scroll', on, { passive: true });
+    addEventListener('resize', on);
+    return () => { removeEventListener('scroll', on); removeEventListener('resize', on); cancelAnimationFrame(raf); };
+  }, []);
+
+  const urls = useMemo(() => SLIDES.map((s) => imgSrc(s.n, mobile ? 960 : 1920)), [mobile]);
+  const onGlReady = useCallback(() => setGlReady(true), []);
 
   return (
-    <section className={`royal ${ready ? 'is-ready' : ''}`} ref={root} id="top">
-      <div className="ra-stage">
-        <div className="ra-canvas" aria-hidden="true">
-          <Suspense fallback={null}>
-            <ArchCorridor progress={progress} speed={velocity} active={near} small={small} />
-          </Suspense>
-        </div>
-        <div className="ra-vignette" aria-hidden="true" />
+    <section className={`grow-hero ${ready ? 'is-ready' : ''}`} ref={root} id="top">
+      <div className="gh-stage">
+        <p className="eyebrow gh-top"><span>Glasgow</span><i>✦</i><span>Wedding &amp; event caterers</span><i>✦</i><span>Since 1975</span></p>
 
-        <div className="ra-intro">
-          <p className="eyebrow ra-top"><span>Glasgow</span><i>✦</i><span>Wedding &amp; event caterers</span><i>✦</i><span>Since 1975</span></p>
-          <h1 className="hero-title">
-            <span className="hero-word l">{split('Make it')}</span>
-            <span className="hero-word r"><em>{split('memorable.')}</em></span>
-          </h1>
-          <div className="hero-foot">
-            <div className="hero-foot-in">
-              <p className="hero-lede">Engagements, mehndis, weddings, walimas and birthdays. Indian &amp; Asian catering from a Glasgow family kitchen.</p>
-              <div className="hero-ctas">
-                <Btn to="enquire">Check your date →</Btn>
-                <Btn to="occasions" variant="ghost">Explore occasions</Btn>
+        <h1 className="gh-title">
+          <span className="gh-word l">{split('Love for')}</span>
+          <span className="gh-word r"><em>{split('food.')}</em></span>
+        </h1>
+
+        <div className="gh-window" ref={win}>
+          <div className="gh-media">
+            {SLIDES.map((s, i) => (
+              <Img key={s.n} n={s.n} className={`gh-img ${i === idx ? 'on' : ''}`} sizes="100vw" eager={i === 0} style={s.f ? { objectPosition: `${s.f[0] * 100}% ${(1 - s.f[1]) * 100}%` } : undefined} />
+            ))}
+            {gl && near && (
+              <div className={`gh-gl ${glReady ? 'on' : ''}`}>
+                <Suspense fallback={null}>
+                  <HeroSlides urls={urls} focus={FOCUS} index={idx} zoom={zoom} active={near} onReady={onGlReady} />
+                </Suspense>
               </div>
+            )}
+          </div>
+          <div className="gh-shade" />
+          <div className="gh-inside wrap">
+            <p className="eyebrow">Discover Apna Catering</p>
+            <h2 className="display">Make it <em>memorable.</em></h2>
+            <p className="gh-inside-sub">Engagements, mehndis, weddings, walimas and birthdays. Indian &amp; Asian catering from a Glasgow family kitchen.</p>
+            <div className="hero-ctas">
+              <Btn to="enquire">Check your date →</Btn>
+              <Btn to="occasions" variant="ghost">Explore occasions</Btn>
             </div>
           </div>
-          <div className="scroll-hint" aria-hidden="true"><span>Scroll to step inside</span><i /></div>
+          <div className="gh-caption">
+            <span className="gh-count">0{idx + 1}<i>/0{SLIDES.length}</i></span>
+            <span className="gh-cap" key={idx}>{SLIDES[idx].cap}</span>
+          </div>
         </div>
 
-        <div className="ra-chapter" aria-hidden="true">
-          <span className="ra-num">0{arch}</span>
-          <span className="ra-line"><b style={{ transform: `scaleX(${arch / 4})` }} /></span>
-          <span className="ra-name" key={arch}>{chapters[arch]}</span>
+        <div className="gh-foot">
+          <p className="gh-lede">Glasgow's wedding &amp; event caterers with a passion for fine food. Sikh, Hindu and Muslim celebrations since 1975.</p>
+          <div className="hero-ctas">
+            <Btn to="enquire" variant="dark">Check your date →</Btn>
+          </div>
         </div>
-
-        <div className="ra-shade" aria-hidden="true" />
-        <div className="ra-end wrap">
-          <p className="eyebrow">Discover Apna Catering</p>
-          <h2 className="display">Love for food,<br /><em>since 1975.</em></h2>
-          <p className="ra-end-sub">Glasgow's wedding &amp; event caterers, with a passion for fine food.</p>
-        </div>
-        <div className="ra-veil" aria-hidden="true" />
+        <div className="scroll-hint" aria-hidden="true"><span>Scroll</span><i /></div>
       </div>
     </section>
   );
@@ -152,8 +187,8 @@ export function Heritage() {
         </p>
         <div className="heritage-grid">
           <div className="h-media">
-            <div className="h-img h-img-1 par" data-from="8"><img src="/img/spread.webp" alt="A table of Indian curries, rice and breads" loading="lazy" /></div>
-            <div className="h-img h-img-2 par" data-from="-14"><img src="/img/samosa.webp" alt="Golden vegetable samosas" loading="lazy" /></div>
+            <div className="h-img h-img-1 par" data-from="8"><Img n="spread" alt="A table of Indian curries, rice and breads" /></div>
+            <div className="h-img h-img-2 par" data-from="-14"><Img n="samosa" alt="Golden vegetable samosas" sizes="25vw" /></div>
           </div>
           <div className="h-copy">
             <blockquote className="shaw" data-reveal>

@@ -2,6 +2,7 @@ import { lazy, Suspense, useEffect, useLayoutEffect, useRef, useState } from 're
 import { gsap, ScrollTrigger, reducedMotion, finePointer, scrollToId, useNearView, useReveal } from '../hooks.js';
 import { traditions, menus, courses, gallery, experiences, occasionCards, allServices } from '../data.js';
 import { Btn, Magnetic } from './Chrome.jsx';
+import { Img, imgSrc } from '../img.jsx';
 
 const Gallery3D = lazy(() => import('../three/Gallery3D.jsx'));
 
@@ -37,7 +38,7 @@ export function Traditions({ onOccasion }) {
           <span className="tab-ink" style={{ width: ink.w, transform: `translateX(${ink.x}px)` }} aria-hidden="true" />
         </div>
         <article className="panel" key={t.key} role="tabpanel">
-          <div className="panel-img"><img src={t.img} alt="" /><span className="panel-no">0{tab + 1}</span></div>
+          <div className="panel-img"><Img n={t.img} /><span className="panel-no">0{tab + 1}</span></div>
           <div className="panel-copy">
             <h3>{t.title}</h3>
             <p>{t.body}</p>
@@ -66,7 +67,7 @@ function TiltCard({ m, i }) {
   const leave = () => { ref.current.style.setProperty('--rx', '0deg'); ref.current.style.setProperty('--ry', '0deg'); };
   return (
     <article className="mcard" ref={ref} onPointerMove={move} onPointerLeave={leave}>
-      <div className="mcard-img"><img src={m.img} alt="" loading="lazy" /></div>
+      <div className="mcard-img"><Img n={m.img} sizes="(max-width: 900px) 100vw, 30vw" /></div>
       <div className="mcard-body">
         <span className="mcard-no">{m.no}</span>
         <h3>{m.name}</h3>
@@ -131,7 +132,7 @@ export function GallerySection({ velocity }) {
       <div className="gallery-stage" data-cursor="drag">
         {near && (
           <Suspense fallback={<div className="gallery-loading">Loading…</div>}>
-            <Gallery3D images={gallery} onOpen={setOpen} velocity={velocity} active={near} />
+            <Gallery3D images={gallery.map((n) => imgSrc(n, 960))} onOpen={(u) => setOpen(u.replace('-960', '-1920'))} velocity={velocity} active={near} />
           </Suspense>
         )}
       </div>
@@ -230,14 +231,14 @@ export function Experiences() {
               <span className="x-no">0{i + 1}</span>
               <h3>{x.title}</h3>
               <p>{x.text}</p>
-              <img className="x-thumb" src={x.img} alt="" loading="lazy" />
+              <Img className="x-thumb" n={x.img} />
               <span className="x-arrow" aria-hidden="true">↗</span>
             </li>
           ))}
         </ul>
       </div>
       <div className={`x-float ${active >= 0 ? 'show' : ''}`} ref={float} aria-hidden="true">
-        {experiences.map((x, i) => <img key={x.title} src={x.img} alt="" className={active === i ? 'on' : ''} />)}
+        {experiences.map((x, i) => <Img key={x.title} n={x.img} sizes="320px" className={active === i ? 'on' : ''} />)}
       </div>
     </section>
   );
@@ -273,7 +274,7 @@ export function Occasions({ onOccasion }) {
               onPointerMove={move}
               onClick={(e) => { e.preventDefault(); onOccasion(o.occasion); scrollToId('enquire'); }}
             >
-              <img src={o.img} alt="" loading="lazy" />
+              <Img n={o.img} sizes={i === 2 ? '(max-width: 900px) 100vw, 50vw' : '(max-width: 900px) 50vw, 25vw'} />
               <span className="occ-shine" aria-hidden="true" />
               <span className="occ-tag">{o.tag}</span>
               <span className="occ-body">
@@ -308,7 +309,7 @@ export function Featured() {
   return (
     <section className="featured section" ref={root}>
       <div className="wrap feat-grid">
-        <div className="feat-img"><img src="/img/table.webp" alt="A dressed banquet table" loading="lazy" /></div>
+        <div className="feat-img"><Img n="aisle" alt="A floral outdoor celebration aisle" /></div>
         <div className="feat-copy">
           <p className="eyebrow" data-reveal>Featured event</p>
           <h2 className="h2" data-reveal>Archana &amp; Sanjeev's <em>celebration.</em></h2>

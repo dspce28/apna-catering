@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useSmoothScroll, ScrollTrigger } from './hooks.js';
 import { Preloader, Cursor, Nav, MobileBar, Footer } from './components/Chrome.jsx';
-import { RoyalArch, Heritage } from './components/Intro.jsx';
+import { GrowHero, Heritage } from './components/Intro.jsx';
 import { Traditions, Menus, GallerySection, Builder, Experiences, Occasions, Featured } from './components/Middle.jsx';
 import { Stories, Process, Enquire } from './components/Closing.jsx';
 
@@ -33,7 +33,7 @@ export default function App() {
       <div className="grain" aria-hidden="true" />
       <Nav />
       <main>
-        <RoyalArch ready={ready} velocity={velocity} />
+        <GrowHero ready={ready} />
         <Heritage />
         <Occasions onOccasion={setOccasion} />
         <Traditions onOccasion={setOccasion} />

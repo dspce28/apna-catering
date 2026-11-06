@@ -9,15 +9,15 @@ npm run build    # production build to dist/
 ```
 
 ## Structure
-- `src/three/HeroScene.jsx` — WebGL hero: lathe-turned brass handi, instanced orbiting spices, rising gold embers, mouse parallax, scroll-driven tilt/scatter
-- `src/three/Gallery3D.jsx` — drag-to-rotate curved image ring with a custom shader (warm desaturate → full colour on hover, scroll-velocity bend)
-- `src/components/Intro.jsx` — hero, "step inside" pinned jharokha-arch zoom, heritage with scroll-filled text and odometer counters
-- `src/components/Middle.jsx` — tradition tabs, pinned horizontal signature menus, 3D gallery, menu builder, experiences with cursor-following image
-- `src/components/Closing.jsx` — testimonials, process, four-step enquiry wizard (hands off to WhatsApp/email)
-- `src/components/Chrome.jsx` — preloader, custom cursor, magnetic buttons, nav/drawer, mobile action bar, footer
-- `src/data.js` — all copy, menus, contact details
+- `src/components/Intro.jsx` — `GrowHero`: an ivory page with a photo window that grows to full screen as you scroll (plain scroll position + clip-path, so it works on touch and with or without smooth scroll); heritage section with scroll-filled text, odometer stats and pillars
+- `src/three/HeroSlides.jsx` — WebGL slideshow inside the hero window: liquid noise-edged transitions between real photographs, subtle cursor lens; falls back to `<img>` crossfade without WebGL
+- `src/three/Gallery3D.jsx` — drag-to-rotate curved image ring
+- `src/components/Middle.jsx` — occasions grid, tradition tabs, pinned horizontal menus, gallery, menu builder, services list, featured event
+- `src/components/Closing.jsx` — testimonials, process, four-step enquiry wizard (WhatsApp/email hand-off)
+- `src/img.jsx` + `public/img/` — every photo at 960/1920 px (hero and full-bleed ones also at 3840 px) served via `srcset`
+- `src/data.js` — copy, menus, occasions, contact details
 
 ## Before launch
-- Photography in `public/img/` is placeholder (Unsplash licence + images from the current site). Replace with a commissioned shoot.
+- Photography in `public/img/` is Unsplash-licensed stock at up to 3840 px. Replace with the client's own event photography before launch.
 - The enquiry form has no backend; connect a form service so leads are captured even if the visitor doesn't press send.
 - Confirm all copy claims with the client.
