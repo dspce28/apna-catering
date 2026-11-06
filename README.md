@@ -23,7 +23,7 @@ npm run build    # production build to dist/
 - Confirm all copy claims with the client.
 
 ## Tadka video (scroll-scrubbed)
-The "Cooked fresh." section scrubs a video with scroll when `public/video/tadka.mp4` exists; otherwise it shows the photo slideshow.
+The "Cooked fresh." section shows a photo slideshow. To switch it to a scroll-scrubbed video, add `public/video/tadka.mp4` and set `TADKA_VIDEO = '/video/tadka.mp4'` in `src/components/Intro.jsx`.
 Use 6–10 s of slow-motion footage (tadka hitting the pan, steam, sizzle). Encode with a keyframe on every frame so scrubbing is smooth:
 
 ```bash

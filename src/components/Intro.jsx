@@ -6,9 +6,9 @@ import { Img, imgSrc } from '../img.jsx';
 const HeroSlides = lazy(() => import('../three/HeroSlides.jsx'));
 const PetalField = lazy(() => import('../three/PetalField.jsx'));
 
-/* Drop a slow-motion tadka clip here (see README for encoding) and the
-   sizzle section scrubs it with scroll; until then it shows the slideshow. */
-const TADKA_VIDEO = '/video/tadka.mp4';
+/* Set to '/video/tadka.mp4' once the clip is in public/video (see README):
+   the sizzle section then scrubs it with scroll instead of the slideshow. */
+const TADKA_VIDEO = '';
 
 const SLIDES = [
   { n: 'karahi', cap: 'Butter chicken, served in copper' },
@@ -175,7 +175,7 @@ export function GrowHero({ ready = true }) {
             {SLIDES.map((s, i) => (
               <Img key={s.n} n={s.n} className={`gh-img ${i === idx ? 'on' : ''}`} sizes="100vw" eager={i === 0} style={s.f ? { objectPosition: `${s.f[0] * 100}% ${(1 - s.f[1]) * 100}%` } : undefined} />
             ))}
-            <video
+            {TADKA_VIDEO && <video
               ref={video}
               className={`gh-video ${hasVideo ? 'on' : ''}`}
               src={TADKA_VIDEO}
@@ -184,7 +184,7 @@ export function GrowHero({ ready = true }) {
               preload="auto"
               onLoadedMetadata={() => setHasVideo(true)}
               onError={() => setHasVideo(false)}
-            />
+            />}
             {gl && near && !hasVideo && (
               <div className={`gh-gl ${glReady ? 'on' : ''}`}>
                 <Suspense fallback={null}>
