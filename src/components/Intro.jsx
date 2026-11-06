@@ -4,13 +4,18 @@ import { Btn } from './Chrome.jsx';
 import { Img, imgSrc } from '../img.jsx';
 
 const HeroSlides = lazy(() => import('../three/HeroSlides.jsx'));
+const PetalField = lazy(() => import('../three/PetalField.jsx'));
+
+/* Drop a slow-motion tadka clip here (see README for encoding) and the
+   sizzle section scrubs it with scroll; until then it shows the slideshow. */
+const TADKA_VIDEO = '/video/tadka.mp4';
 
 const SLIDES = [
   { n: 'karahi', cap: 'Butter chicken, served in copper' },
-  { n: 'bride', cap: 'Engagements & weddings', f: [0.5, 0.8] },
-  { n: 'buffet', cap: 'Catering for hundreds of guests' },
+  { n: 'kebab', cap: 'Off the grill, straight to the table' },
+  { n: 'brass-curry', cap: 'Slow-cooked, finished with cream' },
+  { n: 'paneer-tikka', cap: 'Paneer tikka, still sizzling' },
   { n: 'thali-dark', cap: 'The full thali, done properly' },
-  { n: 'cake', cap: 'Birthdays & parties' },
 ];
 
 // uv focus (y measured from the bottom in GL), used to keep faces in frame
@@ -29,13 +34,80 @@ const lerp = (a, b, t) => a + (b - a) * t;
 const clamp01 = (v) => Math.min(1, Math.max(0, v));
 const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 
+
 /*
- * Hero: a framed window of real photography in the middle of an ivory page.
+ * Opening moment: a carpet of rose and marigold petals over the feast.
+ * Move the cursor (or a finger) to scatter them; scrolling blows them away.
+ */
+export function PetalHero({ ready }) {
+  const root = useRef();
+  const gust = useRef(0);
+  const near = useNearView(root, '0px');
+  const [revealed, setRevealed] = useState(false);
+  const [mobile] = useState(() => typeof window !== 'undefined' && innerWidth < 900);
+  const [gl, setGl] = useState(true);
+
+  useEffect(() => {
+    import('../three/HeroSlides.jsx').then((m) => setGl(m.webglAvailable() && !reducedMotion()));
+  }, []);
+
+  useEffect(() => {
+    const el = root.current;
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      const total = el.offsetHeight - innerHeight;
+      const p = clamp01(-el.getBoundingClientRect().top / Math.max(1, total));
+      gust.current = clamp01(p / 0.55);
+      el.style.setProperty('--p', p.toFixed(4));
+      if (p > 0.08) setRevealed(true);
+    };
+    const on = () => { if (!raf) raf = requestAnimationFrame(update); };
+    update();
+    addEventListener('scroll', on, { passive: true });
+    return () => { removeEventListener('scroll', on); cancelAnimationFrame(raf); };
+  }, []);
+
+  useEffect(() => { if (!gl) setRevealed(true); }, [gl]);
+  const onCleared = useCallback(() => setRevealed(true), []);
+
+  return (
+    <section className={`petal-hero ${ready ? 'is-ready' : ''} ${revealed ? 'revealed' : ''}`} ref={root} id="top">
+      <div className="ph-stage">
+        <Img n={mobile ? 'karahi' : 'thali-dark'} className="ph-bg" sizes="100vw" eager alt="An Indian feast laid out for a celebration" />
+        <div className="ph-scrim" aria-hidden="true" />
+        <div className="ph-copy wrap">
+          <p className="eyebrow center ph-eyebrow"><span>Glasgow</span><span className="ph-mid"> · Wedding &amp; event caterers</span><span> · Since 1975</span></p>
+          <h1 className="ph-title">Make it <em>memorable.</em></h1>
+          <p className="ph-sub">Engagements, mehndis, weddings, walimas and birthdays, catered by a Glasgow family kitchen with a love for food.</p>
+          <div className="hero-ctas">
+            <Btn to="enquire">Check your date →</Btn>
+            <Btn to="occasions" variant="ghost">Explore occasions</Btn>
+          </div>
+        </div>
+        {gl && (
+          <div className="ph-petals" aria-hidden="true">
+            <Suspense fallback={null}>
+              <PetalField gust={gust} count={mobile ? 520 : 1300} active={near} breeze={ready} onCleared={onCleared} />
+            </Suspense>
+          </div>
+        )}
+        <p className="ph-hint" aria-hidden="true">{mobile ? 'Swipe to scatter the petals' : 'Move to scatter the petals'}</p>
+        <div className="scroll-hint ph-scroll" aria-hidden="true"><span>Scroll</span><i /></div>
+      </div>
+    </section>
+  );
+}
+
+/*
+ * Sizzle section: a framed window of real photography in the middle of an ivory page.
  * Scrolling grows the window until it fills the screen, then the page continues.
  * Driven by plain scroll position + clip-path, so it works with or without
  * smooth scrolling, on touch devices, and without WebGL (falls back to <img>).
  */
-export function GrowHero({ ready }) {
+export function GrowHero({ ready = true }) {
+  const video = useRef();
+  const [hasVideo, setHasVideo] = useState(false);
   const root = useRef();
   const win = useRef();
   const zoom = useRef(1.12);
@@ -75,6 +147,8 @@ export function GrowHero({ ready }) {
       el.style.setProperty('--g', g.toFixed(4));
       el.style.setProperty('--late', clamp01((p - 0.7) / 0.24).toFixed(4));
       zoom.current = lerp(1.12, 1.0, g);
+      const v = video.current;
+      if (v && v.duration) v.currentTime = Math.min(v.duration - 0.05, p * v.duration);
     };
     const on = () => { if (!raf) raf = requestAnimationFrame(update); };
     update();
@@ -87,13 +161,13 @@ export function GrowHero({ ready }) {
   const onGlReady = useCallback(() => setGlReady(true), []);
 
   return (
-    <section className={`grow-hero ${ready ? 'is-ready' : ''}`} ref={root} id="top">
+    <section className={`grow-hero ${ready ? 'is-ready' : ''} ${hasVideo ? 'has-video' : ''}`} ref={root} id="sizzle">
       <div className="gh-stage">
-        <p className="eyebrow gh-top"><span>Glasgow</span><i>✦</i><span>Wedding &amp; event caterers</span><i>✦</i><span>Since 1975</span></p>
+        <p className="eyebrow gh-top"><span>The sizzle</span><i>✦</i><span>Cooked fresh on the day</span></p>
 
         <h1 className="gh-title">
-          <span className="gh-word l">{split('Love for')}</span>
-          <span className="gh-word r"><em>{split('food.')}</em></span>
+          <span className="gh-word l">{split('Cooked')}</span>
+          <span className="gh-word r"><em>{split('fresh.')}</em></span>
         </h1>
 
         <div className="gh-window" ref={win}>
@@ -101,7 +175,17 @@ export function GrowHero({ ready }) {
             {SLIDES.map((s, i) => (
               <Img key={s.n} n={s.n} className={`gh-img ${i === idx ? 'on' : ''}`} sizes="100vw" eager={i === 0} style={s.f ? { objectPosition: `${s.f[0] * 100}% ${(1 - s.f[1]) * 100}%` } : undefined} />
             ))}
-            {gl && near && (
+            <video
+              ref={video}
+              className={`gh-video ${hasVideo ? 'on' : ''}`}
+              src={TADKA_VIDEO}
+              muted
+              playsInline
+              preload="auto"
+              onLoadedMetadata={() => setHasVideo(true)}
+              onError={() => setHasVideo(false)}
+            />
+            {gl && near && !hasVideo && (
               <div className={`gh-gl ${glReady ? 'on' : ''}`}>
                 <Suspense fallback={null}>
                   <HeroSlides urls={urls} focus={FOCUS} index={idx} zoom={zoom} active={near} onReady={onGlReady} />
@@ -111,9 +195,9 @@ export function GrowHero({ ready }) {
           </div>
           <div className="gh-shade" />
           <div className="gh-inside wrap">
-            <p className="eyebrow">Discover Apna Catering</p>
-            <h2 className="display">Make it <em>memorable.</em></h2>
-            <p className="gh-inside-sub">Engagements, mehndis, weddings, walimas and birthdays. Indian &amp; Asian catering from a Glasgow family kitchen.</p>
+            <p className="eyebrow">Always fresh ingredients</p>
+            <h2 className="display">Served hot, <em>every time.</em></h2>
+            <p className="gh-inside-sub">Kebabs, curries and breads are cooked on the day, never batch-made and reheated. That’s the difference your guests taste.</p>
             <div className="hero-ctas">
               <Btn to="enquire">Check your date →</Btn>
               <Btn to="occasions" variant="ghost">Explore occasions</Btn>
@@ -126,9 +210,9 @@ export function GrowHero({ ready }) {
         </div>
 
         <div className="gh-foot">
-          <p className="gh-lede">Glasgow's wedding &amp; event caterers with a passion for fine food. Sikh, Hindu and Muslim celebrations since 1975.</p>
+          <p className="gh-lede">We only work with the best suppliers, including small local family farms, so every dish starts with the freshest ingredients.</p>
           <div className="hero-ctas">
-            <Btn to="enquire" variant="dark">Check your date →</Btn>
+            <Btn to="menus" variant="dark">See our menus →</Btn>
           </div>
         </div>
         <div className="scroll-hint" aria-hidden="true"><span>Scroll</span><i /></div>

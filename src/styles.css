@@ -127,6 +127,38 @@ body:not(.cursor-moved) .c-dot, body:not(.cursor-moved) .c-ring { opacity: 0; }
 .drawer.open > a { opacity: 1; transform: none; }
 .drawer-foot { margin-top: auto; display: flex; flex-direction: column; gap: 4px; color: var(--muted); font-size: 14px; }
 
+/* ============ Petal hero ============ */
+.petal-hero { position: relative; height: 210svh; --p: 0; }
+.ph-stage { position: sticky; top: 0; height: 100svh; overflow: hidden; background: #17110e; }
+.ph-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform: scale(calc(1.1 - var(--p) * .1)); }
+.ph-scrim { position: absolute; inset: 0; background: radial-gradient(70% 60% at 50% 50%, rgba(12,9,7,.6), rgba(12,9,7,.25) 70%), linear-gradient(180deg, rgba(12,9,7,.35), transparent 25%, transparent 70%, rgba(12,9,7,.55)); }
+.ph-copy { position: absolute; inset: 0; z-index: 2; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; color: #fff; opacity: 0; transform: scale(.96); transition: opacity 1.4s var(--ease-out), transform 1.6s var(--ease-out); }
+.revealed .ph-copy { opacity: 1; transform: none; }
+.ph-copy .eyebrow { color: var(--gold-light); font-size: 11px; }
+.ph-title { font-family: var(--serif); font-weight: 300; font-size: clamp(56px, 10vw, 168px); line-height: .92; letter-spacing: -.025em; text-shadow: 0 10px 60px rgba(0,0,0,.45); }
+.ph-title em { color: var(--gold-light); }
+.ph-sub { max-width: 520px; margin: 26px auto 34px; font-size: 17px; color: rgba(255,255,255,.88); }
+.ph-copy .hero-ctas { justify-content: center; }
+.ph-copy .btn-ghost { --btn-fg: #fff; color: #fff; border-color: rgba(255,255,255,.55); }
+.ph-copy .btn-ghost::before { background: #fff; }
+.ph-copy .btn-ghost:hover { --btn-fg: var(--ink); }
+.ph-petals { position: absolute; inset: 0; z-index: 3; pointer-events: none; opacity: 0; transition: opacity 1.4s var(--ease) .2s; }
+.is-ready .ph-petals { opacity: 1; }
+.petal-canvas { width: 100% !important; height: 100% !important; }
+.ph-hint { position: absolute; left: 0; right: 0; bottom: 92px; z-index: 4; text-align: center; font-size: 11px; letter-spacing: .3em; text-transform: uppercase; color: #fff; opacity: 0; text-shadow: 0 2px 12px rgba(0,0,0,.5); transition: opacity 1s 2.2s; animation: hintPulse 2.4s ease-in-out infinite; }
+.is-ready .ph-hint { opacity: calc(.9 - var(--p) * 6); }
+@keyframes hintPulse { 50% { letter-spacing: .36em; } }
+.ph-scroll { color: rgba(255,255,255,.8); opacity: calc(.9 - var(--p) * 6); }
+.ph-scroll i { background: linear-gradient(#fff, transparent); }
+.nav:not(.scrolled) .brand-mark { color: #fff; }
+.nav:not(.scrolled) .brand-sub { color: var(--gold-light); }
+.nav:not(.scrolled) .nav-links a span::before { color: #fff; }
+.nav:not(.scrolled) .nav-links a span::after { color: var(--gold-light); }
+.nav:not(.scrolled) .burger span { background: #fff; }
+.gh-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .8s; }
+.gh-video.on { opacity: 1; }
+.has-video .gh-img { opacity: 0 !important; }
+
 /* ============ Grow hero ============ */
 .grow-hero { position: relative; height: 320svh; --g: 0; --late: 0; }
 .gh-stage { position: sticky; top: 0; height: 100svh; overflow: hidden; background: radial-gradient(60% 50% at 50% 55%, var(--blush), var(--bg) 70%); }
@@ -443,6 +475,12 @@ legend { font-family: var(--serif); font-size: clamp(28px, 3vw, 38px); line-heig
   .nav-links, .nav-cta { display: none; }
   .burger { display: block; }
   .grow-hero { height: 280svh; }
+  .petal-hero { height: 190svh; }
+  .ph-mid { display: none; }
+  .ph-hint { bottom: 110px; }
+  .ph-sub { font-size: 15px; padding: 0 8px; }
+  .ph-copy .hero-ctas { flex-wrap: nowrap; }
+  .ph-copy .btn { padding: 14px 18px; font-size: 13px; }
   .gh-top { top: 76px; flex-wrap: wrap; padding: 0 var(--pad); gap: 10px; }
   .gh-top span:nth-of-type(2), .gh-top i:nth-of-type(2) { display: none; }
   .gh-title { top: calc(76px + 34px); transform: none; justify-content: center; gap: .22em; font-size: clamp(46px, 13vw, 90px); }

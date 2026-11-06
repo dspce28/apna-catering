@@ -21,3 +21,11 @@ npm run build    # production build to dist/
 - Photography in `public/img/` is Unsplash-licensed stock at up to 3840 px. Replace with the client's own event photography before launch.
 - The enquiry form has no backend; connect a form service so leads are captured even if the visitor doesn't press send.
 - Confirm all copy claims with the client.
+
+## Tadka video (scroll-scrubbed)
+The "Cooked fresh." section scrubs a video with scroll when `public/video/tadka.mp4` exists; otherwise it shows the photo slideshow.
+Use 6–10 s of slow-motion footage (tadka hitting the pan, steam, sizzle). Encode with a keyframe on every frame so scrubbing is smooth:
+
+```bash
+ffmpeg -i tadka-source.mov -an -vf "scale=1920:-2" -c:v libx264 -preset slow -crf 22 -g 1 -pix_fmt yuv420p -movflags +faststart public/video/tadka.mp4
+```
