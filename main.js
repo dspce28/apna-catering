@@ -112,7 +112,7 @@
   document.body.appendChild(lb);
   const closeLb = () => lb.classList.remove('open');
   $$('.g').forEach(g => g.addEventListener('click', () => {
-    const i = $('img', g); $("img", lb).src = i.currentSrc || i.src; $('img', lb).alt = i.alt; lb.classList.add('open');
+    const i = $('img', g); $("img", lb).src = (i.getAttribute("src") || "").replace(/\.webp$/, "-3840.webp"); $('img', lb).alt = i.alt; lb.classList.add('open');
   }));
   lb.addEventListener('click', closeLb);
   addEventListener('keydown', e => { if (e.key === 'Escape') { closeLb(); setDrawer(false); } });
