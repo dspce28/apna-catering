@@ -21,6 +21,28 @@
 </script>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="sp-anise" viewBox="0 0 100 100"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+      <g id="pod"><path d="M50 50 C43 38 44 22 50 11 C56 22 57 38 50 50Z"/><path d="M50 46 C48 38 48 28 50 18" opacity=".55"/><ellipse cx="50" cy="28" rx="2.4" ry="4.6"/></g>
+      <use href="#pod" transform="rotate(45 50 50)"/><use href="#pod" transform="rotate(90 50 50)"/><use href="#pod" transform="rotate(135 50 50)"/>
+      <use href="#pod" transform="rotate(180 50 50)"/><use href="#pod" transform="rotate(225 50 50)"/><use href="#pod" transform="rotate(270 50 50)"/><use href="#pod" transform="rotate(315 50 50)"/>
+      <circle cx="50" cy="50" r="4.5"/></g></symbol>
+    <symbol id="sp-cardamom" viewBox="0 0 100 100"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M16 74 C26 44 56 22 84 22 C78 48 50 74 16 74Z"/><path d="M22 70 C38 50 58 34 80 25" opacity=".6"/><path d="M24 64 C38 46 56 32 76 24" opacity=".4"/><path d="M28 72 C44 58 62 42 80 28" opacity=".4"/>
+      <path d="M84 22 L92 15"/><path d="M14 76 L9 80"/></g></symbol>
+    <symbol id="sp-chilli" viewBox="0 0 100 100"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M30 24 C36 32 40 48 48 64 C56 80 70 88 86 86 C72 80 61 66 55 50 C49 36 46 27 42 21Z"/><path d="M37 30 C42 42 46 56 54 68 C60 76 68 82 76 84" opacity=".5"/>
+      <path d="M27 24 C30 16 40 14 44 21 C40 24 33 26 27 24Z"/><path d="M35 17 C33 10 27 6 20 7"/></g></symbol>
+    <symbol id="sp-cinnamon" viewBox="0 0 100 100"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 66 L70 18 M20 76 L78 28"/><ellipse cx="74" cy="23" rx="4" ry="7" transform="rotate(-50 74 23)"/><path d="M74 23 m-2 1 a2 3 -50 1 1 3 -2"/>
+      <path d="M26 82 L86 40 M34 90 L92 50" opacity=".85"/><ellipse cx="89" cy="45" rx="4" ry="7" transform="rotate(-55 89 45)"/>
+      <path d="M30 60 L50 44 M40 70 L60 54" opacity=".4"/></g></symbol>
+    <symbol id="sp-leaf" viewBox="0 0 100 100"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M16 84 C18 46 50 18 88 14 C84 52 54 82 16 84Z"/><path d="M16 84 C40 62 62 38 88 14"/>
+      <path d="M34 66 L30 52 M46 54 L44 38 M58 42 L58 28 M42 62 L56 64 M54 50 L68 52 M66 38 L78 40" opacity=".6"/><path d="M16 84 L8 92"/></g></symbol>
+  </defs>
+</svg>
 <div class="progress" aria-hidden="true"></div>
 
 <header class="nav" id="top">
@@ -30,9 +52,10 @@
   </a>
   <nav class="nav-links" aria-label="Main">
     <a href="#heritage">Heritage</a>
+    <a href="#occasions">Occasions</a>
     <a href="#traditions">Weddings</a>
     <a href="#menus">Menus</a>
-    <a href="#experiences">Experiences</a>
+    <a href="#experiences">Services</a>
     <a href="#stories">Stories</a>
   </nav>
   <a href="#enquire" class="btn btn-gold btn-sm magnetic">Check your date</a>
@@ -41,9 +64,10 @@
 
 <div class="drawer" aria-hidden="true">
   <a href="#heritage">Heritage</a>
+  <a href="#occasions">Occasions</a>
   <a href="#traditions">Weddings</a>
   <a href="#menus">Menus</a>
-  <a href="#experiences">Experiences</a>
+  <a href="#experiences">Services</a>
   <a href="#stories">Stories</a>
   <a href="#enquire" class="btn btn-gold">Check your date</a>
 </div>
@@ -52,6 +76,8 @@
 <!-- HERO -->
 <section class="hero">
   <div class="hero-glow" aria-hidden="true"></div>
+  <span class="spice" aria-hidden="true" data-speed="-0.25" data-rot="40" style="top:14%;left:44%;width:86px"><svg><use href="#sp-anise"/></svg></span>
+  <span class="spice" aria-hidden="true" data-speed="0.18" data-rot="-30" style="top:78%;left:6%;width:72px"><svg><use href="#sp-cardamom"/></svg></span>
   <div class="hero-copy">
     <p class="eyebrow reveal-up">Glasgow &nbsp;·&nbsp; Since 1975</p>
     <h1 class="hero-title">
@@ -81,28 +107,98 @@
 
 <div class="marquee" aria-hidden="true">
   <div class="marquee-track">
-    <span>Anand Karaj</span><i>✦</i><span>Hindu Weddings</span><i>✦</i><span>Nikah &amp; Walima</span><i>✦</i><span>Mehndi Nights</span><i>✦</i><span>Live Chaat Stalls</span><i>✦</i><span>Corporate Dining</span><i>✦</i><span>Milestone Birthdays</span><i>✦</i>
-    <span>Anand Karaj</span><i>✦</i><span>Hindu Weddings</span><i>✦</i><span>Nikah &amp; Walima</span><i>✦</i><span>Mehndi Nights</span><i>✦</i><span>Live Chaat Stalls</span><i>✦</i><span>Corporate Dining</span><i>✦</i><span>Milestone Birthdays</span><i>✦</i>
+    <span>Engagements</span><i>✦</i><span>Anand Karaj</span><i>✦</i><span>Hindu Weddings</span><i>✦</i><span>Nikah &amp; Walima</span><i>✦</i><span>Mehndi Nights</span><i>✦</i><span>Live Chaat Stalls</span><i>✦</i><span>Corporate Dining</span><i>✦</i><span>Milestone Birthdays</span><i>✦</i>
+    <span>Engagements</span><i>✦</i><span>Anand Karaj</span><i>✦</i><span>Hindu Weddings</span><i>✦</i><span>Nikah &amp; Walima</span><i>✦</i><span>Mehndi Nights</span><i>✦</i><span>Live Chaat Stalls</span><i>✦</i><span>Corporate Dining</span><i>✦</i><span>Milestone Birthdays</span><i>✦</i>
   </div>
 </div>
 
 <!-- HERITAGE -->
 <section class="heritage section light" id="heritage">
+  <span class="spice on-light" aria-hidden="true" data-speed="0.22" data-rot="35" style="top:8%;left:86%;width:110px"><svg><use href="#sp-leaf"/></svg></span>
+  <span class="spice on-light" aria-hidden="true" data-speed="-0.15" data-rot="-20" style="top:82%;left:40%;width:96px"><svg><use href="#sp-cinnamon"/></svg></span>
   <div class="wrap grid-2">
     <div class="heritage-media">
       <div class="frame parallax" data-speed="0.08"><img src="img/spread.webp" srcset="img/spread.webp 1200w, img/spread-2400.webp 2400w, img/spread-3840.webp 3840w" sizes="(max-width: 900px) 100vw, 45vw" alt="A table of Indian curries, rice and breads" loading="lazy" width="1200" height="1600"></div>
       <div class="frame frame-sm parallax" data-speed="-0.06"><img src="img/samosa.webp" srcset="img/samosa.webp 1200w, img/samosa-2400.webp 2400w, img/samosa-3840.webp 3840w" sizes="(max-width: 900px) 100vw, 45vw" alt="Golden vegetable samosas with green chilli" loading="lazy" width="1000" height="667"></div>
     </div>
     <div class="heritage-copy">
-      <p class="eyebrow dark reveal-up">Our heritage</p>
+      <p class="eyebrow dark reveal-up">Our story · Love for food</p>
       <h2 class="h2 reveal-up">A family kitchen that grew up with Glasgow's Asian community.</h2>
-      <p class="reveal-up">Since 1975 we've cooked for the biggest days in families' lives: weddings, walimas and reunions that bring three generations around one table. The recipes have been passed down. The standards haven't moved.</p>
-      <p class="reveal-up">Every menu is built around your family's traditions, using fresh ingredients from suppliers we've trusted for years and served by a team that knows the difference between feeding guests and honouring them.</p>
+      <p class="reveal-up">Welcome to Apna Catering, Glasgow's wedding and event caterers with a passion for fine food. Since 1975 we have cooked quality Indian and Asian dishes for the biggest days in families' lives, blessing weddings with an inventive menu of delights.</p>
+      <p class="reveal-up">Our experienced team works with one mission: to uphold the values of every family we cook for. We use fresh ingredients from trusted suppliers, including small local family farms, and serve them with care your guests will notice.</p>
+      <blockquote class="shaw reveal-up">“There is no sincerer love than the love of food.”<cite>George Bernard Shaw</cite></blockquote>
       <div class="stats">
         <div class="stat reveal-up"><b class="count" data-to="1975" data-from="1900">1975</b><span>Founded in Glasgow</span></div>
         <div class="stat reveal-up" style="--d:.1s"><b class="count" data-to="5">5</b><span>Decades of celebrations</span></div>
         <div class="stat reveal-up" style="--d:.2s"><b class="count" data-to="3">3</b><span>Faith traditions, deeply understood</span></div>
       </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- OCCASIONS -->
+<section class="occasions section" id="occasions">
+  <div class="ghost-word" data-drift="-0.12" aria-hidden="true">Occasions · Celebrations ·</div>
+  <span class="spice" aria-hidden="true" data-speed="0.2" data-rot="25" style="top:6%;left:4%;width:92px"><svg><use href="#sp-chilli"/></svg></span>
+  <span class="spice" aria-hidden="true" data-speed="-0.18" data-rot="-40" style="top:70%;left:92%;width:80px"><svg><use href="#sp-anise"/></svg></span>
+  <div class="wrap">
+    <div class="head-row">
+      <div>
+        <p class="eyebrow reveal-up">For your special day</p>
+        <h2 class="h2 reveal-up">Every chapter <em>deserves a feast.</em></h2>
+      </div>
+      <p class="muted reveal-up">From the roka to the reception, and every birthday after. Exceptional catering for weddings, celebrations and the moments you'll talk about for years.</p>
+    </div>
+    <div class="occ-grid">
+      <a href="#enquire" class="occ img-reveal" data-occasion="Engagement / Roka" style="--d:0.00s">
+        <img src="img/occ-rings.webp" srcset="img/occ-rings.webp 1200w, img/occ-rings-2400.webp 2400w, img/occ-rings-3840.webp 3840w" sizes="(max-width: 900px) 50vw, 25vw" alt="" loading="lazy">
+        <span class="occ-tag">The beginning</span>
+        <span class="occ-arrow" aria-hidden="true">→</span>
+        <span class="occ-body"><h3>Engagements &amp; Roka</h3><p>The first party of the journey deserves a first-class spread, from canapés to a full Punjabi table.</p><span class="occ-cta">Plan this celebration</span></span>
+      </a>
+      <a href="#enquire" class="occ img-reveal" data-occasion="Mehndi / Sangeet" style="--d:0.08s">
+        <img src="img/occ-mehndi.webp" srcset="img/occ-mehndi.webp 1200w, img/occ-mehndi-2400.webp 2400w, img/occ-mehndi-3840.webp 3840w" sizes="(max-width: 900px) 50vw, 25vw" alt="" loading="lazy">
+        <span class="occ-tag">The build-up</span>
+        <span class="occ-arrow" aria-hidden="true">→</span>
+        <span class="occ-body"><h3>Mehndi &amp; Sangeet</h3><p>Chaat stalls, live grills and food that keeps the dance floor going all night.</p><span class="occ-cta">Plan this celebration</span></span>
+      </a>
+      <a href="#enquire" class="occ occ-feature img-reveal" data-occasion="Sikh wedding" style="--d:0.16s">
+        <img src="img/occ-bride.webp" srcset="img/occ-bride.webp 1200w, img/occ-bride-2400.webp 2400w, img/occ-bride-3840.webp 3840w" sizes="(max-width: 900px) 100vw, 50vw" alt="" loading="lazy">
+        <span class="occ-tag">The big day</span>
+        <span class="occ-arrow" aria-hidden="true">→</span>
+        <span class="occ-body"><h3>Weddings</h3><p>Sikh, Hindu and Muslim weddings, catered with respect for every tradition and served beautifully to every guest.</p><span class="occ-cta">Plan this celebration</span></span>
+      </a>
+      <a href="#enquire" class="occ img-reveal" data-occasion="Muslim wedding" style="--d:0.24s">
+        <img src="img/occ-walima.webp" srcset="img/occ-walima.webp 1200w, img/occ-walima-2400.webp 2400w, img/occ-walima-3840.webp 3840w" sizes="(max-width: 900px) 50vw, 25vw" alt="" loading="lazy">
+        <span class="occ-tag">The celebration</span>
+        <span class="occ-arrow" aria-hidden="true">→</span>
+        <span class="occ-body"><h3>Walima &amp; Receptions</h3><p>Generous banquets and elegant plated service for the evening everyone remembers.</p><span class="occ-cta">Plan this celebration</span></span>
+      </a>
+      <a href="#enquire" class="occ img-reveal" data-occasion="Birthday" style="--d:0.00s">
+        <img src="img/occ-cake.webp" srcset="img/occ-cake.webp 1200w, img/occ-cake-2400.webp 2400w, img/occ-cake-3840.webp 3840w" sizes="(max-width: 900px) 50vw, 25vw" alt="" loading="lazy">
+        <span class="occ-tag">Party hats on</span>
+        <span class="occ-arrow" aria-hidden="true">→</span>
+        <span class="occ-body"><h3>Birthdays</h3><p>Your 18th, your 30th or your parents’ 60th: delicious, enjoyable and memorable.</p><span class="occ-cta">Plan this celebration</span></span>
+      </a>
+      <a href="#enquire" class="occ img-reveal" data-occasion="Anniversary" style="--d:0.08s">
+        <img src="img/occ-anniv.webp" srcset="img/occ-anniv.webp 1200w, img/occ-anniv-2400.webp 2400w, img/occ-anniv-3840.webp 3840w" sizes="(max-width: 900px) 50vw, 25vw" alt="" loading="lazy">
+        <span class="occ-tag">Another year</span>
+        <span class="occ-arrow" aria-hidden="true">→</span>
+        <span class="occ-body"><h3>Anniversaries</h3><p>Intimate dinners or the whole family together, planned around the people you love.</p><span class="occ-cta">Plan this celebration</span></span>
+      </a>
+      <a href="#enquire" class="occ img-reveal" data-occasion="Private party" style="--d:0.16s">
+        <img src="img/occ-family.webp" srcset="img/occ-family.webp 1200w, img/occ-family-2400.webp 2400w, img/occ-family-3840.webp 3840w" sizes="(max-width: 900px) 50vw, 25vw" alt="" loading="lazy">
+        <span class="occ-tag">Or just because</span>
+        <span class="occ-arrow" aria-hidden="true">→</span>
+        <span class="occ-body"><h3>New births &amp; reunions</h3><p>Welcoming a little one, bringing the family home, or celebrating for no reason at all.</p><span class="occ-cta">Plan this celebration</span></span>
+      </a>
+      <a href="#enquire" class="occ occ-wide img-reveal" data-occasion="Corporate event" style="--d:0.24s">
+        <img src="img/occ-corporate.webp" srcset="img/occ-corporate.webp 1200w, img/occ-corporate-2400.webp 2400w, img/occ-corporate-3840.webp 3840w" sizes="(max-width: 900px) 100vw, 50vw" alt="" loading="lazy">
+        <span class="occ-tag">Impressions count</span>
+        <span class="occ-arrow" aria-hidden="true">→</span>
+        <span class="occ-body"><h3>Corporate events</h3><p>Meetings, team-building days and corporate parties, catered professionally and inventively.</p><span class="occ-cta">Plan this celebration</span></span>
+      </a>
     </div>
   </div>
 </section>
@@ -162,6 +258,9 @@
 
 <!-- SIGNATURE MENUS -->
 <section class="menus section light" id="menus">
+  <span class="dish dish-menus" aria-hidden="true" data-speed="0.12" data-rot="70"><img src="img/dish-thali-800.webp" srcset="img/dish-thali-800.webp 800w, img/dish-thali.webp 1600w" sizes="(max-width: 900px) 60vw, 34vw" alt="" loading="lazy"></span>
+  <div class="ghost-word on-light" data-drift="0.1" aria-hidden="true">Signature menus · Signature menus ·</div>
+  <span class="spice on-light" aria-hidden="true" data-speed="0.2" data-rot="30" style="top:10%;left:88%;width:84px"><svg><use href="#sp-cardamom"/></svg></span>
   <div class="wrap">
     <div class="head-row">
       <div>
@@ -197,6 +296,9 @@
 
 <!-- MENU BUILDER -->
 <section class="builder section" id="builder">
+  <span class="dish dish-builder" aria-hidden="true" data-speed="-0.1" data-rot="-60"><img src="img/dish-palak-800.webp" srcset="img/dish-palak-800.webp 800w, img/dish-palak.webp 1600w" sizes="(max-width: 900px) 60vw, 34vw" alt="" loading="lazy"></span>
+  <span class="spice" aria-hidden="true" data-speed="-0.16" data-rot="-25" style="top:16%;left:3%;width:90px"><svg><use href="#sp-leaf"/></svg></span>
+  <span class="spice" aria-hidden="true" data-speed="0.2" data-rot="40" style="top:74%;left:93%;width:76px"><svg><use href="#sp-chilli"/></svg></span>
   <div class="wrap">
     <p class="eyebrow center reveal-up">Interactive</p>
     <h2 class="h2 center reveal-up">Design your menu in sixty seconds.</h2>
@@ -231,21 +333,36 @@
 
 <!-- EXPERIENCES -->
 <section class="experiences section light" id="experiences">
+  <div class="ghost-word on-light" data-drift="-0.1" aria-hidden="true">Our services · Our services ·</div>
   <div class="wrap">
     <div class="head-row">
       <div>
-        <p class="eyebrow dark reveal-up">Beyond the plate</p>
+        <p class="eyebrow dark reveal-up">Our services</p>
         <h2 class="h2 reveal-up">Theatre your guests<br><em>will remember.</em></h2>
       </div>
       <p class="muted reveal-up">Live stations, displays and full event service, all from one team, so your family can enjoy the day.</p>
     </div>
   </div>
-  <div class="hscroll" tabindex="0" aria-label="Experiences, scroll horizontally">
-    <article class="xcard"><img src="img/chaat.webp" srcset="img/chaat.webp 1200w, img/chaat-2400.webp 2400w, img/chaat-3840.webp 3840w" sizes="(max-width: 900px) 100vw, 45vw" alt="" loading="lazy"><div><span>01</span><h3>Food Stations &amp; Chaat Stalls</h3><p>Gol gappe, papdi chaat and aloo tikki, made fresh in front of your guests.</p></div></article>
+  <div class="hscroll" tabindex="0" aria-label="Services, scroll horizontally">
+    <article class="xcard"><img src="img/chaat.webp" srcset="img/chaat.webp 1200w, img/chaat-2400.webp 2400w, img/chaat-3840.webp 3840w" sizes="(max-width: 900px) 100vw, 45vw" alt="" loading="lazy"><div><span>01</span><h3>Chaat &amp; Food Stations</h3><p>Gol gappe, papdi chaat and aloo tikki, made fresh in front of your guests.</p></div></article>
     <article class="xcard"><img src="img/kebab.webp" srcset="img/kebab.webp 1200w, img/kebab-2400.webp 2400w, img/kebab-3840.webp 3840w" sizes="(max-width: 900px) 100vw, 45vw" alt="" loading="lazy"><div><span>02</span><h3>Live Cooking &amp; Outdoor BBQ</h3><p>Tandoor and grill stations that bring the kitchen to the party.</p></div></article>
-    <article class="xcard"><img src="img/halwa.webp" srcset="img/halwa.webp 1200w, img/halwa-2400.webp 2400w, img/halwa-3840.webp 3840w" sizes="(max-width: 900px) 100vw, 45vw" alt="" loading="lazy"><div><span>03</span><h3>Dessert Buffet</h3><p>Rasmalai, kulfi, chocolate fountains and fresh fruit carvings.</p></div></article>
-    <article class="xcard"><img src="img/table.webp" srcset="img/table.webp 1200w, img/table-2400.webp 2400w, img/table-3840.webp 3840w" sizes="(max-width: 900px) 100vw, 45vw" alt="" loading="lazy"><div><span>04</span><h3>Full Event Package</h3><p>Staff, china, buffet canopies, tables, chairs and bar service, all handled for you.</p></div></article>
-    <article class="xcard"><img src="img/naan.webp" srcset="img/naan.webp 1200w, img/naan-2400.webp 2400w, img/naan-3840.webp 3840w" sizes="(max-width: 900px) 100vw, 45vw" alt="" loading="lazy"><div><span>05</span><h3>Juice Bars &amp; Drinks Fountains</h3><p>Fresh lassi, mocktails and juice bars, plus ice cream, candyfloss and popcorn for younger guests.</p></div></article>
+    <article class="xcard"><img src="img/halwa.webp" srcset="img/halwa.webp 1200w, img/halwa-2400.webp 2400w, img/halwa-3840.webp 3840w" sizes="(max-width: 900px) 100vw, 45vw" alt="" loading="lazy"><div><span>03</span><h3>Dessert Buffets &amp; Chocolate Fountains</h3><p>Rasmalai, kulfi, fruit displays and carvings, and a chocolate fountain for the sweet tooth.</p></div></article>
+    <article class="xcard"><img src="img/table.webp" srcset="img/table.webp 1200w, img/table-2400.webp 2400w, img/table-3840.webp 3840w" sizes="(max-width: 900px) 100vw, 45vw" alt="" loading="lazy"><div><span>04</span><h3>Buffet Displays &amp; Setup</h3><p>Buffet canopies, tables, china and staff, set up and cleared for you.</p></div></article>
+    <article class="xcard"><img src="img/bar.webp" srcset="img/bar.webp 1200w, img/bar-2400.webp 2400w, img/bar-3840.webp 3840w" sizes="(max-width: 900px) 100vw, 45vw" alt="" loading="lazy"><div><span>05</span><h3>Bar Service &amp; Drinks Fountains</h3><p>Bar service, juice bars and drinks fountains, plus ice cream stands, candyfloss and popcorn.</p></div></article>
+  </div>
+  <div class="wrap">
+    <ul class="svc-tags reveal-up" aria-label="All services">
+      <li>Fruit Displays &amp; Carvings</li><li>Chaat &amp; Food Stations</li><li>Dessert Buffets</li><li>Chocolate Fountains</li><li>Juice Bars &amp; Drinks Fountains</li>
+      <li>Ice Cream Stands</li><li>Candyfloss &amp; Popcorn</li><li>Live Cooking &amp; Outdoor BBQ</li><li>Bar Service</li><li>Buffet Displays &amp; Setup</li>
+    </ul>
+    <div class="complete">
+      <p class="eyebrow dark reveal-up">Complete event catering</p>
+      <div class="complete-grid">
+        <div class="ccard reveal-up"><svg><use href="#sp-anise"/></svg><h3>Food &amp; Beverages</h3><p>Bespoke menus and flavourful Indian and Asian cuisine, from canapés to the dessert buffet.</p></div>
+        <div class="ccard reveal-up" style="--d:.1s"><svg><use href="#sp-cardamom"/></svg><h3>Staff &amp; Equipment</h3><p>Experienced teams, buffet service and every event essential, from china to canopies.</p></div>
+        <div class="ccard reveal-up" style="--d:.2s"><svg><use href="#sp-leaf"/></svg><h3>Event Management</h3><p>Support from the first plan through to the final service, so your family can enjoy the day.</p></div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -296,6 +413,9 @@
 
 <!-- ENQUIRE -->
 <section class="enquire section" id="enquire">
+  <span class="dish dish-enquire" aria-hidden="true" data-speed="0.1" data-rot="50"><img src="img/dish-curry-800.webp" srcset="img/dish-curry-800.webp 800w, img/dish-curry.webp 1600w" sizes="(max-width: 900px) 60vw, 34vw" alt="" loading="lazy"></span>
+  <span class="spice" aria-hidden="true" data-speed="0.2" data-rot="30" style="top:8%;left:90%;width:96px"><svg><use href="#sp-cinnamon"/></svg></span>
+  <span class="spice" aria-hidden="true" data-speed="-0.15" data-rot="-45" style="top:84%;left:44%;width:70px"><svg><use href="#sp-anise"/></svg></span>
   <div class="wrap grid-2">
     <div class="enquire-copy">
       <p class="eyebrow reveal-up">Enquire</p>
@@ -317,10 +437,13 @@
       <fieldset class="wiz-step active" data-step="1">
         <legend>What are you celebrating?</legend>
         <div class="choice-grid">
+          <label><input type="radio" name="occasion" value="Engagement / Roka"><span>Engagement / Roka</span></label>
           <label><input type="radio" name="occasion" value="Sikh wedding"><span>Sikh wedding</span></label>
           <label><input type="radio" name="occasion" value="Hindu wedding"><span>Hindu wedding</span></label>
           <label><input type="radio" name="occasion" value="Muslim wedding"><span>Nikah / Walima</span></label>
           <label><input type="radio" name="occasion" value="Mehndi / Sangeet"><span>Mehndi / Sangeet</span></label>
+          <label><input type="radio" name="occasion" value="Birthday"><span>Birthday</span></label>
+          <label><input type="radio" name="occasion" value="Anniversary"><span>Anniversary</span></label>
           <label><input type="radio" name="occasion" value="Corporate event"><span>Corporate</span></label>
           <label><input type="radio" name="occasion" value="Private party"><span>Private party</span></label>
         </div>
@@ -370,9 +493,10 @@
   <div class="wrap footer-grid">
     <div>
       <img class="footer-logo" src="img/logo-256.png" alt="Apna Catering Glasgow" width="112" height="112">
+      <p class="footer-tag">It’s your day.<br><em>Make it memorable with us.</em></p>
       <p class="muted">Indian wedding &amp; event caterers.<br>Glasgow, Scotland · Since 1975.</p>
     </div>
-    <div><h4>Visit</h4><a href="#traditions">Weddings</a><a href="#menus">Menus</a><a href="#experiences">Experiences</a><a href="#stories">Stories</a></div>
+    <div><h4>Visit</h4><a href="#traditions">Weddings</a><a href="#menus">Menus</a><a href="#experiences">Services</a><a href="#stories">Stories</a></div>
     <div><h4>Talk to us</h4><a href="tel:+447818478036">07818 478036</a><a href="tel:+447828218002">07828 218002</a><a href="mailto:hello@apnacatering.co.uk">hello@apnacatering.co.uk</a><a href="mailto:j.shergill@live.co.uk">j.shergill@live.co.uk</a><a href="https://wa.me/447818478036" target="_blank" rel="noopener">WhatsApp</a><a href="https://www.instagram.com/desiglasgowcaterer/" target="_blank" rel="noopener">Instagram @desiglasgowcaterer</a></div>
   </div>
   <div class="wrap footer-base"><span>© <span id="yr">2026</span> Apna Catering. All rights reserved.</span><a href="#top">Back to top ↑</a></div>

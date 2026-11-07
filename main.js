@@ -11,6 +11,7 @@
   // Nav, progress, mobile bar, parallax
   const nav = $('.nav'), bar = $('.progress'), mbar = $('.mobile-bar');
   const par = $$('.parallax');
+  const spices = $$('.spice, .dish'), ghosts = $$('.ghost-word');
   let ticking = false;
   const onScroll = () => {
     const y = scrollY, h = document.documentElement.scrollHeight - innerHeight;
@@ -21,6 +22,17 @@
       const r = el.getBoundingClientRect();
       const off = (r.top + r.height / 2 - innerHeight / 2) * parseFloat(el.dataset.speed);
       el.style.transform = `translate3d(0,${off.toFixed(1)}px,0)`;
+    });
+    if (!reduce) spices.forEach(el => {
+      const r = el.getBoundingClientRect();
+      if (r.bottom < -200 || r.top > innerHeight + 200) return;
+      const d = r.top + r.height / 2 - innerHeight / 2;
+      el.style.transform = `translate3d(0,${(d * parseFloat(el.dataset.speed)).toFixed(1)}px,0) rotate(${(d / innerHeight * parseFloat(el.dataset.rot)).toFixed(1)}deg)`;
+    });
+    if (!reduce) ghosts.forEach(el => {
+      const r = el.parentElement.getBoundingClientRect();
+      if (r.bottom < 0 || r.top > innerHeight) return;
+      el.style.transform = `translate3d(${((r.top - innerHeight / 2) * parseFloat(el.dataset.drift)).toFixed(1)}px,0,0)`;
     });
     ticking = false;
   };
@@ -55,6 +67,14 @@
     io.unobserve(e.target);
   }), { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
   $$('.reveal-up').filter(el => !el.closest('.hero')).forEach(el => io.observe(el));
+  // a clipped element never reports as visible, so watch each card's (unclipped) parent instead
+  const revealParents = new Set($$('.img-reveal').map(el => el.parentElement));
+  const io2 = new IntersectionObserver(entries => entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    $$(':scope > .img-reveal', e.target).forEach(el => el.classList.add('in'));
+    io2.unobserve(e.target);
+  }), { threshold: 0.08 });
+  revealParents.forEach(p => (reduce ? $$(':scope > .img-reveal', p).forEach(el => el.classList.add('in')) : io2.observe(p)));
 
   // Tabs
   const tabs = $$('.tabs [role=tab]'), ink = $('.tab-ink');
