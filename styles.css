@@ -478,3 +478,4 @@ em.shimmer{background:linear-gradient(110deg,var(--gold-2) 0%,var(--gold-2) 42%,
   .sparkles,.hero-dish img,em.shimmer,.loaded .arch img.on{animation:none!important}
   em.shimmer{color:var(--gold-2);background:none}
 }
+@media (max-width:900px){ .hero-dish{display:none} }
