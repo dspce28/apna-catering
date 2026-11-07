@@ -99,9 +99,22 @@ p+p{margin-top:16px}
 .hero-visual{position:relative;justify-self:center;width:min(100%,480px)}
 .arch{aspect-ratio:3/4.3;border-radius:999px 999px 14px 14px;overflow:hidden;position:relative;clip-path:inset(100% 0 0 0 round 999px 999px 14px 14px);transition:clip-path 1.6s var(--ease) .3s;box-shadow:0 40px 100px -30px rgba(0,0,0,.8)}
 .loaded .arch{clip-path:inset(0 0 0 0 round 999px 999px 14px 14px)}
-.arch img{width:100%;height:100%;object-fit:cover;transform:scale(1.25);transition:transform 2.6s var(--ease) .3s}
+.arch img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transform:scale(1.25);transition:opacity 1.6s var(--ease),transform 2.6s var(--ease) .3s}
+.arch img.on{opacity:1}
 .loaded .arch img{transform:scale(1.05)}
-.arch::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(12,42,34,.55))}
+.loaded .arch img.on{animation:kenburns 7s ease-out both}
+@keyframes kenburns{from{transform:scale(1.14) translate(1.5%,-1%)}to{transform:scale(1.02) translate(0,0)}}
+.arch-cap{position:absolute;left:22px;right:22px;bottom:20px;z-index:2;display:flex;align-items:center;gap:12px;color:var(--text-light);font-size:11px;letter-spacing:.24em;text-transform:uppercase;opacity:0;transition:opacity 1s 1.8s}
+.loaded .arch-cap{opacity:1}
+.arch-cap b{font-family:var(--serif);font-style:italic;font-weight:400;font-size:20px;letter-spacing:0;color:var(--gold-2)}
+.arch-bar{position:relative;flex:0 0 46px;height:1px;background:rgba(247,242,232,.3);overflow:hidden}
+.arch-bar i{position:absolute;inset:0;background:var(--gold);transform-origin:left;transform:scaleX(0)}
+.arch-bar.run i{animation:capbar 5.5s linear forwards}
+@keyframes capbar{to{transform:scaleX(1)}}
+.arch-caps{position:relative;display:grid}
+.arch-caps span{grid-area:1/1;opacity:0;transform:translateY(8px);transition:opacity .6s,transform .6s var(--ease)}
+.arch-caps span.on{opacity:1;transform:none}
+.arch::after{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,transparent 52%,rgba(12,42,34,.35) 72%,rgba(8,30,24,.88))}
 .arch-ring{position:absolute;inset:-18px;border:1px solid rgba(207,174,107,.35);border-radius:999px 999px 24px 24px;pointer-events:none;opacity:0;transform:scale(.96);transition:opacity 1.2s 1.2s,transform 1.6s var(--ease) 1.2s}
 .loaded .arch-ring{opacity:1;transform:none}
 .badge{position:absolute;left:-46px;bottom:60px;width:124px;height:124px;border-radius:50%;background:var(--ink);border:1px solid rgba(207,174,107,.4);display:grid;place-items:center}
@@ -444,4 +457,24 @@ section{position:relative}
   .dish-menus{width:44vw;top:-120px;right:-14%}
   .dish-builder{width:38vw;top:-90px;right:-12%}
   .dish-enquire{width:42vw;bottom:-90px;right:-14%}
+}
+
+/* ===== Hero extras: depth, dish, shimmer, sparkles ===== */
+[data-depth]{transition:translate .6s cubic-bezier(.2,.7,.1,1)}
+.hero-dish{position:absolute;top:-9%;right:-24%;width:44%;z-index:-1;pointer-events:none;opacity:0;transition:opacity 1.6s 1.4s,translate .6s cubic-bezier(.2,.7,.1,1)}
+.loaded .hero-dish{opacity:1}
+.hero-dish img{width:100%;border-radius:50%;animation:spin 60s linear infinite;filter:drop-shadow(0 30px 40px rgba(0,0,0,.5))}
+.hero-copy{will-change:translate,opacity}
+em.shimmer{background:linear-gradient(110deg,var(--gold-2) 0%,var(--gold-2) 42%,#fff8e6 50%,var(--gold-2) 58%,var(--gold-2) 100%);background-size:260% 100%;background-position:100% 0;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shimmer 6s ease-in-out 2.4s infinite}
+@keyframes shimmer{0%{background-position:100% 0}45%,100%{background-position:0 0}}
+.sparkles{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+.sparkles i{position:absolute;bottom:-10px;left:var(--x);width:var(--s);height:var(--s);border-radius:50%;background:var(--gold-2);box-shadow:0 0 10px 2px rgba(235,221,190,.55);opacity:0;animation:sparkle var(--t) linear var(--d) infinite}
+@keyframes sparkle{0%{transform:translate(0,0);opacity:0}12%{opacity:.85}70%{opacity:.5}100%{transform:translate(28px,-92vh);opacity:0}}
+@media (max-width:900px){
+  .hero-dish{width:40%;right:-18%;top:-6%}
+  .arch-cap{left:16px;right:16px;bottom:14px;font-size:9.5px;letter-spacing:.18em}
+}
+@media (prefers-reduced-motion:reduce){
+  .sparkles,.hero-dish img,em.shimmer,.loaded .arch img.on{animation:none!important}
+  em.shimmer{color:var(--gold-2);background:none}
 }

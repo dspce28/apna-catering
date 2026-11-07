@@ -39,6 +39,39 @@
   addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(onScroll); } }, { passive: true });
   onScroll();
 
+  // Hero: arch slideshow with captions
+  const slides = $$('.arch img.slide'), caps = $$('.arch-caps span'), capNo = $('.arch-cap b'), capBar = $('.arch-bar');
+  let si = 0;
+  const showSlide = (i) => {
+    si = i;
+    slides.forEach((s, k) => s.classList.toggle('on', k === i));
+    caps.forEach((c, k) => c.classList.toggle('on', k === i));
+    if (capNo) capNo.textContent = String(i + 1).padStart(2, '0');
+    if (capBar) { capBar.classList.remove('run'); void capBar.offsetWidth; if (!reduce) capBar.classList.add('run'); }
+  };
+  if (slides.length) {
+    showSlide(0);
+    if (!reduce) setInterval(() => showSlide((si + 1) % slides.length), 5500);
+  }
+
+  // Hero: layers drift with the pointer at different depths; copy lifts away on scroll
+  const hero = $('.hero'), heroCopy = $('.hero-copy'), depthEls = $$('.hero [data-depth]');
+  if (hero && !reduce && matchMedia('(pointer: fine)').matches) {
+    hero.addEventListener('pointermove', (e) => {
+      const r = hero.getBoundingClientRect();
+      const mx = (e.clientX - r.left) / r.width - 0.5, my = (e.clientY - r.top) / r.height - 0.5;
+      depthEls.forEach((el) => { const d = parseFloat(el.dataset.depth); el.style.translate = `${(-mx * 34 * d).toFixed(1)}px ${(-my * 26 * d).toFixed(1)}px`; });
+    });
+    hero.addEventListener('pointerleave', () => depthEls.forEach((el) => { el.style.translate = '0 0'; }));
+  }
+  if (hero && heroCopy && !reduce) {
+    addEventListener('scroll', () => {
+      const y = Math.min(scrollY, innerHeight);
+      heroCopy.style.translate = `0 ${(y * 0.22).toFixed(1)}px`;
+      heroCopy.style.opacity = String(Math.max(0, 1 - y / (innerHeight * 0.85)));
+    }, { passive: true });
+  }
+
   // Burger drawer
   const burger = $('.burger'), drawer = $('.drawer');
   const setDrawer = open => {
