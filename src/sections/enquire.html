@@ -1,0 +1,75 @@
+<!-- ENQUIRE -->
+<section class="enquire section" id="enquire">
+  <span class="spice" aria-hidden="true" data-speed="0.2" data-rot="30" style="top:8%;left:90%;width:96px"><svg><use href="#sp-cinnamon"/></svg></span>
+  <span class="spice" aria-hidden="true" data-speed="-0.15" data-rot="-45" style="top:84%;left:44%;width:70px"><svg><use href="#sp-anise"/></svg></span>
+  <div class="wrap grid-2">
+    <div class="enquire-copy">
+      <p class="eyebrow reveal-up">Enquire</p>
+      <h2 class="h2 reveal-up">Is your date<br><em>still available?</em></h2>
+      <p class="muted reveal-up">Wedding season dates go early. Share a few details and we'll confirm availability and arrange a tasting.</p>
+      <div class="contact-lines reveal-up">
+        <a href="tel:+447818478036"><small>Call</small>07818 478036</a>
+        <a href="tel:+447828218002"><small>Or call</small>07828 218002</a>
+        <a href="mailto:hello@apnacatering.co.uk"><small>Email</small>hello@apnacatering.co.uk</a>
+        <a href="https://wa.me/447818478036" target="_blank" rel="noopener"><small>WhatsApp</small>Message us</a>
+        <a href="https://www.instagram.com/desiglasgowcaterer/" target="_blank" rel="noopener"><small>Instagram</small>@desiglasgowcaterer</a>
+      </div>
+    </div>
+
+    <form class="wizard reveal-up" novalidate>
+      <div class="wiz-bar"><span></span></div>
+      <p class="wiz-step-label">Step <b>1</b> of 4</p>
+
+      <fieldset class="wiz-step active" data-step="1">
+        <legend>What are you celebrating?</legend>
+        <div class="choice-grid">
+          <label><input type="radio" name="occasion" value="Engagement / Roka"><span>Engagement / Roka</span></label>
+          <label><input type="radio" name="occasion" value="Sikh wedding"><span>Sikh wedding</span></label>
+          <label><input type="radio" name="occasion" value="Hindu wedding"><span>Hindu wedding</span></label>
+          <label><input type="radio" name="occasion" value="Muslim wedding"><span>Nikah / Walima</span></label>
+          <label><input type="radio" name="occasion" value="Mehndi / Sangeet"><span>Mehndi / Sangeet</span></label>
+          <label><input type="radio" name="occasion" value="Birthday"><span>Birthday</span></label>
+          <label><input type="radio" name="occasion" value="Anniversary"><span>Anniversary</span></label>
+          <label><input type="radio" name="occasion" value="Corporate event"><span>Corporate</span></label>
+          <label><input type="radio" name="occasion" value="Private party"><span>Private party</span></label>
+        </div>
+      </fieldset>
+
+      <fieldset class="wiz-step" data-step="2">
+        <legend>When, and how many guests?</legend>
+        <label class="field"><span>Event date</span><input type="date" name="date" required></label>
+        <label class="field"><span>Approximate guests</span><input type="number" name="guests" min="10" step="10" placeholder="e.g. 300" required></label>
+      </fieldset>
+
+      <fieldset class="wiz-step" data-step="3">
+        <legend>Where is it?</legend>
+        <label class="field"><span>Venue or town</span><input type="text" name="venue" placeholder="e.g. Glasgow city centre"></label>
+        <label class="field"><span>Anything we should know?</span><textarea name="notes" rows="3" placeholder="Dietary needs, live stations, number of events…"></textarea></label>
+        <p class="menu-attach" hidden>✦ Your menu selection (<b></b> dishes) will be attached.</p>
+      </fieldset>
+
+      <fieldset class="wiz-step" data-step="4">
+        <legend>How can we reach you?</legend>
+        <label class="field"><span>Your name</span><input type="text" name="name" autocomplete="name" required></label>
+        <label class="field"><span>Phone</span><input type="tel" name="phone" autocomplete="tel" required></label>
+        <label class="field"><span>Email</span><input type="email" name="email" autocomplete="email"></label>
+      </fieldset>
+
+      <div class="wiz-done" hidden>
+        <div class="tick" aria-hidden="true">✓</div>
+        <h3>Thank you. Your enquiry is ready.</h3>
+        <p>Choose how you'd like to send it, and we'll reply within one working day.</p>
+        <div class="send-row">
+          <a class="btn btn-gold" id="sendWa" target="_blank" rel="noopener">Send on WhatsApp</a>
+          <a class="btn btn-ghost" id="sendMail">Send by email</a>
+        </div>
+      </div>
+
+      <p class="wiz-error" role="alert"></p>
+      <div class="wiz-nav">
+        <button type="button" class="btn btn-ghost" data-prev disabled>Back</button>
+        <button type="button" class="btn btn-gold magnetic" data-next>Continue →</button>
+      </div>
+    </form>
+  </div>
+</section>

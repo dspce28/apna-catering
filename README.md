@@ -16,3 +16,12 @@ The React/three.js iterations remain in git history (commits 24f37a3 to 2a681df)
 - Palette: Royal Aubergine & Gold — aubergine `#2A0F2E`, plum `#3B1840`, antique gold `#D6B06A`, champagne `#F1DFBA`, ivory `#F8F1E8`, mauve `#BFA6C2`; light-section accent plum `#5A2160`. All text colours pass WCAG AA.
 - Logo: `img/logo-256.png`, cut from the client's flyer. The flyer only contains a 153 px version, so it is used small (nav 56 px, footer 112 px). Replace with the original logo file (SVG/AI/EPS or PNG ≥ 1000 px) when available.
 - Photos: every image is served at 1200 / 2400 / 3840 px via `srcset`; the gallery lightbox opens the 3840 px version.
+
+## Pages and build
+The site has five pages: `index.html`, `about.html`, `services.html`, `menus.html`, `contact.html`.
+They are generated from the partials in `src/sections/` by `python3 build.py`. Edit the partials
+(or `build.py` for the shared nav, loader, page banners and CTA band), then rebuild.
+
+Cross-page behaviour (menu builder picks, chosen occasion) is kept in `sessionStorage`.
+
+AI demo image prompts for Gemini: `docs/ai-image-prompts.md`.

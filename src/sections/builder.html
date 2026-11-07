@@ -1,0 +1,36 @@
+<!-- MENU BUILDER -->
+<section class="builder section" id="builder">
+  <span class="dish dish-builder" aria-hidden="true" data-speed="-0.1" data-rot="-60"><img src="img/dish-palak-800.webp" srcset="img/dish-palak-800.webp 800w, img/dish-palak.webp 1600w" sizes="(max-width: 900px) 60vw, 34vw" alt="" loading="lazy"></span>
+  <span class="spice" aria-hidden="true" data-speed="-0.16" data-rot="-25" style="top:16%;left:3%;width:90px"><svg><use href="#sp-leaf"/></svg></span>
+  <span class="spice" aria-hidden="true" data-speed="0.2" data-rot="40" style="top:74%;left:93%;width:76px"><svg><use href="#sp-chilli"/></svg></span>
+  <div class="wrap">
+    <p class="eyebrow center reveal-up">Interactive</p>
+    <h2 class="h2 center reveal-up">Design your menu in sixty seconds.</h2>
+    <p class="center muted reveal-up narrow">Choose the dishes you love. We'll attach your selection to your enquiry, so our first conversation starts with your menu.</p>
+    <div class="builder-grid">
+      <div class="courses">
+        <div class="course reveal-up"><h4>Starters <small>choose up to 4</small></h4><div class="chips" data-course="Starters" data-max="4">
+          <button>Aloo Papdi Chaat</button><button>Gol Gappe</button><button>Vegetable Samosa</button><button>Aloo Tikki</button><button>Gobi Pakora</button><button>Chilli Paneer</button><button>Amritsari Fish</button><button>Goa Fish Tikki</button></div></div>
+        <div class="course reveal-up"><h4>Grill <small>choose up to 3</small></h4><div class="chips" data-course="Grill" data-max="3">
+          <button>Chicken Tikka</button><button>Lamb Seekh Kebab</button><button>Chicken Reshmi Kebab</button><button>Lamb Chapli Kebab</button><button>Haryali Chicken Tikka</button><button>Shami Kebab</button></div></div>
+        <div class="course reveal-up"><h4>Mains <small>choose up to 4</small></h4><div class="chips" data-course="Mains" data-max="4">
+          <button>Lamb Rogan Josh</button><button>Chicken Bhuna</button><button>Chicken Desi Style</button><button>Lamb Saag</button><button>Palak Paneer</button><button>Mattar Paneer</button><button>Bhindi Dopiaza</button><button>Mah Makhni Dal</button><button>Chandigarh Fish Masala</button></div></div>
+        <div class="course reveal-up"><h4>Desserts <small>choose up to 2</small></h4><div class="chips" data-course="Desserts" data-max="2">
+          <button>Rasmalai</button><button>Kulfi Selection</button><button>Gulab Jamun</button><button>Fruit Trifle</button><button>Fresh Fruit Display</button></div></div>
+      </div>
+      <aside class="summary" aria-live="polite">
+        <div class="summary-inner">
+          <p class="eyebrow">Your menu</p>
+          <div class="guests">
+            <label for="guests">Guests <output id="guestsOut">250</output></label>
+            <input type="range" id="guests" min="50" max="1000" step="25" value="250">
+          </div>
+          <ol class="summary-list"><li class="empty">Tap a dish to begin…</li></ol>
+          <div class="meter"><span></span></div>
+          <p class="summary-count"><b>0</b> dishes selected</p>
+          <a href="contact.html#enquire" class="btn btn-gold full magnetic" id="useMenu">Add to my enquiry →</a>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
