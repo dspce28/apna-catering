@@ -517,8 +517,10 @@ em.shimmer{background:linear-gradient(110deg,var(--gold-2) 0%,var(--gold-2) 42%,
 .bloom.drawn .bloom-line{opacity:1}
 .bloom.quick .bloom-line{display:none}
 .bloom-count{font-family:var(--serif);font-weight:400;font-size:20px;letter-spacing:0;color:var(--gold);min-width:2.2em;font-variant-numeric:tabular-nums}
-.bloom.opening .bloom-emblem{transform:translate(-50%,-50%) scale(1.6);opacity:0}
-.bloom.closing .bloom-emblem{transition:opacity .35s .3s,transform .6s cubic-bezier(.2,.7,.1,1)}
+/* the emblem leaves before the page shows, so the logo never floats over page content */
+.bloom.opening .bloom-emblem{transform:translate(-50%,-50%) scale(.92);opacity:0;transition:opacity .38s ease,transform .5s cubic-bezier(.2,.7,.1,1)}
+/* page-to-page transitions are a clean circle only: no logo */
+.bloom.quick .bloom-emblem,.bloom.closing .bloom-emblem{display:none}
 /* fail-safe: never leave the page covered if the script does not run */
 .bloom.is-on{animation:bloomFailsafe 0s linear 8s forwards}
 @keyframes bloomFailsafe{to{visibility:hidden;pointer-events:none}}
@@ -600,7 +602,7 @@ em.shimmer{background:linear-gradient(110deg,var(--gold-2) 0%,var(--gold-2) 42%,
   .more-link{margin-top:-40px;padding-bottom:56px}
   .filigree{-webkit-mask-image:radial-gradient(circle 160px at var(--mx,50%) var(--my,50%),#000 0%,transparent 72%);mask-image:radial-gradient(circle 160px at var(--mx,50%) var(--my,50%),#000 0%,transparent 72%)}
   .bloom-emblem{transform:translate(-50%,-50%) scale(.8)}
-  .bloom.opening .bloom-emblem{transform:translate(-50%,-50%) scale(1.3)}
+  .bloom.opening .bloom-emblem{transform:translate(-50%,-50%) scale(.74)}
 }
 @media (prefers-reduced-motion:reduce){
   .bloom{display:none!important}

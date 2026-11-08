@@ -31,13 +31,15 @@
     if (!bloom) { document.body.classList.add('loaded'); return; }
     bloom.classList.remove('closing');
     bloom.classList.add('opening');
-    setTimeout(() => document.body.classList.add('loaded'), reduce ? 0 : 200);
+    setTimeout(() => document.body.classList.add('loaded'), reduce ? 0 : (bloom.classList.contains('quick') ? 150 : 520));
     if (reduce) { bloom.classList.add('gone'); return; }
-    animR(0, maxR(), 1250, () => { bloom.classList.remove('is-on'); bloom.classList.add('gone'); });
+    // on the first visit let the logo fade away before the page appears
+    const wait = bloom.classList.contains('quick') ? 0 : 380;
+    setTimeout(() => animR(0, maxR(), 1150, () => { bloom.classList.remove('is-on'); bloom.classList.add('gone'); }), wait);
   };
   const runLoader = () => {
     if (!bloom || reduce) { store.set('seen', true); openBloom(); return; }
-    if (!firstVisit) { bloom.classList.add('quick'); setTimeout(openBloom, 320); return; }
+    if (!firstVisit) { bloom.classList.add('quick'); setTimeout(openBloom, 120); return; }
     store.set('seen', true);
     requestAnimationFrame(() => bloom.classList.add('drawn'));
     const count = $('.bloom-count', bloom);
