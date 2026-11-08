@@ -490,40 +490,65 @@ em.shimmer{background:linear-gradient(110deg,var(--gold-2) 0%,var(--gold-2) 42%,
 .nav-links a[aria-current="page"]::after{transform:scaleX(1)}
 .drawer a[aria-current="page"]{color:var(--gold-2)}
 
-/* --- Bloom loader & page transition: a gold lotus mandala draws itself,
-       then the page opens outward from the logo in a widening circle --- */
-.bloom{position:fixed;inset:0;z-index:300;pointer-events:none;--r:0px}
-.bloom.is-on{pointer-events:auto}
-.bloom.gone{display:none}
-.bloom-veil{position:absolute;inset:0;background:radial-gradient(70% 70% at 50% 50%,var(--ink-3),var(--ink) 70%);-webkit-mask-image:radial-gradient(circle at 50% 50%,transparent var(--r),#000 calc(var(--r) + 1px));mask-image:radial-gradient(circle at 50% 50%,transparent var(--r),#000 calc(var(--r) + 1px))}
-.bloom-veil::after{content:"";position:absolute;left:50%;top:50%;width:calc(var(--r) * 2);height:calc(var(--r) * 2);transform:translate(-50%,-50%);border-radius:50%;box-shadow:0 0 0 1.5px rgba(214,176,106,.85),0 0 40px 6px rgba(214,176,106,.35);opacity:var(--edge,0)}
-.bloom-emblem{position:absolute;left:50%;top:50%;width:300px;height:300px;transform:translate(-50%,-50%);transition:transform 1s cubic-bezier(.2,.7,.1,1),opacity .6s}
-.bloom-emblem img{position:absolute;left:84px;top:84px;width:132px;height:132px;border-radius:50%;box-shadow:0 18px 50px rgba(0,0,0,.55);transform:scale(.6);opacity:0;transition:transform 1.1s cubic-bezier(.2,.7,.1,1),opacity .8s}
-.bloom.drawn .bloom-emblem img,.bloom.quick .bloom-emblem img{transform:none;opacity:1}
-.mandala{position:absolute;inset:0;width:300px;height:300px;overflow:visible}
-.mandala path,.mandala circle{fill:none;stroke:var(--gold);stroke-width:1.1;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1}
-.mandala .l3 path,.mandala .l5 circle{stroke:var(--gold-2);stroke-width:.9}
-.bloom.drawn .mandala path,.bloom.drawn .mandala circle{transition:stroke-dashoffset 1.1s cubic-bezier(.65,0,.35,1);stroke-dashoffset:0}
-.bloom.drawn .ml.l0 *{transition-delay:0s}
-.bloom.drawn .ml.l1 *{transition-delay:.25s}
-.bloom.drawn .ml.l2 *{transition-delay:.5s}
-.bloom.drawn .ml.l3 *{transition-delay:.75s}
-.bloom.drawn .ml.l4 *{transition-delay:1s}
-.bloom.drawn .ml.l5 *{transition-delay:1.2s;transition-duration:.5s}
-.bloom.quick .mandala path,.bloom.quick .mandala circle{stroke-dashoffset:0}
-.bloom.drawn .mandala{animation:mandalaTurn 14s linear infinite}
-@keyframes mandalaTurn{to{transform:rotate(360deg)}}
-.bloom-line{position:absolute;left:50%;top:calc(100% + 22px);transform:translateX(-50%);display:flex;gap:12px;align-items:baseline;font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:var(--gold-2);white-space:nowrap;opacity:0;transition:opacity .8s .3s}
-.bloom.drawn .bloom-line{opacity:1}
-.bloom.quick .bloom-line{display:none}
-.bloom-count{font-family:var(--serif);font-weight:400;font-size:20px;letter-spacing:0;color:var(--gold);min-width:2.2em;font-variant-numeric:tabular-nums}
-/* the emblem leaves before the page shows, so the logo never floats over page content */
-.bloom.opening .bloom-emblem{transform:translate(-50%,-50%) scale(.92);opacity:0;transition:opacity .38s ease,transform .5s cubic-bezier(.2,.7,.1,1)}
-/* page-to-page transitions are a clean circle only: no logo */
-.bloom.quick .bloom-emblem,.bloom.closing .bloom-emblem{display:none}
+/* --- Loader. First visit: a sealed invitation opens and the card grows into the site.
+       Between pages: gold powder settles into a rangoli, then a breeze clears it. --- */
+.loader{position:fixed;inset:0;z-index:300;pointer-events:none}
+.loader.is-on{pointer-events:auto}
+.loader.gone{display:none}
+.ld-veil{position:absolute;inset:0;background:radial-gradient(70% 70% at 50% 50%,var(--ink-3),var(--ink) 72%);
+  clip-path:polygon(evenodd,0 0,100% 0,100% 100%,0 100%,0 0,50% 50%,50% 50%,50% 50%,50% 50%,50% 50%)}
+.ld-env,.ld-powder,.ld-logo{display:none}
+.loader.first .ld-env{display:block}
+.loader.trans .ld-powder,.loader.trans .ld-logo{display:block}
+
+/* invitation */
+.ld-env{position:absolute;left:50%;top:54%;width:min(520px,80vw);aspect-ratio:38/25;transform:translate(-50%,-50%);
+  container-type:inline-size;perspective:1400px;transition:opacity .7s ease,transform .9s cubic-bezier(.2,.7,.2,1)}
+.ld-env>*{position:absolute}
+.ld-back{inset:0;border-radius:1.8cqw;background:linear-gradient(#3b1840,#2f1235);box-shadow:0 8cqw 13cqw -5cqw rgba(0,0,0,.7);z-index:1}
+.ld-letter{left:5%;right:5%;top:5%;height:90%;z-index:2;background:var(--ivory);border-radius:1cqw;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.3cqw;
+  box-shadow:inset 0 0 0 .9cqw var(--ivory),inset 0 0 0 1.3cqw var(--gold);transition:transform 1s cubic-bezier(.2,.8,.2,1)}
+.ld-letter i{font:400 12cqw/1 "Pinyon Script",cursive;color:var(--maroon)}
+.ld-letter small{font-family:var(--sans);font-weight:600;font-size:2.3cqw;letter-spacing:.35em;color:var(--gold-3);text-transform:uppercase}
+.ld-front{inset:0;z-index:3;border-radius:1.8cqw;background:linear-gradient(165deg,#5a2160,#3b1840 70%);
+  clip-path:polygon(0 0,50% 54%,100% 0,100% 100%,0 100%)}
+.ld-front::after{content:"";position:absolute;inset:0;background:linear-gradient(to top right,transparent 49.7%,rgba(214,176,106,.4) 50%,transparent 50.3%),linear-gradient(to top left,transparent 49.7%,rgba(214,176,106,.4) 50%,transparent 50.3%)}
+.ld-flap{left:0;right:0;top:0;height:60%;z-index:4;transform-origin:50% 0;background:linear-gradient(#6b2b72,#4a2050);
+  clip-path:polygon(0 0,100% 0,50% 100%);transition:transform .75s cubic-bezier(.45,0,.2,1)}
+.ld-seal{left:50%;top:60%;width:22cqw;height:22cqw;z-index:5;opacity:0;transform:translate(-50%,-50%) scale(1.25);
+  transition:transform .45s cubic-bezier(.3,1.6,.5,1),opacity .3s}
+.ld-seal>div{position:absolute;inset:0;display:grid;place-items:center;border-radius:48% 52% 50% 50%/52% 47% 53% 48%;
+  background:radial-gradient(circle at 34% 30%,#b33a52,#7a1834 55%,#4d0b21);
+  box-shadow:inset 0 0 0 1.3cqw rgba(0,0,0,.18),inset .8cqw .8cqw 1.6cqw rgba(255,255,255,.18),0 1.3cqw 2.6cqw rgba(0,0,0,.45);
+  transition:transform .8s cubic-bezier(.5,0,.8,.6),opacity .8s ease-in}
+.ld-seal img{width:72%;filter:sepia(1) saturate(2.4) hue-rotate(-12deg) brightness(.95) drop-shadow(0 1px 0 rgba(0,0,0,.4))}
+.ld-seal .l{clip-path:polygon(0 0,53% 0,45% 19%,57% 37%,43% 57%,55% 77%,47% 100%,0 100%)}
+.ld-seal .r{clip-path:polygon(53% 0,100% 0,100% 100%,47% 100%,55% 77%,43% 57%,57% 37%,45% 19%)}
+.loader.s-in .ld-seal{opacity:1;transform:translate(-50%,-50%) scale(1)}
+.loader.s-crack .ld-seal .l{transform:translate(-55%,90%) rotate(-38deg);opacity:0}
+.loader.s-crack .ld-seal .r{transform:translate(55%,100%) rotate(32deg);opacity:0}
+.loader.s-open .ld-flap{transform:rotateX(180deg)}
+.loader.s-flapback .ld-flap{z-index:0}
+.loader.s-rise .ld-letter{transform:translateY(-58%)}
+.loader.s-reveal .ld-env{opacity:0;transform:translate(-50%,-50%) scale(1.2)}
+.loader.s-reveal .ld-veil{transition:clip-path .95s cubic-bezier(.7,0,.2,1)}
+
+/* rangoli transition */
+.ld-veil{transition:opacity .4s ease}
+.loader.trans .ld-veil{clip-path:none}
+.loader.trans.closing .ld-veil{opacity:0;animation:ldVeilIn .3s ease forwards}
+@keyframes ldVeilIn{to{opacity:1}}
+.loader.trans.clearing .ld-veil{opacity:0;transition:opacity .7s ease .1s}
+.ld-powder{position:absolute;inset:0;width:100%;height:100%}
+.ld-logo{position:absolute;left:50%;top:50%;width:clamp(84px,11vw,132px);height:auto;border-radius:50%;transform:translate(-50%,-50%);
+  box-shadow:0 14px 40px rgba(0,0,0,.5);transition:opacity .5s,transform .7s cubic-bezier(.2,.8,.2,1)}
+.loader.trans.closing .ld-logo{animation:ldLogoIn .5s .25s both cubic-bezier(.2,.8,.2,1)}
+@keyframes ldLogoIn{from{opacity:0;transform:translate(-50%,-50%) scale(.8)}}
+.loader.trans.clearing .ld-logo{opacity:0;transform:translate(-50%,-50%) scale(1.15)}
 /* fail-safe: never leave the page covered if the script does not run */
-.bloom.is-on{animation:bloomFailsafe 0s linear 8s forwards}
-@keyframes bloomFailsafe{to{visibility:hidden;pointer-events:none}}
+.loader.is-on{animation:ldFailsafe 0s linear 8s forwards}
+@keyframes ldFailsafe{to{visibility:hidden;pointer-events:none}}
 
 /* --- Lamp-lit hidden filigree --- */
 .filigree{position:absolute;inset:0;z-index:0;color:var(--gold-2);pointer-events:none;opacity:.75;-webkit-mask-image:radial-gradient(circle 240px at var(--mx,50%) var(--my,50%),#000 0%,rgba(0,0,0,.6) 35%,transparent 72%);mask-image:radial-gradient(circle 240px at var(--mx,50%) var(--my,50%),#000 0%,rgba(0,0,0,.6) 35%,transparent 72%)}
@@ -601,11 +626,9 @@ em.shimmer{background:linear-gradient(110deg,var(--gold-2) 0%,var(--gold-2) 42%,
   .ph-scroll{display:none}
   .more-link{margin-top:-40px;padding-bottom:56px}
   .filigree{-webkit-mask-image:radial-gradient(circle 160px at var(--mx,50%) var(--my,50%),#000 0%,transparent 72%);mask-image:radial-gradient(circle 160px at var(--mx,50%) var(--my,50%),#000 0%,transparent 72%)}
-  .bloom-emblem{transform:translate(-50%,-50%) scale(.8)}
-  .bloom.opening .bloom-emblem{transform:translate(-50%,-50%) scale(.74)}
 }
 @media (prefers-reduced-motion:reduce){
-  .bloom{display:none!important}
+  .loader{display:none!important}
   .wrd>span{transform:none!important}
   .ph-media img{clip-path:none!important}
   .filigree,.lamp-glow{display:none}

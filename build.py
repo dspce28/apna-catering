@@ -115,28 +115,17 @@ def floral_tile():
 _T, _TILE = floral_tile()
 
 
-def mandala():
-    """Loader mandala: layers drawn one after another by CSS (pathLength=1 on every stroke)."""
-    c = 150
-    layers = []
-    def ring(paths, cls):
-        layers.append(f'<g class="ml {cls}">' + paths.replace('<path ', '<path pathLength="1" ').replace('<circle ', '<circle pathLength="1" ') + '</g>')
-    ring(f'<circle cx="{c}" cy="{c}" r="64"/>', 'l0')
-    ring(_flower(c, c, 8, 34, 13, 64), 'l1')
-    ring(_flower(c, c, 8, 26, 9, 66, 22.5), 'l2')
-    ring(_flower(c, c, 16, 18, 5, 98, 11.25), 'l3')
-    ring(f'<circle cx="{c}" cy="{c}" r="122"/><circle cx="{c}" cy="{c}" r="128"/>', 'l4')
-    ring("".join(f'<circle cx="{c + 136 * _m.cos(_m.radians(a)):.1f}" cy="{c + 136 * _m.sin(_m.radians(a)):.1f}" r="3"/>' for a in range(0, 360, 15)), 'l5')
-    return '<svg class="mandala" viewBox="0 0 300 300">' + "".join(layers) + '</svg>'
-
-
-CURTAIN = """<div class="bloom is-on" aria-hidden="true">
-  <div class="bloom-veil"></div>
-  <div class="bloom-emblem">
-    """ + mandala() + """
-    <img src="img/logo-256.png" alt="" width="132" height="132">
-    <p class="bloom-line"><span>Preparing your celebration</span><b class="bloom-count">0</b></p>
+CURTAIN = """<div class="loader is-on" aria-hidden="true">
+  <div class="ld-veil"></div>
+  <div class="ld-env">
+    <div class="ld-back"></div>
+    <div class="ld-letter"><small>You are invited</small><i>Apna Catering</i><small>Glasgow &middot; Since 1975</small></div>
+    <div class="ld-front"></div>
+    <div class="ld-flap"></div>
+    <div class="ld-seal"><div class="l"><img src="img/logo-256.png" alt=""></div><div class="r"><img src="img/logo-256.png" alt=""></div></div>
   </div>
+  <canvas class="ld-powder"></canvas>
+  <img class="ld-logo" src="img/logo-256.png" alt="" width="132" height="132">
 </div>
 """
 

@@ -8,69 +8,123 @@
     set(k, v) { try { sessionStorage.setItem('apna-' + k, JSON.stringify(v)); } catch { /* private mode */ } },
   };
 
-  /* ---------- Bloom loader & page transitions ----------
-     First visit: a gold lotus mandala draws itself around the logo, then the
-     page opens outward from the logo in a widening circle with a gold edge.
-     Between pages the circle closes onto the logo, and the next page blooms open. */
-  const bloom = $('.bloom');
+  /* ---------- Loader & page transitions ----------
+     First visit: a wax seal cracks, the invitation opens and the card grows into the site.
+     Between pages: gold, saffron and rose powder settles into a rangoli around the logo
+     on the way out, and a breeze clears it away on the next page. */
+  const loader = $('.loader');
   const firstVisit = !store.get('seen');
-  const maxR = () => Math.hypot(innerWidth, innerHeight) / 2 + 40;
-  const animR = (from, to, dur, done) => {
-    const t0 = performance.now();
-    const step = (t) => {
-      const p = Math.min(1, (t - t0) / dur);
-      const e = p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2;
-      const r = from + (to - from) * e;
-      bloom.style.setProperty('--r', r.toFixed(1) + 'px');
-      bloom.style.setProperty('--edge', String(Math.max(0, Math.min(1, r / 60)) * (1 - p * 0.85)));
-      if (p < 1) requestAnimationFrame(step); else done && done();
+  const reveal = () => document.body.classList.add('loaded');
+  const finish = () => { if (!loader) return; loader.classList.remove('is-on'); loader.classList.add('gone'); };
+
+  // rangoli powder: same seed every time so the pattern closing one page matches the one opening the next
+  const powder = (() => {
+    const cv = loader && $('.ld-powder', loader);
+    if (!cv) return null;
+    const ctx = cv.getContext('2d');
+    const TAU = Math.PI * 2, SAFFRON = ['#e8892b', '#f0a84a', '#f5b85c', '#d9731f'], ROSE = ['#d6508a', '#b8336e', '#e57aa6', '#8f2457'], GOLD = ['#d6b06a', '#f1dfba', '#c9a052'];
+    let parts = [], W = 0, H = 0, dpr = 1, raf = 0;
+    const build = () => {
+      let seed = 1975;
+      const rnd = (a, b) => { seed = (seed * 16807) % 2147483647; return a + (seed / 2147483647) * (b - a); };
+      const pick = (a) => a[Math.floor(rnd(0, a.length))];
+      dpr = Math.min(2, window.devicePixelRatio || 1);
+      W = cv.width = Math.round(innerWidth * dpr); H = cv.height = Math.round(innerHeight * dpr);
+      const cx = W / 2, cy = H / 2, R = Math.min(W * 0.46, H * 0.4), k = innerWidth < 700 ? 0.6 : 1;
+      parts = [];
+      const add = (x, y, c, s) => parts.push({ tx: cx + x * R, ty: cy + y * R, c, s: s * dpr,
+        x0: cx + x * R + rnd(-.08, .08) * W, y0: -rnd(.02, .4) * H, d: rnd(0, 1), dur: rnd(.55, 1), wv: rnd(.5, 1.4), wu: rnd(-.3, .05) });
+      const petal = (a, r0, r1, w, n, cols, edge) => {
+        const ca = Math.cos(a), sa = Math.sin(a), wid = (u) => Math.pow(Math.sin(Math.PI * Math.pow(u, .8)), .9) * w;
+        for (let i = 0; i < n * k; i++) { const u = rnd(0, 1), v = rnd(-1, 1) * wid(u), r = r0 + (r1 - r0) * u; add(ca * r - sa * v, sa * r + ca * v, pick(cols), rnd(1.1, 1.9)); }
+        for (let i = 0; i < edge; i++) { const u = i / edge, r = r0 + (r1 - r0) * u; [-1, 1].forEach((sd) => add(ca * r - sa * wid(u) * sd, sa * r + ca * wid(u) * sd, pick(GOLD), 1.3)); }
+      };
+      for (let i = 0; i < 12; i++) petal(i / 12 * TAU, .5, .97, .15, 70, SAFFRON, 14);
+      for (let i = 0; i < 8; i++) petal((i + .5) / 8 * TAU, .25, .52, .11, 46, ROSE, 9);
+      const ring = (r, n) => { for (let i = 0; i < n * k; i++) { const a = rnd(0, TAU), rr = r + rnd(-.007, .007); add(Math.cos(a) * rr, Math.sin(a) * rr, pick(GOLD), 1.3); } };
+      ring(.22, 110); ring(.5, 120); ring(1, 200);
+      for (let i = 0; i < 24; i++) { const a = i / 24 * TAU; for (let j = 0; j < 7; j++) add(Math.cos(a) * 1.08 + rnd(-.012, .012), Math.sin(a) * 1.08 + rnd(-.012, .012), '#f8f1e8', 1.4); }
     };
-    requestAnimationFrame(step);
+    // mode 'fall': powder lands over `ms`; mode 'wind': settled powder blows away over `ms`
+    const run = (mode, ms, done) => {
+      cancelAnimationFrame(raf); build();
+      const t0 = performance.now(), spread = mode === 'fall' ? .45 : 0;
+      const frame = (now) => {
+        const T = Math.min(1, (now - t0) / ms);
+        ctx.clearRect(0, 0, W, H);
+        for (const p of parts) {
+          let x = p.tx, y = p.ty, a = .92;
+          if (mode === 'fall') {
+            const t = Math.max(0, Math.min(1, (T - p.d * spread) / (p.dur * (1 - spread))));
+            if (t <= 0) continue;
+            const e = 1 - Math.pow(1 - t, 3);
+            x = p.x0 + (p.tx - p.x0) * e; y = p.y0 + (p.ty - p.y0) * e;
+          } else {
+            const w = T * T; x += w * W * .55 * p.wv; y += w * H * .5 * p.wu; a *= 1 - T;
+          }
+          ctx.globalAlpha = a; ctx.fillStyle = p.c; ctx.fillRect(x, y, p.s, p.s);
+        }
+        if (T < 1) raf = requestAnimationFrame(frame); else done && done();
+      };
+      raf = requestAnimationFrame(frame);
+    };
+    return { run };
+  })();
+
+  const steps = (list) => list.forEach(([ms, fn]) => setTimeout(fn, ms));
+  const cls = (c) => () => loader.classList.add(c);
+
+  const playInvitation = () => {
+    loader.classList.add('first');
+    const veil = $('.ld-veil', loader), letter = $('.ld-letter', loader);
+    steps([
+      [100, cls('s-in')], [800, cls('s-crack')], [1100, cls('s-open')], [1480, cls('s-flapback')], [1600, cls('s-rise')],
+      [2400, () => {
+        // open a hole the size of the risen card, then grow it to the whole screen
+        const r = letter.getBoundingClientRect(), W = innerWidth, H = innerHeight;
+        const hole = (x1, y1, x2, y2) => `polygon(evenodd,0 0,100% 0,100% 100%,0 100%,0 0,${x1}px ${y1}px,${x1}px ${y2}px,${x2}px ${y2}px,${x2}px ${y1}px,${x1}px ${y1}px)`;
+        veil.style.clipPath = hole(r.left, r.top, r.right, r.bottom);
+        void veil.offsetWidth;
+        loader.classList.add('s-reveal');
+        veil.style.clipPath = hole(-2, -2, W + 2, H + 2);
+        reveal();
+      }],
+      [3400, finish],
+    ]);
   };
-  const openBloom = () => {
-    if (!bloom) { document.body.classList.add('loaded'); return; }
-    bloom.classList.remove('closing');
-    bloom.classList.add('opening');
-    setTimeout(() => document.body.classList.add('loaded'), reduce ? 0 : (bloom.classList.contains('quick') ? 150 : 520));
-    if (reduce) { bloom.classList.add('gone'); return; }
-    // on the first visit let the logo fade away before the page appears
-    const wait = bloom.classList.contains('quick') ? 0 : 380;
-    setTimeout(() => animR(0, maxR(), 1150, () => { bloom.classList.remove('is-on'); bloom.classList.add('gone'); }), wait);
+
+  const playClear = () => {
+    loader.classList.add('trans');
+    void loader.offsetWidth; // paint the settled state first so the logo and veil fade rather than vanish
+    loader.classList.add('clearing');
+    reveal();
+    if (powder) powder.run('wind', 850, finish); else setTimeout(finish, 700);
   };
+
   const runLoader = () => {
-    if (!bloom || reduce) { store.set('seen', true); openBloom(); return; }
-    if (!firstVisit) { bloom.classList.add('quick'); setTimeout(openBloom, 120); return; }
-    store.set('seen', true);
-    requestAnimationFrame(() => bloom.classList.add('drawn'));
-    const count = $('.bloom-count', bloom);
-    const t0 = performance.now(), dur = 2300;
-    const tick = (t) => {
-      const p = Math.min(1, (t - t0) / dur);
-      if (count) count.textContent = Math.round((1 - Math.pow(1 - p, 3)) * 100);
-      if (p < 1) requestAnimationFrame(tick); else setTimeout(openBloom, 250);
-    };
-    requestAnimationFrame(tick);
+    if (!loader || reduce) { store.set('seen', true); reveal(); finish(); return; }
+    if (firstVisit) { store.set('seen', true); playInvitation(); return; }
+    playClear();
   };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', runLoader); else runLoader();
   addEventListener('pageshow', (e) => {
-    if (!e.persisted || !bloom) return;
-    bloom.classList.remove('closing'); bloom.classList.add('gone'); bloom.classList.remove('is-on');
-    document.body.classList.add('loaded');
+    if (!e.persisted || !loader) return;
+    loader.className = 'loader gone';
+    reveal();
   });
 
-  // close the bloom onto the logo before moving to another page of the site
+  // settle the rangoli before moving to another page of the site
   document.addEventListener('click', (e) => {
     const a = e.target.closest('a');
-    if (!a || !bloom || reduce || e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey || a.target === '_blank') return;
+    if (!a || !loader || !powder || reduce || e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey || a.target === '_blank') return;
     const url = new URL(a.href, location.href);
     if (url.origin !== location.origin) return;
     const clean = (p) => p.replace(/\.html$/, '').replace(/\/index$/, '/');
     if (clean(url.pathname) === clean(location.pathname)) return; // same page anchor
     e.preventDefault();
-    bloom.classList.remove('gone', 'opening', 'drawn');
-    bloom.classList.add('is-on', 'quick', 'closing');
-    bloom.style.setProperty('--r', maxR() + 'px');
-    animR(maxR(), 0, 650, () => { location.href = url.href; });
+    store.set('seen', true);
+    loader.className = 'loader is-on trans closing';
+    powder.run('fall', 750, () => setTimeout(() => { location.href = url.href; }, 80));
   });
 
   const yr = $('#yr'); if (yr) yr.textContent = new Date().getFullYear();
