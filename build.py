@@ -57,28 +57,93 @@ def nav(active):
 '''
 
 
-CURTAIN = '''<div class="curtain is-closed" aria-hidden="true">
-  <div class="curtain-panel left"><i class="curtain-trim"></i></div>
-  <div class="curtain-panel right"><i class="curtain-trim"></i></div>
-  <div class="curtain-emblem">
-    <svg class="emblem-ring" viewBox="0 0 200 200"><circle cx="100" cy="100" r="92"/><circle cx="100" cy="100" r="84" class="thin"/></svg>
-    <img src="img/logo-256.png" alt="" width="128" height="128">
-    <div class="diyas"><span class="diya"><i></i></span><span class="diya"><i></i></span><span class="diya"><i></i></span></div>
-    <p class="curtain-line"><span class="curtain-words">Lighting the diyas</span><b class="curtain-count">0</b></p>
+# ---------------------------------------------------------------------------
+# Floral line art (generated so every petal is symmetric)
+# ---------------------------------------------------------------------------
+import math as _m
+
+
+def _rot(x, y, cx, cy, a):
+    r = _m.radians(a)
+    dx, dy = x - cx, y - cy
+    return cx + dx * _m.cos(r) - dy * _m.sin(r), cy + dx * _m.sin(r) + dy * _m.cos(r)
+
+
+def _petal(cx, cy, length, width, angle, inner=0.0):
+    """Pointed lotus petal from (cx,cy) outward, as an SVG path."""
+    pts = [(cx, cy - inner), (cx - width, cy - inner - length * 0.45), (cx - width * 0.35, cy - inner - length * 0.85),
+           (cx, cy - inner - length), (cx + width * 0.35, cy - inner - length * 0.85), (cx + width, cy - inner - length * 0.45)]
+    p = [_rot(x, y, cx, cy, angle) for x, y in pts]
+    f = lambda q: f"{q[0]:.1f} {q[1]:.1f}"
+    return (f"M{f(p[0])} C{f(p[1])} {f(p[2])} {f(p[3])} C{f(p[4])} {f(p[5])} {f(p[0])}Z")
+
+
+def _flower(cx, cy, n, length, width, inner=0, start=0):
+    return "".join(f'<path d="{_petal(cx, cy, length, width, start + i * 360 / n, inner)}"/>' for i in range(n))
+
+
+def floral_tile():
+    t = 180
+    c = t / 2
+    parts = []
+    # centre lotus: two layers of petals + seed ring
+    parts.append(_flower(c, c, 8, 30, 11, 6))
+    parts.append(_flower(c, c, 8, 18, 6, 4, 22.5))
+    parts.append(f'<circle cx="{c}" cy="{c}" r="6"/><circle cx="{c}" cy="{c}" r="2"/>')
+    parts.append("".join(f'<circle cx="{c + 44 * _m.cos(_m.radians(a)):.1f}" cy="{c + 44 * _m.sin(_m.radians(a)):.1f}" r="1.6"/>' for a in range(0, 360, 30)))
+    # corner rosettes (tile seamlessly)
+    for x, y in [(0, 0), (t, 0), (0, t), (t, t)]:
+        parts.append(_flower(x, y, 6, 20, 8, 3, 30))
+        parts.append(f'<circle cx="{x}" cy="{y}" r="4"/>')
+    # buds at the edge midpoints, pointing inward, with two leaves each
+    for (x, y, a) in [(c, 0, 180), (c, t, 0), (0, c, 90), (t, c, 270)]:
+        parts.append(f'<path d="{_petal(x, y, 22, 7, a)}"/>')
+        for da in (-55, 55):
+            parts.append(f'<path d="{_petal(x, y, 16, 4, a + da)}"/>')
+    # vines from the lotus towards each corner, with small leaves
+    for sx, sy in [(-1, -1), (1, -1), (-1, 1), (1, 1)]:
+        x0, y0 = c + sx * 36, c + sy * 36
+        x1, y1 = c + sx * 64, c + sy * 64
+        cxp, cyp = c + sx * 60, c + sy * 36
+        parts.append(f'<path d="M{x0:.1f} {y0:.1f} Q{cxp:.1f} {cyp:.1f} {x1:.1f} {y1:.1f}"/>')
+        mx, my = c + sx * 52, c + sy * 44
+        ang = _m.degrees(_m.atan2(sy, sx)) + 90
+        parts.append(f'<path d="{_petal(mx, my, 10, 3.5, ang - 50)}"/><path d="{_petal(mx, my, 10, 3.5, ang + 50)}"/>')
+    return t, "".join(parts)
+
+
+_T, _TILE = floral_tile()
+
+
+def mandala():
+    """Loader mandala: layers drawn one after another by CSS (pathLength=1 on every stroke)."""
+    c = 150
+    layers = []
+    def ring(paths, cls):
+        layers.append(f'<g class="ml {cls}">' + paths.replace('<path ', '<path pathLength="1" ').replace('<circle ', '<circle pathLength="1" ') + '</g>')
+    ring(f'<circle cx="{c}" cy="{c}" r="64"/>', 'l0')
+    ring(_flower(c, c, 8, 34, 13, 64), 'l1')
+    ring(_flower(c, c, 8, 26, 9, 66, 22.5), 'l2')
+    ring(_flower(c, c, 16, 18, 5, 98, 11.25), 'l3')
+    ring(f'<circle cx="{c}" cy="{c}" r="122"/><circle cx="{c}" cy="{c}" r="128"/>', 'l4')
+    ring("".join(f'<circle cx="{c + 136 * _m.cos(_m.radians(a)):.1f}" cy="{c + 136 * _m.sin(_m.radians(a)):.1f}" r="3"/>' for a in range(0, 360, 15)), 'l5')
+    return '<svg class="mandala" viewBox="0 0 300 300">' + "".join(layers) + '</svg>'
+
+
+CURTAIN = """<div class="bloom is-on" aria-hidden="true">
+  <div class="bloom-veil"></div>
+  <div class="bloom-emblem">
+    """ + mandala() + """
+    <img src="img/logo-256.png" alt="" width="132" height="132">
+    <p class="bloom-line"><span>Preparing your celebration</span><b class="bloom-count">0</b></p>
   </div>
 </div>
-'''
+"""
 
-FILIGREE = '''<div class="filigree" aria-hidden="true">
-    <svg width="100%" height="100%"><defs><pattern id="jali" width="120" height="120" patternUnits="userSpaceOnUse">
-      <g fill="none" stroke="currentColor" stroke-width="1">
-        <path d="M60 6 L72 48 L114 60 L72 72 L60 114 L48 72 L6 60 L48 48 Z"/>
-        <circle cx="60" cy="60" r="16"/><circle cx="60" cy="60" r="34"/>
-        <path d="M0 0 L24 24 M120 0 L96 24 M0 120 L24 96 M120 120 L96 96"/>
-        <circle cx="0" cy="0" r="10"/><circle cx="120" cy="0" r="10"/><circle cx="0" cy="120" r="10"/><circle cx="120" cy="120" r="10"/>
-      </g></pattern></defs><rect width="100%" height="100%" fill="url(#jali)"/></svg>
-  </div>
-  <div class="lamp-glow" aria-hidden="true"></div>'''
+FILIGREE = ('<div class="filigree" aria-hidden="true">\n    <svg width="100%" height="100%"><defs>'
+            f'<pattern id="floral" width="{_T}" height="{_T}" patternUnits="userSpaceOnUse" patternTransform="scale(1.45)">'
+            f'<g fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">{_TILE}</g></pattern>'
+            '</defs><rect width="100%" height="100%" fill="url(#floral)"/></svg>\n  </div>\n  <div class="lamp-glow" aria-hidden="true"></div>')
 
 
 def page_hero(kicker, title_html, lede, img, alt):

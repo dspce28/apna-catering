@@ -8,45 +8,67 @@
     set(k, v) { try { sessionStorage.setItem('apna-' + k, JSON.stringify(v)); } catch { /* private mode */ } },
   };
 
-  /* ---------- Curtain loader & page transitions ---------- */
-  const curtain = $('.curtain');
+  /* ---------- Bloom loader & page transitions ----------
+     First visit: a gold lotus mandala draws itself around the logo, then the
+     page opens outward from the logo in a widening circle with a gold edge.
+     Between pages the circle closes onto the logo, and the next page blooms open. */
+  const bloom = $('.bloom');
   const firstVisit = !store.get('seen');
-  const openCurtain = () => {
-    if (!curtain) { document.body.classList.add('loaded'); return; }
-    curtain.classList.remove('is-closed', 'closing');
-    curtain.classList.add('opening');
-    setTimeout(() => document.body.classList.add('loaded'), reduce ? 0 : 250);
-    setTimeout(() => curtain.classList.add('gone'), reduce ? 0 : 1500);
+  const maxR = () => Math.hypot(innerWidth, innerHeight) / 2 + 40;
+  const animR = (from, to, dur, done) => {
+    const t0 = performance.now();
+    const step = (t) => {
+      const p = Math.min(1, (t - t0) / dur);
+      const e = p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2;
+      const r = from + (to - from) * e;
+      bloom.style.setProperty('--r', r.toFixed(1) + 'px');
+      bloom.style.setProperty('--edge', String(Math.max(0, Math.min(1, r / 60)) * (1 - p * 0.85)));
+      if (p < 1) requestAnimationFrame(step); else done && done();
+    };
+    requestAnimationFrame(step);
+  };
+  const openBloom = () => {
+    if (!bloom) { document.body.classList.add('loaded'); return; }
+    bloom.classList.remove('closing');
+    bloom.classList.add('opening');
+    setTimeout(() => document.body.classList.add('loaded'), reduce ? 0 : 200);
+    if (reduce) { bloom.classList.add('gone'); return; }
+    animR(0, maxR(), 1250, () => { bloom.classList.remove('is-on'); bloom.classList.add('gone'); });
   };
   const runLoader = () => {
-    if (!curtain || reduce) { store.set('seen', true); openCurtain(); return; }
-    if (!firstVisit) { curtain.classList.add('quick'); setTimeout(openCurtain, 380); return; }
+    if (!bloom || reduce) { store.set('seen', true); openBloom(); return; }
+    if (!firstVisit) { bloom.classList.add('quick'); setTimeout(openBloom, 320); return; }
     store.set('seen', true);
-    curtain.classList.add('intro');
-    const count = $('.curtain-count', curtain), diyas = $$('.diya', curtain);
-    const t0 = performance.now(), dur = 2200;
+    requestAnimationFrame(() => bloom.classList.add('drawn'));
+    const count = $('.bloom-count', bloom);
+    const t0 = performance.now(), dur = 2300;
     const tick = (t) => {
-      const p = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - p, 3);
-      if (count) count.textContent = Math.round(e * 100);
-      diyas.forEach((d, i) => d.classList.toggle('lit', p > 0.22 + i * 0.24));
-      if (p < 1) requestAnimationFrame(tick); else setTimeout(openCurtain, 420);
+      const p = Math.min(1, (t - t0) / dur);
+      if (count) count.textContent = Math.round((1 - Math.pow(1 - p, 3)) * 100);
+      if (p < 1) requestAnimationFrame(tick); else setTimeout(openBloom, 250);
     };
     requestAnimationFrame(tick);
   };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', runLoader); else runLoader();
-  addEventListener('pageshow', (e) => { if (e.persisted) openCurtain(); });
+  addEventListener('pageshow', (e) => {
+    if (!e.persisted || !bloom) return;
+    bloom.classList.remove('closing'); bloom.classList.add('gone'); bloom.classList.remove('is-on');
+    document.body.classList.add('loaded');
+  });
 
-  // close the curtain before moving to another page of the site
+  // close the bloom onto the logo before moving to another page of the site
   document.addEventListener('click', (e) => {
     const a = e.target.closest('a');
-    if (!a || !curtain || reduce || e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey || a.target === '_blank') return;
+    if (!a || !bloom || reduce || e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey || a.target === '_blank') return;
     const url = new URL(a.href, location.href);
-    if (url.origin !== location.origin || !/\.html$|\/$/.test(url.pathname)) return;
-    if (url.pathname === location.pathname) return; // same page anchor
+    if (url.origin !== location.origin) return;
+    const clean = (p) => p.replace(/\.html$/, '').replace(/\/index$/, '/');
+    if (clean(url.pathname) === clean(location.pathname)) return; // same page anchor
     e.preventDefault();
-    curtain.classList.remove('gone', 'opening', 'intro');
-    curtain.classList.add('quick', 'closing');
-    setTimeout(() => { location.href = url.href; }, 720);
+    bloom.classList.remove('gone', 'opening', 'drawn');
+    bloom.classList.add('is-on', 'quick', 'closing');
+    bloom.style.setProperty('--r', maxR() + 'px');
+    animR(maxR(), 0, 650, () => { location.href = url.href; });
   });
 
   const yr = $('#yr'); if (yr) yr.textContent = new Date().getFullYear();
