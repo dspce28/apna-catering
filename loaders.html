@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Loader Concepts — Apna Catering</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="img/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Manrope:wght@400;500;600&family=Pinyon+Script&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#2a0f2e;--ink-2:#3b1840;--ink-3:#4a2050;--ivory:#f8f1e8;--gold:#d6b06a;--gold-2:#f1dfba;--gold-3:#7d5f2c;--maroon:#5a2160;--muted:#bfa6c2}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--ink);color:var(--ivory);font-family:Manrope,system-ui,sans-serif;line-height:1.6}
+.wrap{max-width:1240px;margin:0 auto;padding:56px 24px 96px}
+header{text-align:center;margin-bottom:48px}
+.eyebrow{font-size:12px;letter-spacing:.32em;text-transform:uppercase;color:var(--gold)}
+h1{font-family:"Cormorant Garamond",serif;font-weight:500;font-size:clamp(34px,5vw,58px);line-height:1.1;margin:12px 0 14px}
+h1 em{color:var(--gold);font-style:italic}
+header p{color:var(--muted);max-width:640px;margin:0 auto}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:40px 32px}
+@media (max-width:900px){.grid{grid-template-columns:1fr}}
+.card{display:flex;flex-direction:column;gap:16px}
+.stage{position:relative;aspect-ratio:16/9;border-radius:14px;overflow:hidden;container-type:inline-size;
+  background:radial-gradient(ellipse at 50% 42%,#4a2050 0%,#2a0f2e 72%);box-shadow:0 30px 60px -30px #000,0 0 0 1px rgba(214,176,106,.25)}
+.stage .site{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;z-index:1}
+.stage.reset *,.stage.reset{transition:none!important;animation:none!important}
+.meta{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
+.meta h2{font-family:"Cormorant Garamond",serif;font-weight:500;font-size:28px;line-height:1.15}
+.meta h2 span{color:var(--gold);font-size:16px;letter-spacing:.2em;margin-right:10px;vertical-align:middle;font-family:Manrope}
+.meta p{color:var(--muted);font-size:14.5px;margin-top:6px}
+.tags{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.tags b{font-weight:500;font-size:11.5px;letter-spacing:.08em;border:1px solid rgba(214,176,106,.35);color:var(--gold-2);padding:3px 10px;border-radius:99px}
+.replay{flex:none;background:none;border:1px solid var(--gold);color:var(--gold-2);font:600 12px Manrope;letter-spacing:.18em;text-transform:uppercase;padding:10px 16px;border-radius:99px;cursor:pointer;transition:background .25s,color .25s}
+.replay:hover{background:var(--gold);color:var(--ink)}
+footer{margin-top:64px;text-align:center;color:var(--muted);font-size:14px}
+footer a{color:var(--gold)}
+
+/* ---------- 1. Invitation ---------- */
+.inv .env{position:absolute;left:50%;top:56%;width:38cqw;height:25cqw;transform:translate(-50%,-50%);z-index:2;
+  perspective:140cqw;transition:opacity .7s ease,transform .9s cubic-bezier(.2,.7,.2,1)}
+.inv .env>*{position:absolute}
+.inv .back{inset:0;border-radius:.7cqw;background:linear-gradient(#3b1840,#2f1235);box-shadow:0 3cqw 5cqw -2cqw rgba(0,0,0,.7);z-index:1}
+.inv .letter{left:5%;right:5%;top:5%;height:90%;z-index:2;background:var(--ivory);border-radius:.4cqw;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.5cqw;color:var(--maroon);
+  box-shadow:inset 0 0 0 .35cqw var(--ivory),inset 0 0 0 .5cqw var(--gold);transition:transform 1s cubic-bezier(.2,.8,.2,1)}
+.inv .letter i{font:400 4.6cqw/1 "Pinyon Script",cursive;color:var(--maroon)}
+.inv .letter small{font:600 .9cqw Manrope;letter-spacing:.35em;color:var(--gold-3);text-transform:uppercase}
+.inv .front{inset:0;z-index:3;border-radius:.7cqw;background:linear-gradient(165deg,#5a2160,#3b1840 70%);
+  clip-path:polygon(0 0,50% 54%,100% 0,100% 100%,0 100%)}
+.inv .front::after{content:"";position:absolute;inset:0;background:linear-gradient(to top right,transparent 49.6%,rgba(214,176,106,.35) 50%,transparent 50.4%),linear-gradient(to top left,transparent 49.6%,rgba(214,176,106,.35) 50%,transparent 50.4%)}
+.inv .flap{left:0;right:0;top:0;height:60%;z-index:4;transform-origin:50% 0;
+  background:linear-gradient(#6b2b72,#4a2050);clip-path:polygon(0 0,100% 0,50% 100%);transition:transform .75s cubic-bezier(.45,0,.2,1)}
+.inv .seal{left:50%;top:60%;width:8.5cqw;height:8.5cqw;transform:translate(-50%,-50%) scale(1.25);opacity:0;z-index:5;
+  transition:transform .45s cubic-bezier(.3,1.6,.5,1),opacity .3s}
+.inv .seal>div{position:absolute;inset:0;border-radius:48% 52% 50% 50%/52% 47% 53% 48%;
+  background:radial-gradient(circle at 34% 30%,#b33a52,#7a1834 55%,#4d0b21);box-shadow:inset 0 0 0 .5cqw rgba(0,0,0,.18),inset .3cqw .3cqw .6cqw rgba(255,255,255,.18),0 .5cqw 1cqw rgba(0,0,0,.45);
+  display:grid;place-items:center;transition:transform .8s cubic-bezier(.5,0,.8,.6),opacity .8s ease-in}
+.inv .seal img{width:72%;filter:sepia(1) saturate(2.4) hue-rotate(-12deg) brightness(.95) drop-shadow(0 1px 0 rgba(0,0,0,.4))}
+.inv .seal .l{clip-path:polygon(0 0,53% 0,45% 19%,57% 37%,43% 57%,55% 77%,47% 100%,0 100%)}
+.inv .seal .r{clip-path:polygon(53% 0,100% 0,100% 100%,47% 100%,55% 77%,43% 57%,57% 37%,45% 19%)}
+.inv.s-in .seal{opacity:1;transform:translate(-50%,-50%) scale(1)}
+.inv.s-crack .seal .l{transform:translate(-55%,90%) rotate(-38deg);opacity:0}
+.inv.s-crack .seal .r{transform:translate(55%,100%) rotate(32deg);opacity:0}
+.inv.s-open .flap{transform:rotateX(180deg)}
+.inv.s-flapback .flap{z-index:0}
+.inv.s-rise .letter{transform:translateY(-58%)}
+.inv .site{clip-path:inset(28% 34% 44% 34% round 1cqw);transition:clip-path .95s cubic-bezier(.7,0,.2,1),opacity .35s}
+.inv.s-reveal .site{opacity:1;clip-path:inset(0 0 0 0 round 0)}
+.inv.s-reveal .env{opacity:0;transform:translate(-50%,-50%) scale(1.2)}
+
+/* ---------- 2. Signature ---------- */
+.sig .ink{position:absolute;inset:0;z-index:2;transition:transform 1s cubic-bezier(.7,0,.2,1),opacity .8s}
+.sig svg{width:100%;height:100%;display:block}
+.sig .word{font-family:"Pinyon Script",cursive;font-size:190px;fill:url(#sigFill);fill-opacity:0;stroke:var(--gold);stroke-width:1.4;
+  stroke-dasharray:1100;stroke-dashoffset:1100;transition:stroke-dashoffset 1.9s cubic-bezier(.45,.05,.35,1),fill-opacity .9s ease}
+.sig .pen{transform-box:fill-box;transform-origin:0 50%;transform:scaleX(0);transition:transform 1.7s cubic-bezier(.45,.05,.4,1)}
+.sig .swash{fill:none;stroke:var(--gold);stroke-width:1.6;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset 1s cubic-bezier(.6,0,.2,1)}
+.sig .sub{font:600 15px Manrope;letter-spacing:.5em;fill:var(--gold-2);opacity:0;transition:opacity .8s,letter-spacing 1.2s cubic-bezier(.2,.7,.2,1)}
+.sig.s-write .word{stroke-dashoffset:0}
+.sig.s-write .pen{transform:scaleX(1)}
+.sig.s-fill .word{fill-opacity:1}
+.sig.s-fill .swash{stroke-dashoffset:0}
+.sig.s-sub .sub{opacity:1;letter-spacing:.32em}
+.sig .site{transform:translateY(100%);opacity:1;transition:transform 1s cubic-bezier(.7,0,.2,1);box-shadow:0 -2cqw 4cqw rgba(0,0,0,.5)}
+.sig.s-reveal .site{transform:translateY(0)}
+.sig.s-reveal .ink{transform:translateY(-22%);opacity:0}
+
+/* ---------- 3. Rangoli ---------- */
+.ran canvas{position:absolute;inset:0;width:100%;height:100%;z-index:2}
+.ran .logo{position:absolute;left:50%;top:50%;width:13cqw;transform:translate(-50%,-50%) scale(.8);opacity:0;z-index:3;
+  transition:opacity .7s,transform .9s cubic-bezier(.2,.8,.2,1)}
+.ran.s-logo .logo{opacity:1;transform:translate(-50%,-50%) scale(1)}
+.ran.s-wind .logo{opacity:0;transform:translate(-50%,-50%) scale(1.15)}
+.ran .site{transition:opacity 1s ease}
+.ran.s-reveal .site{opacity:1}
+
+/* ---------- 4. Golden drop ---------- */
+.drp .drop{position:absolute;left:50%;top:-8%;width:2.6cqw;height:3.4cqw;z-index:3;transform:translate(-50%,-50%) rotate(180deg);
+  border-radius:50% 50% 50% 50%/62% 62% 38% 38%;background:radial-gradient(circle at 40% 62%,#fff4d6,#f1dfba 18%,#d6b06a 52%,#7d5f2c);
+  box-shadow:0 0 2cqw rgba(241,223,186,.55);transition:top .6s cubic-bezier(.55,0,1,.45)}
+.drp.s-fall .drop{top:50%}
+.drp.s-splash .drop{transition:transform .3s ease-out,opacity .3s;transform:translate(-50%,-50%) scale(3.2,.18);opacity:0}
+.drp .dot{position:absolute;left:50%;top:50%;width:.7cqw;height:.7cqw;margin:-.35cqw;border-radius:50%;z-index:3;opacity:0;
+  background:radial-gradient(circle at 35% 35%,#fff4d6,#d6b06a 60%,#7d5f2c);transition:transform .7s cubic-bezier(.1,.7,.3,1),opacity .7s ease-in}
+.drp.s-splash .dot{opacity:0;transform:rotate(var(--a)) translateX(var(--d)) scale(.4)}
+.drp.s-splash .dot{animation:dotfade .7s ease-out}
+@keyframes dotfade{0%{opacity:1}70%{opacity:1}100%{opacity:0}}
+.drp .ring{position:absolute;left:50%;top:50%;width:0;height:0;border-radius:50%;z-index:2;opacity:0;
+  border:.25cqw solid var(--gold);box-shadow:0 0 1.5cqw rgba(214,176,106,.5),inset 0 0 1.5cqw rgba(214,176,106,.35);filter:url(#wob);transform:translate(-50%,-50%) scaleY(.92)}
+.drp.s-splash .ring{animation:ripple 1.6s cubic-bezier(.15,.6,.3,1) forwards;animation-delay:var(--dl)}
+@keyframes ripple{0%{width:0;height:0;opacity:1}100%{width:70cqw;height:70cqw;opacity:0}}
+.drp .site{opacity:1;clip-path:circle(0px at 50% 50%)}
+.drp .edge{position:absolute;left:50%;top:50%;border-radius:50%;z-index:4;pointer-events:none;transform:translate(-50%,-50%);
+  box-shadow:0 0 0 .3cqw #e8c983,0 0 2.4cqw .6cqw rgba(241,223,186,.55);opacity:0}
+.drp .glow{position:absolute;inset:0;z-index:0;background:radial-gradient(circle at 50% 50%,rgba(214,176,106,.18),transparent 40%);opacity:0;transition:opacity .6s}
+.drp.s-splash .glow{opacity:1}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Apna Catering · loader concepts</div>
+    <h1>Four ways to <em>open the door.</em></h1>
+    <p>Each one plays on a loop below and ends by revealing the homepage. On the real site it plays once per visit, and a shorter version runs between pages. Pick the one that feels most like the brand.</p>
+  </header>
+
+  <div class="grid">
+    <!-- 1 -->
+    <section class="card">
+      <div class="stage inv" data-loader="invitation">
+        <img class="site" src="img/loader-demo/site.jpg" alt="">
+        <div class="env">
+          <div class="back"></div>
+          <div class="letter"><small>You are invited</small><i>Apna Catering</i><small>Glasgow · Since 1975</small></div>
+          <div class="front"></div>
+          <div class="flap"></div>
+          <div class="seal"><div class="l"><img src="img/logo-256.png" alt=""></div><div class="r"><img src="img/logo-256.png" alt=""></div></div>
+        </div>
+      </div>
+      <div class="meta">
+        <div>
+          <h2><span>01</span>The Invitation</h2>
+          <p>A wax seal cracks, the envelope opens, and the invitation card grows into the website. Every wedding starts with a card, so this one tells that story.</p>
+          <div class="tags"><b>~3.2s</b><b>Most storytelling</b><b>Weddings</b></div>
+        </div>
+        <button class="replay" type="button">Replay</button>
+      </div>
+    </section>
+
+    <!-- 2 -->
+    <section class="card">
+      <div class="stage sig" data-loader="signature">
+        <img class="site" src="img/loader-demo/site.jpg" alt="">
+        <div class="ink">
+          <svg viewBox="0 0 800 450" aria-hidden="true">
+            <defs>
+              <linearGradient id="sigFill" x1="0" y1="0" x2="800" y2="0" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#b8924c"/><stop offset=".4" stop-color="#d6b06a"/>
+                <stop offset=".5" stop-color="#fff4d6"/><stop offset=".6" stop-color="#d6b06a"/><stop offset="1" stop-color="#b8924c"/>
+                <animateTransform id="shine" attributeName="gradientTransform" type="translate" from="-800 0" to="800 0" dur="1.3s" begin="indefinite" fill="freeze"/>
+              </linearGradient>
+              <clipPath id="penClip"><rect class="pen" x="120" y="40" width="560" height="300"/></clipPath>
+            </defs>
+            <text class="word" x="400" y="248" text-anchor="middle" clip-path="url(#penClip)">Apna</text>
+            <path class="swash" pathLength="1" d="M250 292 C 330 270, 470 270, 548 288 C 585 297, 600 312, 575 318 C 552 322, 545 300, 572 292"/>
+            <text class="sub" x="400" y="360" text-anchor="middle">CATERING · GLASGOW · SINCE 1975</text>
+          </svg>
+        </div>
+      </div>
+      <div class="meta">
+        <div>
+          <h2><span>02</span>The Signature</h2>
+          <p>"Apna" is written in gold ink, a light runs across it, and then the page rises up like a curtain. Quiet and confident, like a couture label.</p>
+          <div class="tags"><b>~3.8s</b><b>Most minimal</b><b>Brand recall</b></div>
+        </div>
+        <button class="replay" type="button">Replay</button>
+      </div>
+    </section>
+
+    <!-- 3 -->
+    <section class="card">
+      <div class="stage ran" data-loader="rangoli">
+        <img class="site" src="img/loader-demo/site.jpg" alt="">
+        <canvas></canvas>
+        <img class="logo" src="img/logo-256.png" alt="">
+      </div>
+      <div class="meta">
+        <div>
+          <h2><span>03</span>The Rangoli</h2>
+          <p>Saffron, rose and gold powder falls and settles into a rangoli around the logo, then a breeze carries it away to show the site. Festive and very Indian.</p>
+          <div class="tags"><b>~3.4s</b><b>Most festive</b><b>Mehndi · Diwali</b></div>
+        </div>
+        <button class="replay" type="button">Replay</button>
+      </div>
+    </section>
+
+    <!-- 4 -->
+    <section class="card">
+      <div class="stage drp" data-loader="drop">
+        <img class="site" src="img/loader-demo/site.jpg" alt="">
+        <div class="glow"></div>
+        <div class="ring" style="--dl:0s"></div><div class="ring" style="--dl:.16s"></div><div class="ring" style="--dl:.32s"></div>
+        <div class="drop"></div>
+        <div class="edge"></div>
+      </div>
+      <div class="meta">
+        <div>
+          <h2><span>04</span>The Golden Drop</h2>
+          <p>A single drop of molten gold falls, splashes, and the ripple opens up to the website. The shortest of the four, so it suits page-to-page transitions too.</p>
+          <div class="tags"><b>~2.2s</b><b>Fastest</b><b>Works between pages</b></div>
+        </div>
+        <button class="replay" type="button">Replay</button>
+      </div>
+    </section>
+  </div>
+
+  <footer>Demo only: the background is a screenshot of the homepage. <a href="/">Open the live site →</a></footer>
+</div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="wob"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="9"/></filter>
+</svg>
+
+<script>
+(() => {
+  const TAU = Math.PI * 2;
+  const rnd = (a, b) => a + Math.random() * (b - a);
+  const pick = a => a[(Math.random() * a.length) | 0];
+
+  /* A small player per stage: schedule class changes, reset, loop while visible. */
+  function Player(stage, def) {
+    let timers = [], gen = 0, visible = false, running = false;
+    const steps = def.steps;
+    const clear = () => { timers.forEach(clearTimeout); timers = []; };
+    function reset() {
+      stage.classList.add('reset');
+      stage.classList.remove(...steps.map(s => s[1]));
+      def.reset && def.reset();
+      void stage.offsetWidth;
+      stage.classList.remove('reset');
+    }
+    function play() {
+      clear(); const g = ++gen; running = true; reset();
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        if (g !== gen) return;
+        def.start && def.start(g, () => g === gen);
+        steps.forEach(([ms, cls, fn]) => timers.push(setTimeout(() => {
+          if (cls) stage.classList.add(cls); fn && fn(g, () => g === gen);
+        }, ms)));
+        timers.push(setTimeout(() => {
+          running = false;
+          if (visible) timers.push(setTimeout(play, 1000));
+        }, def.length + 1300));
+      }));
+    }
+    new IntersectionObserver(es => es.forEach(e => {
+      visible = e.isIntersecting;
+      if (visible && !running) play();
+    }), { threshold: .45 }).observe(stage);
+    stage.closest('.card').querySelector('.replay').addEventListener('click', play);
+  }
+
+  /* 1 — Invitation */
+  const inv = document.querySelector('.inv');
+  Player(inv, { length: 3300, steps: [
+    [100, 's-in'], [800, 's-crack'], [1100, 's-open'], [1480, 's-flapback'], [1600, 's-rise'], [2400, 's-reveal']
+  ]});
+
+  /* 2 — Signature */
+  const sig = document.querySelector('.sig');
+  const shine = document.getElementById('shine');
+  const fontReady = document.fonts ? document.fonts.load('190px "Pinyon Script"') : Promise.resolve();
+  fontReady.then(() => Player(sig, { length: 3900, steps: [
+    [150, 's-write'], [1750, 's-fill'], [2050, 's-sub', () => { try { shine.beginElement(); } catch (e) {} }], [3000, 's-reveal']
+  ]}));
+
+  /* 3 — Rangoli (canvas particles) */
+  const ran = document.querySelector('.ran');
+  const cv = ran.querySelector('canvas'), ctx = cv.getContext('2d');
+  let parts = [], W = 0, H = 0, dpr = 1, t0 = 0, windAt = 0;
+  const SAFFRON = ['#e8892b', '#f0a84a', '#f5b85c', '#d9731f'];
+  const ROSE = ['#d6508a', '#b8336e', '#e57aa6', '#8f2457'];
+  const GOLD = ['#d6b06a', '#f1dfba', '#c9a052'];
+  function build() {
+    const r = ran.getBoundingClientRect();
+    dpr = Math.min(2, window.devicePixelRatio || 1);
+    W = cv.width = Math.round(r.width * dpr); H = cv.height = Math.round(r.height * dpr);
+    parts = [];
+    const cx = W / 2, cy = H / 2, R = Math.min(W, H) * 0.43;
+    const add = (x, y, c, s) => parts.push({ tx: cx + x * R, ty: cy + y * R, c, s: s * dpr,
+      x0: cx + x * R + rnd(-.08, .08) * W, y0: -rnd(.02, .45) * H, d: rnd(0, 950), dur: rnd(650, 1150), wv: rnd(.5, 1.4), wu: rnd(-.25, .05) });
+    const petal = (a, r0, r1, w, n, cols, edge) => {
+      const ca = Math.cos(a), sa = Math.sin(a);
+      for (let i = 0; i < n; i++) {
+        const u = Math.random(), wid = Math.pow(Math.sin(Math.PI * Math.pow(u, .8)), .9) * w;
+        const v = (Math.random() * 2 - 1) * wid, r = r0 + (r1 - r0) * u;
+        add(ca * r - sa * v, sa * r + ca * v, pick(cols), rnd(1.1, 1.9));
+      }
+      for (let i = 0; i < edge; i++) {
+        const u = i / edge, wid = Math.pow(Math.sin(Math.PI * Math.pow(u, .8)), .9) * w, r = r0 + (r1 - r0) * u;
+        [-1, 1].forEach(sd => add(ca * r - sa * wid * sd, sa * r + ca * wid * sd, pick(GOLD), 1.3));
+      }
+    };
+    for (let k = 0; k < 12; k++) petal(k / 12 * TAU, .5, .97, .15, 70, SAFFRON, 14);
+    for (let k = 0; k < 8; k++) petal((k + .5) / 8 * TAU, .25, .52, .11, 46, ROSE, 9);
+    const ring = (r, n, cols, j) => { for (let i = 0; i < n; i++) { const a = Math.random() * TAU, rr = r + rnd(-j, j); add(Math.cos(a) * rr, Math.sin(a) * rr, pick(cols), 1.3); } };
+    ring(.22, 110, GOLD, .008); ring(.5, 120, GOLD, .006); ring(1.0, 200, GOLD, .006);
+    for (let k = 0; k < 24; k++) { const a = k / 24 * TAU; for (let i = 0; i < 7; i++) add(Math.cos(a) * 1.08 + rnd(-.012, .012), Math.sin(a) * 1.08 + rnd(-.012, .012), '#f8f1e8', 1.4); }
+  }
+  const ease = t => 1 - Math.pow(1 - t, 3);
+  function frame(alive) {
+    if (!alive()) return;
+    const now = performance.now() - t0;
+    ctx.clearRect(0, 0, W, H);
+    const wind = windAt ? Math.min(1, (now - windAt) / 1000) : 0;
+    for (const p of parts) {
+      const t = Math.max(0, Math.min(1, (now - p.d) / p.dur));
+      if (t <= 0) continue;
+      const e = ease(t);
+      let x = p.x0 + (p.tx - p.x0) * e, y = p.y0 + (p.ty - p.y0) * e + Math.sin(t * Math.PI) * 6 * dpr;
+      let a = .92;
+      if (wind) { const w2 = wind * wind; x += w2 * W * .55 * p.wv; y += w2 * H * .5 * p.wu; a *= 1 - wind; }
+      ctx.globalAlpha = a; ctx.fillStyle = p.c; ctx.fillRect(x, y, p.s, p.s);
+    }
+    if (wind < 1) requestAnimationFrame(() => frame(alive));
+    else ctx.clearRect(0, 0, W, H);
+  }
+  Player(ran, { length: 3400,
+    reset: () => { windAt = 0; ctx.clearRect(0, 0, W, H); },
+    start: (g, alive) => { build(); t0 = performance.now(); frame(alive); },
+    steps: [[1450, 's-logo'], [2350, 's-wind', () => { windAt = performance.now() - t0; }], [2550, 's-reveal']]
+  });
+
+  /* 4 — Golden drop */
+  const drp = document.querySelector('.drp');
+  const site4 = drp.querySelector('.site'), edge = drp.querySelector('.edge');
+  for (let i = 0; i < 9; i++) {
+    const d = document.createElement('div'); d.className = 'dot';
+    d.style.setProperty('--a', (i / 9 * 360 + rnd(-12, 12)) + 'deg');
+    d.style.setProperty('--d', rnd(5, 10) + 'cqw');
+    drp.appendChild(d);
+  }
+  function openRipple(alive) {
+    const r = drp.getBoundingClientRect(), max = Math.hypot(r.width, r.height) / 2 + 20, t1 = performance.now(), dur = 1250;
+    (function step() {
+      if (!alive()) return;
+      const t = Math.min(1, (performance.now() - t1) / dur), e = t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+      const rad = e * max;
+      site4.style.clipPath = `circle(${rad}px at 50% 50%)`;
+      edge.style.width = edge.style.height = rad * 2 + 'px';
+      edge.style.opacity = t < .85 ? 1 : (1 - t) / .15;
+      if (t < 1) requestAnimationFrame(step);
+    })();
+  }
+  Player(drp, { length: 2300,
+    reset: () => { site4.style.clipPath = 'circle(0px at 50% 50%)'; edge.style.opacity = 0; edge.style.width = edge.style.height = '0px'; },
+    steps: [[150, 's-fall'], [750, 's-splash'], [950, null, (g, alive) => openRipple(alive)]]
+  });
+})();
+</script>
+</body>
+</html>
