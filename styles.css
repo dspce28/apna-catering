@@ -1110,3 +1110,41 @@ body.loaded .hero2-title .line>span{transform:none}
 .pstep figure img{transition:transform 1s var(--ease),filter .8s}
 .pstep:not(.in) figure img{filter:grayscale(.6) brightness(.9)}
 @media (max-width:900px){.steps-path{display:none}}
+
+/* ======================================================================
+   Fix pass: wordmark, brocade scale, timeline layering, more roses,
+   inner pages on the same system
+   ====================================================================== */
+.wordmark{line-height:1.3;padding:.08em 0 .22em;margin-top:30px}
+:root{--brocade:linear-gradient(rgba(46,7,15,.74),rgba(46,7,15,.8)),url(img/brocade.webp) center/640px auto repeat}
+.footer{background:linear-gradient(rgba(36,5,11,.86),rgba(36,5,11,.92)),url(img/brocade.webp) center/640px auto repeat}
+
+/* timeline: line and spark run beneath the numbered medallions */
+.journey-line::before{z-index:0}
+.journey-line::after{z-index:1}
+.j-spark{z-index:2}
+.j-no{position:relative;z-index:3}
+
+/* roses: bigger, on every cream section, alternating corners */
+.heritage::after,.journey::before,.steps-x::after,.faq::after,.statement::before{content:none}
+.light,.statement,.faq,.journey,.steps-x,.team,.process,.experiences,.menus,.gallery-wrap{
+  background:url(img/rose-tr.webp) top right/clamp(260px,32vw,520px) auto no-repeat,url(img/rose-bl.webp) bottom left/clamp(180px,18vw,320px) auto no-repeat,radial-gradient(70% 60% at 50% 40%,rgba(255,250,240,.8),transparent 70%),url(img/paper.webp) center/cover,var(--cream)}
+.journey,.team,.faq,.menus{
+  background:url(img/rose-tl.webp) top left/clamp(260px,32vw,520px) auto no-repeat,url(img/rose-br.webp) bottom right/clamp(180px,18vw,320px) auto no-repeat,radial-gradient(70% 60% at 50% 40%,rgba(255,250,240,.8),transparent 70%),url(img/paper.webp) center/cover,var(--cream)}
+@media (max-width:700px){
+  .light,.statement,.faq,.journey,.steps-x,.team,.process,.experiences,.menus{background-size:58vw auto,34vw auto,auto,cover,auto}
+}
+
+/* inner pages: dark bands share the brocade, never brown */
+.traditions,.why,.builder,.enquire{background:var(--brocade)}
+
+/* fewer maroon bands back to back: occasions and the gallery go cream with roses */
+.occasions,.gallery-section{background:url(img/rose-tr.webp) top right/clamp(260px,32vw,520px) auto no-repeat,url(img/rose-bl.webp) bottom left/clamp(180px,18vw,320px) auto no-repeat,radial-gradient(70% 60% at 50% 40%,rgba(255,250,240,.8),transparent 70%),url(img/paper.webp) center/cover,var(--cream);color:var(--text-dark)}
+.occasions .eyebrow,.gallery-section .eyebrow{color:var(--crimson)}
+.occasions .h2,.gallery-section .h2{color:#3d0a14}
+.occasions .h2 em,.gallery-section .h2 em{color:#9a6f2a}
+.occasions .muted,.gallery-section .muted{color:var(--muted-dark)}
+.occasions .ghost-word{-webkit-text-stroke-color:rgba(184,137,58,.3)}
+.occasions .spice{color:var(--gold-3)}
+.occasions+.more-link{background:var(--cream)}
+.occasions+.more-link .link-arrow{color:var(--crimson)}
