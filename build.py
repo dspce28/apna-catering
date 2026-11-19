@@ -209,7 +209,10 @@ HERO_PRELOAD = '<link rel="preload" as="image" href="img/hero.webp" imagesrcset=
 
 def hero_with_filigree():
     h = part("hero")
-    return h.replace('<div class="hero-glow" aria-hidden="true"></div>', '<div class="hero-glow" aria-hidden="true"></div>\n  ' + FILIGREE, 1)
+    h = h.replace('<div class="hero-glow" aria-hidden="true"></div>', '<div class="hero-glow" aria-hidden="true"></div>\n  ' + FILIGREE, 1)
+    roses = ('<img class="rose rose-tr" src="img/rose-tr.webp" alt="" aria-hidden="true" width="758" height="470">')
+    return '<div class="hero-stage">' + roses + h + '</div>\n'
+
 
 
 def build():
@@ -228,7 +231,7 @@ def build():
             "Our Story — Apna Catering, Glasgow · Since 1975",
             "Since 1975 Apna Catering has cooked for Glasgow's biggest celebrations. Meet the family kitchen behind the food.",
             page_hero("Our story", "Love for food,<br><em>since 1975.</em>", "A Glasgow family kitchen that has grown up with the city's Asian community, one celebration at a time.", "p-tablesetting", "An elegant table set with fine china and silver cutlery")
-            + part("heritage") + WHY + part("process") + part("quotes")
+            + part("heritage") + part("team") + WHY + part("process") + part("quotes")
             + cta("Your celebration, <em>our kitchen.</em>", "Fifty years of weddings, walimas and reunions. Let’s plan yours.", "p-toast"),
         ),
         "services.html": shell(

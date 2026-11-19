@@ -22,7 +22,7 @@
     const cv = loader && $('.ld-powder', loader);
     if (!cv) return null;
     const ctx = cv.getContext('2d');
-    const TAU = Math.PI * 2, SAFFRON = ['#e8892b', '#f0a84a', '#f5b85c', '#d9731f'], ROSE = ['#8f1d1d', '#a8262a', '#611414', '#c0392b'], GOLD = ['#cfae5a', '#eedcaa', '#b8953f'];
+    const TAU = Math.PI * 2, SAFFRON = ['#e8892b', '#f0a84a', '#f5b85c', '#d9731f'], ROSE = ['#8f1d1d', '#a8262a', '#7d1526', '#c0392b'], GOLD = ['#c99a45', '#f1dcaa', '#b8953f'];
     let parts = [], W = 0, H = 0, dpr = 1, raf = 0;
     const build = () => {
       let seed = 1975;
@@ -43,7 +43,7 @@
       for (let i = 0; i < 8; i++) petal((i + .5) / 8 * TAU, .25, .52, .11, 46, ROSE, 9);
       const ring = (r, n) => { for (let i = 0; i < n * k; i++) { const a = rnd(0, TAU), rr = r + rnd(-.007, .007); add(Math.cos(a) * rr, Math.sin(a) * rr, pick(GOLD), 1.3); } };
       ring(.22, 110); ring(.5, 120); ring(1, 200);
-      for (let i = 0; i < 24; i++) { const a = i / 24 * TAU; for (let j = 0; j < 7; j++) add(Math.cos(a) * 1.08 + rnd(-.012, .012), Math.sin(a) * 1.08 + rnd(-.012, .012), '#f4ede3', 1.4); }
+      for (let i = 0; i < 24; i++) { const a = i / 24 * TAU; for (let j = 0; j < 7; j++) add(Math.cos(a) * 1.08 + rnd(-.012, .012), Math.sin(a) * 1.08 + rnd(-.012, .012), '#fbf3e6', 1.4); }
     };
     // mode 'fall': powder lands over `ms`; mode 'wind': settled powder blows away over `ms`
     const run = (mode, ms, done) => {
