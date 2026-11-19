@@ -204,15 +204,11 @@ def shell(active, title, description, body, preload=""):
             + '\n<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js" defer></script>\n<script src="main.js" defer></script>\n</body>\n</html>\n')
 
 
-HERO_PRELOAD = '<link rel="preload" as="image" href="img/hero.webp" imagesrcset="img/hero.webp 1200w, img/hero-2400.webp 2400w, img/hero-3840.webp 3840w" imagesizes="(max-width: 900px) 82vw, 480px">'
+HERO_PRELOAD = '<link rel="preload" as="image" href="img/b-hall.webp" imagesrcset="img/b-hall.webp 1200w, img/b-hall-2400.webp 2400w, img/b-hall-3840.webp 3840w" imagesizes="100vw">'
 
 
 def hero_with_filigree():
-    h = part("hero")
-    h = h.replace('<div class="hero-glow" aria-hidden="true"></div>', '<div class="hero-glow" aria-hidden="true"></div>\n  ' + FILIGREE, 1)
-    roses = ('<img class="rose rose-tr" src="img/rose-tr.webp" alt="" aria-hidden="true" width="758" height="470">')
-    return '<div class="hero-stage">' + roses + h + '</div>\n'
-
+    return part("hero").replace("<!--FILIGREE-->", FILIGREE, 1)
 
 
 def build():
@@ -221,8 +217,8 @@ def build():
             "index.html",
             "Apna Catering — Indian Wedding & Event Caterers, Glasgow · Since 1975",
             "Apna Catering: Glasgow's Indian & Asian wedding caterers since 1975. Sikh, Hindu and Muslim weddings, engagements, birthdays and corporate events across Scotland.",
-            hero_with_filigree() + part("marquee") + part("statement") + part("journey") + part("heritage") + more("about.html", "Read our story")
-            + part("occasions") + part("kitchen") + part("menus") + more("menus.html", "Explore menus and build your own")
+            hero_with_filigree() + part("marquee") + part("pins") + part("statement") + part("journey") + part("heritage") + more("about.html", "Read our story")
+            + part("kitchen") + part("steps") + part("menus") + more("menus.html", "Explore menus and build your own")
             + part("quotes") + cta(),
             HERO_PRELOAD,
         ),
@@ -239,7 +235,7 @@ def build():
             "Our Services — Wedding & Event Catering, Glasgow | Apna Catering",
             "Sikh, Hindu and Muslim wedding catering, live stations, dessert buffets, bar service and complete event management across Scotland.",
             page_hero("Our services", "Every tradition,<br><em>beautifully served.</em>", "Weddings, mehndis, walimas, birthdays and corporate events, with live stations and full event service from one team.", "p-banquet", "A banquet hall dressed with crystal, linen and flowers")
-            + part("traditions") + part("experiences")
+            + part("traditions") + part("occasions") + part("experiences")
             + cta("Theatre your guests <em>will remember.</em>", "From chaat stalls to chocolate fountains, tell us what you imagine.", "p-chefflame"),
         ),
         "menus.html": shell(

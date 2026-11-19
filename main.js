@@ -498,6 +498,38 @@
     })();
   }
 
+  // photo hero: slow crossfading slideshow
+  const h2s = $$('.h2-slides img'), h2d = $$('.hero2-dots i');
+  if (h2s.length > 1 && !reduce) {
+    let hi = 0;
+    setInterval(() => {
+      hi = (hi + 1) % h2s.length;
+      h2s.forEach((im, k) => { if (k === hi) im.loading = 'eager'; im.classList.toggle('on', k === hi); });
+      h2d.forEach((d, k) => d.classList.toggle('on', k === hi));
+    }, 6000);
+  }
+
+  // pinned wedding panels: card rises in, ghost words drift, photo eases out of its zoom
+  const pins = $$('.pin');
+  if (pins.length) {
+    const pio = new IntersectionObserver((es) => es.forEach((e) => e.target.classList.toggle('in', e.isIntersecting)), { threshold: 0.45 });
+    pins.forEach((p) => pio.observe(p));
+    if (!reduce) {
+      const pinGhosts = pins.map((p) => $('.pin-ghost', p)), pinImgs = pins.map((p) => $('.pin-bg img', p));
+      (function pinLoop() {
+        const vh = innerHeight;
+        pins.forEach((p, i) => {
+          const r = p.getBoundingClientRect();
+          if (r.top > vh || r.bottom < -vh) return;
+          const prog = (vh - r.top) / (vh * 2);
+          pinGhosts[i].style.setProperty('--gx', (-prog * 600).toFixed(1) + 'px');
+          pinImgs[i].style.setProperty('--z', (1.12 - Math.max(0, Math.min(1, prog)) * 0.12).toFixed(4));
+        });
+        requestAnimationFrame(pinLoop);
+      })();
+    }
+  }
+
   // wedding journey: Sikh / Hindu tabs, steps rise in once visible
   const jtabs = $$('.jtabs [role=tab]');
   if (jtabs.length) {
