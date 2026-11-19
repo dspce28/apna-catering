@@ -108,42 +108,57 @@ def p34_spread():
       <div class="box script" style="left:106mm;width:51mm;top:73mm;font-size:18pt">…to your table</div>"""
 
 
+M = 7          # frame inset (same on every page)
+TOPW, BOTW = 34, 28   # corner rose widths
+
+
+def rose_frame(W, left_bleed=0):
+    """Gold double frame with four mirrored rose corners locked to the frame corners."""
+    th = TOPW * 470 / 758
+    bh = BOTW * 742 / 640
+    o = M + 3   # push the cut edge of each cluster out into the bleed
+    frame = (f'<rect x="{M}" y="{M}" width="{W-2*M}" height="{DH-2*M}" fill="none" stroke="url(#gold)" stroke-width=".6"/>'
+             f'<rect x="{M+1.6}" y="{M+1.6}" width="{W-2*M-3.2}" height="{DH-2*M-3.2}" fill="none" stroke="url(#gold)" stroke-width=".22"/>')
+    corners = (roses(M - o, M - o, TOPW, "x") + roses(W - M + o - TOPW, M - o, TOPW)
+               + roses_bl(M - o, DH - M + o - bh, BOTW) + roses_bl(W - M + o - BOTW, DH - M + o - bh, BOTW, "x"))
+    _cl = f"rf{int(W)}{left_bleed}"
+    clip = f'<clipPath id="{_cl}"><rect x="{-left_bleed}" y="-3" width="{W+left_bleed}" height="{DH+6}"/></clipPath>'
+    return frame + clip + f'<g clip-path="url(#{_cl})">{corners}</g>'
+
+
+def gold_ring(cx, cy, r):
+    return (f'<circle cx="{cx}" cy="{cy}" r="{r}" fill="#FFF8EC" stroke="url(#gold)" stroke-width=".6"/>'
+            f'<circle cx="{cx}" cy="{cy}" r="{r+1.9}" fill="none" stroke="url(#gold)" stroke-width=".5" stroke-dasharray="0 1.25" stroke-linecap="round"/>')
+
+
 def p5_special():
     events = ["Weddings", "Mehndi &amp; Sangeet", "Anniversaries", "Birthdays", "Corporate events", "Religious functions"]
     li = "".join(f"<li>{e}</li>" for e in events)
-    oval = (f'<clipPath id="ov"><ellipse cx="{DF/2}" cy="58" rx="25" ry="17"/></clipPath>'
-            f'<image href="../img/p-mandap-2400.webp" x="{DF/2-25}" y="41" width="50" height="34" preserveAspectRatio="xMidYMid slice" clip-path="url(#ov)"/>'
-            f'<ellipse cx="{DF/2}" cy="58" rx="25" ry="17" fill="none" stroke="url(#gold)" stroke-width=".7"/>'
-            f'<ellipse cx="{DF/2}" cy="58" rx="27.2" ry="19.2" fill="none" stroke="url(#gold)" stroke-width=".5" stroke-dasharray="0 1.25" stroke-linecap="round"/>')
-    frame = (f'<rect x="6" y="6" width="{DF-12}" height="{DH-12}" fill="none" stroke="url(#gold)" stroke-width=".5"/>'
-             f'<rect x="7.6" y="7.6" width="{DF-15.2}" height="{DH-15.2}" fill="none" stroke="url(#gold)" stroke-width=".2"/>')
-    art = svg(DF, DH, frame + oval + wing_divider(DF / 2, 84, 24)
-              + roses(DF - 54, -4, 54) + roses_bl(-6, DH - 52, 42)
-              + roses(-8, -6, 30, "x") + roses_bl(DF - 30, DH - 34, 30, "x")
-              + ribbon(DF / 2, 128, 64, 10))
+    cx = DF / 2
+    oval = (f'<clipPath id="ov"><ellipse cx="{cx}" cy="64" rx="24" ry="17"/></clipPath>'
+            f'<image href="../img/p-mandap-2400.webp" x="{cx-24}" y="47" width="48" height="34" preserveAspectRatio="xMidYMid slice" clip-path="url(#ov)"/>'
+            f'<ellipse cx="{cx}" cy="64" rx="24" ry="17" fill="none" stroke="url(#gold)" stroke-width=".7"/>'
+            f'<ellipse cx="{cx}" cy="64" rx="26.2" ry="19.2" fill="none" stroke="url(#gold)" stroke-width=".5" stroke-dasharray="0 1.25" stroke-linecap="round"/>')
+    art = svg(DF, DH, rose_frame(DF, 3) + wing_divider(cx, 39, 22) + oval + wing_divider(cx, 93, 22))
     return f"""{art}
-      <div class="t script" style="top:13mm;font-size:30pt">Celebrate</div>
-      <div class="t caps" style="top:28.5mm;font-size:11.5pt;letter-spacing:.06em">Special Events</div>
-      <div class="box body it" style="left:13mm;width:{DF-26}mm;top:87.5mm;font-size:9.4pt;line-height:1.35">
-        Every family celebrates in its own way. We tailor each menu to your traditions, your guests and your day.</div>
+      <div class="t script" style="top:18mm;font-size:27pt">Celebrate</div>
+      <div class="t caps" style="top:31mm;font-size:9.5pt;letter-spacing:.12em">Special Events</div>
       <ul class="evl">{li}</ul>
-      <div class="rib" style="left:{DF/2-32}mm;top:125.6mm;width:64mm;font-size:6.6pt">Menus tailored to your day</div>"""
+      <div class="t script" style="top:124mm;font-size:14pt">Menus tailored to your day</div>"""
 
 
 def p6_memorable():
-    art = svg(DW, DH, roses(DW - 50, -3, 53) + wing_divider(DW / 2, 41, 26)
-              + f'<circle cx="{DW/2}" cy="87" r="16.5" fill="#FFF8EC" stroke="url(#gold)" stroke-width=".55"/>'
-              + f'<circle cx="{DW/2}" cy="87" r="18.3" fill="none" stroke="url(#gold)" stroke-width=".45" stroke-dasharray="0 1.25" stroke-linecap="round"/>'
-              + ribbon(DW / 2, 124, 70, 13))
+    cx = DW / 2
+    art = svg(DW, DH, rose_frame(DW) + wing_divider(cx, 39, 22) + gold_ring(cx, 66, 16.5) + wing_divider(cx, 93, 22))
     return f"""{art}
-      <div class="t script" style="top:12mm;font-size:30pt">It's your day</div>
-      <div class="t caps" style="top:27mm;font-size:12.5pt;letter-spacing:.05em">Make it memorable</div>
-      <div class="t bul" style="top:46mm">Special events &nbsp;◆&nbsp; Corporate events<br>Event management</div>
-      <div class="box body it" style="left:12mm;width:{DW-24}mm;top:58.5mm">Celebrate your special event with the beautiful food of Apna Catering.</div>
-      <img class="logo" src="assets/logo-256.png" style="left:{DW/2-14.5}mm;top:72.5mm;width:29mm">
-      <div class="rib" style="left:{DW/2-35}mm;top:118.6mm;width:70mm;line-height:1.35">Book your celebration<br>
-        <span style="font-size:7.8pt;letter-spacing:.04em">07818 478036 · 07828 218002</span></div>
-      <div class="t body" style="top:134mm;font-size:8pt">hello@apnacatering.co.uk · apnacatering.co.uk</div>"""
+      <div class="t script" style="top:18mm;font-size:27pt">It's your day</div>
+      <div class="t caps" style="top:31mm;font-size:9.5pt;letter-spacing:.12em">Make it memorable</div>
+      <img class="logo" src="assets/logo-256.png" style="left:{cx-14.5}mm;top:51.5mm;width:29mm">
+      <div class="t caps" style="top:99mm;font-size:6pt;letter-spacing:.24em">Book your celebration</div>
+      <div class="t body" style="top:104mm;font-size:12pt;font-weight:700;color:{MAROON}">07818 478036</div>
+      <div class="t body" style="top:110.5mm;font-size:12pt;font-weight:700;color:{MAROON}">07828 218002</div>
+      <div class="t body" style="top:118.5mm;font-size:8pt">hello@apnacatering.co.uk</div>
+      <div class="t script" style="top:124mm;font-size:14pt">apnacatering.co.uk</div>"""
 
 
 # ------------------------------------------------------------------ assemble
@@ -177,7 +192,7 @@ body{{-webkit-print-color-adjust:exact;print-color-adjust:exact;background:#fff}
 .bul{{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:700;color:#8A5A18;font-size:9.6pt;line-height:1.5}}
 .rib{{position:absolute;text-align:center;font-family:'Cinzel',serif;font-weight:700;color:#FBEFD6;font-size:7.2pt;letter-spacing:.08em;text-transform:uppercase}}
 .logo{{position:absolute}}
-.evl{{position:absolute;left:16mm;right:12mm;top:104mm;list-style:none;columns:2;column-gap:4mm;font-family:'Cormorant Garamond',serif;font-weight:700;font-size:8.6pt;line-height:1.55;color:{INK};text-align:left}}
+.evl{{position:absolute;left:21mm;right:14mm;top:99.5mm;list-style:none;columns:2;column-gap:4mm;font-family:'Cormorant Garamond',serif;font-weight:700;font-size:8.6pt;line-height:1.55;color:{INK};text-align:left}}
 .evl li:before{{content:'\\25C6';color:#A8752A;font-size:5pt;margin-right:1.6mm;vertical-align:middle}}
 """
     outside = f"""
