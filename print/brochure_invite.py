@@ -148,8 +148,8 @@ def p5_special():
 
 
 def p6_memorable():
-    cx = 38          # text column mirrors the cover's right-hand text block
-    L, Wd = cx - 33, 66
+    cx = 29          # text column mirrors the cover's right-hand text block
+    L, Wd = cx - 25, 50
     art = svg(DW, DH, wing_divider(cx, 45, 20) + gold_ring(cx, 69, 14.5) + wing_divider(cx, 89, 20))
     col = f"left:{L}mm;width:{Wd}mm"
     return f"""{art}
@@ -208,7 +208,8 @@ body{{-webkit-print-color-adjust:exact;print-color-adjust:exact;background:#fff}
 <section class="sheet" id="outside">
   <img class="bgimg" src="assets/cream-bg.jpg">
   {place(B, DF, p5_special())}
-  <div style="position:absolute;left:{B+FW}mm;top:0;width:{PW}mm;height:{SH}mm;overflow:hidden">
+  <div style="position:absolute;left:{B+FW}mm;top:0;width:{PW}mm;height:{SH}mm;overflow:hidden;
+       background:radial-gradient(ellipse 75% 55% at 62% 50%,#FCE7CB 0%,#F8DDBE 55%,#F2D0AC 100%)">
     <img src="assets/cover-mirror.png" style="position:absolute;left:{PW-(PW+B)}mm;top:{-((PW+B)*1.5-SH)*0.3:.3f}mm;width:{PW+B}mm;height:{(PW+B)*1.5}mm">
     {extra_roses(PW, SH)}
   </div>
