@@ -23,3 +23,13 @@ Before print: hotel logos (p6) are placeholders; logo is 256 px (needs vector/�
 - `out/envelope-DL-preview.png` — finished back and front.
 Assembly: fold side flaps in, fold the back panel up and glue it to the side flaps, then the V flap closes over it.
 The A6 brochure goes in landscape (148 × 105) with 5 mm height clearance: make a physical dummy before the run.
+
+## A6 brochure matched to the final envelope (Envelope_design.pdf)
+
+    python3 print/brochure_a6.py && node print/render_a6.js
+
+One design, two sizes:
+- `out/brochure-A6-print-bleed.pdf` — folded 105 × 148 (flat 312 × 148 + 3 mm bleed). Needs a C6 (162 × 114) envelope.
+- `out/brochure-FIT-print-bleed.pdf` — folded 98 × 140 (flat 291 × 140 + 3 mm bleed). Fits the client's Canva envelope (≈147.6 × 104 mm inside, measured from the PDF).
+Page 1 outside (p5 tuck-in | p6 back | p1 cover), page 2 inside (p2 story | p3 + p4 photo spread).
+Style: #6C000C damask (mirrored tile, rasterised 400 dpi), Luxurious Script / Cinzel Decorative / Cormorant Garamond, glossy gold peacock feather with almond eye.

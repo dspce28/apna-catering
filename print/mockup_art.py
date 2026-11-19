@@ -130,7 +130,7 @@ def _egg(rx, ry, cy=0.0, n=72):
     return "M" + " L".join(f"{x:.2f},{y:.2f}" for x, y in pts) + "Z"
 
 
-def peacock(x, y, rot, s=1.0, seed=4):
+def peacock(x, y, rot, s=1.0, seed=4, eye_style="egg", wscale=1.0):
     r = random.Random(seed)
     RX, RY = 10.5, 13.0
     strands, lace, teal = [], [], []
@@ -162,7 +162,7 @@ def peacock(x, y, rot, s=1.0, seed=4):
                 ey += .45 * math.sin(ang)
                 pts.append((ex, ey))
             dd = "M" + " L".join(f"{a:.2f},{b:.2f}" for a, b in pts)
-            w = r.uniform(.32, .58)
+            w = r.uniform(.32, .58) * wscale
             strands.append(f'<path d="{dd}" stroke="{GOLD}" stroke-width="{w:.2f}"/>')
             strands.append(f'<path class="color" d="{dd}" stroke="#FFF1C6" stroke-width="{w*.28:.2f}" opacity=".55" transform="translate(-.08 -.1)"/>')
             if u < .3:
@@ -199,6 +199,8 @@ def peacock(x, y, rot, s=1.0, seed=4):
       <circle cx="0" cy="2.7" r="5.7" fill="none" stroke="#E8FBFF" stroke-width=".18" opacity=".7" class="color"/>"""
     quill = (f'<path d="M0,{RY} C.8,30 1.2,50 2.6,80" stroke="{GOLD}" stroke-width=".85"/>'
              f'<path class="color" d="M-.2,{RY} C.6,30 1,50 2.4,80" stroke="#FFF1C6" stroke-width=".25" opacity=".55"/>')
+    if eye_style == "almond":
+        eye = almond_eye(RX, RY)
     return (f'<g transform="translate({x} {y}) rotate({rot}) scale({s})" fill="none" stroke-linecap="round" stroke-linejoin="round">'
             f'{"".join(strands)}{"".join(teal)}{"".join(lace)}{quill}{eye}</g>')
 
@@ -243,3 +245,121 @@ def paisley_lace(x, y, rot, s, seed=8):
       <path d="{spd}" stroke-width="3"/>
       <path d="{spd}" stroke-width="6" stroke-dasharray="0 10" transform="translate(92 26) scale(1.22) translate(-92 -26)"/>
     </g>"""
+
+
+def _almond(rx, ry, cy=0.0):
+    return (f"M0,{cy-ry:.2f} C{rx*.95:.2f},{cy-ry*.42:.2f} {rx*1.02:.2f},{cy+ry*.42:.2f} 0,{cy+ry:.2f} "
+            f"C{-rx*1.02:.2f},{cy+ry*.42:.2f} {-rx*.95:.2f},{cy-ry*.42:.2f} 0,{cy-ry:.2f}Z")
+
+
+def almond_eye(RX, RY):
+    """Eye as on the client's final envelope: pointed almond, blue band, bronze ring, turquoise, deep blue, gloss."""
+    return f"""
+      <g class="color">
+        <path d="M-4,{RY*.8} C-2.2,{RY+5} -1,{RY+10} 0,{RY+15} C1,{RY+10} 2.2,{RY+5} 4,{RY*.8}Z" fill="url(#neck)"/>
+        <path d="{_almond(RX, RY)}" fill="url(#eyeblue)"/>
+        <path d="{_almond(RX*.78, RY*.74, 1.6)}" fill="url(#eyebronze)"/>
+        <circle cx="0" cy="3.2" r="5.0" fill="url(#turq)"/>
+        <circle cx="0" cy="3.4" r="3.6" fill="url(#deepblue)"/>
+        <path d="M-1.6,6.6 C-1.9,5.4 -1.2,4.6 -.2,4.7 C-.5,5.5 -.9,6.1 -1.6,6.6Z" fill="#46D6D2"/>
+        <ellipse cx="-1.1" cy="2.2" rx="1.1" ry=".75" fill="#fff" opacity=".65" transform="rotate(-25 -1.1 2.2)"/>
+      </g>
+      <path d="{_almond(RX*1.07, RY*1.05)}" fill="none" stroke="{GOLD}" stroke-width=".6" stroke-dasharray="0 1.15"/>
+      <path d="{_almond(RX, RY)}" fill="none" stroke="{GOLD}" stroke-width=".35"/>
+      <path d="{_almond(RX*.78, RY*.74, 1.6)}" fill="none" stroke="{GOLD}" stroke-width=".45" stroke-dasharray="0 .95"/>
+      <circle cx="0" cy="3.2" r="5.0" fill="none" stroke="{GOLD}" stroke-width=".25"/>"""
+
+
+def eye_defs():
+    return """
+  <linearGradient id="eyeblue" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3C86F0"/><stop offset=".6" stop-color="#1F49C4"/><stop offset="1" stop-color="#142E8E"/></linearGradient>
+  <radialGradient id="eyebronze" cx=".5" cy=".6" r=".6"><stop offset=".3" stop-color="#F4B65A"/><stop offset=".8" stop-color="#C8742C"/><stop offset="1" stop-color="#8E4A1C"/></radialGradient>
+  <radialGradient id="deepblue" cx=".4" cy=".35" r=".7"><stop offset="0" stop-color="#4A72F6"/><stop offset=".55" stop-color="#1A33C4"/><stop offset="1" stop-color="#0A1670"/></radialGradient>"""
+
+
+def mandala(cx, cy, R):
+    """Gold mandala like the one on the envelope flap."""
+    parts = [f'<circle r="{R*.16:.2f}" fill="{GOLD}"/>', f'<circle r="{R*.26:.2f}" stroke-width="{R*.03:.2f}"/>']
+    for ring, (n, r0, r1, w) in enumerate([(8, .28, .5, .13), (12, .48, .74, .1), (16, .72, .96, .07)]):
+        for i in range(n):
+            a = 360 * i / n + (ring * 11)
+            parts.append(f'<path transform="rotate({a:.1f})" d="M0,{-R*r0:.2f} C{R*w:.2f},{-R*(r0+r1)/2:.2f} {R*w*.6:.2f},{-R*r1*.95:.2f} 0,{-R*r1:.2f} '
+                         f'C{-R*w*.6:.2f},{-R*r1*.95:.2f} {-R*w:.2f},{-R*(r0+r1)/2:.2f} 0,{-R*r0:.2f}Z" stroke-width="{R*.022:.2f}"/>')
+    parts.append(f'<circle r="{R:.2f}" stroke-width="{R*.06:.2f}" stroke-dasharray="0 {R*.13:.2f}"/>')
+    return (f'<g transform="translate({cx} {cy})" fill="none" stroke="{GOLD}" stroke-linecap="round">{"".join(parts)}</g>')
+
+
+def wing_divider(cx, cy, half):
+    """Envelope-style divider: tapered gold bar with rounded ends and winged centre."""
+    wing = (f"M0,0 C2.2,-2.6 5.6,-3.2 8.4,-1.9 C6.2,-1.9 4.6,-1.2 3.6,0 C4.6,.4 5.6,1.2 6.2,2.2 C4,1.4 1.8,.9 0,0Z")
+    return (f'<g transform="translate({cx} {cy})" fill="{GOLD}">'
+            f'<path d="M{-half},0 Q0,-.75 {half},0 Q0,.75 {-half},0Z"/>'
+            f'<circle cx="{-half}" cy="0" r=".75"/><circle cx="{half}" cy="0" r=".75"/>'
+            f'<path d="{wing}" transform="translate(1.3 0)"/><path d="{wing}" transform="translate(-1.3 0) scale(-1 1)"/>'
+            f'<path d="M0,-2.4 L1.1,0 L0,2.4 L-1.1,0Z"/></g>')
+
+
+def feather_glossy(x, y, rot, s=1.0, seed=12):
+    """Classic gold-leaf peacock feather like the client's final envelope: tapered glossy barbs on a
+    curved quill, almond eye at the tip, dotted gold swirls around it. Local: tip up (-y), base at +68."""
+    r = random.Random(seed)
+    RX, RY = 8.2, 11.5
+    barbs, shine = [], []
+
+    def half_w(yy):
+        if yy < 6:
+            return 15.5
+        return max(2.8, 15.5 - (yy - 6) * .19)
+
+    def qx(yy):  # quill bows slightly
+        return .03 * (yy - 68) ** 2 / 30 - 1.0
+
+    yy = 68.0
+    while yy > -17:
+        for side in (-1, 1):
+            if r.random() < .07:
+                continue
+            hw = half_w(yy) * r.uniform(.85, 1.08)
+            if yy < 8:   # crown around the eye: radiate outward
+                t = (8 - yy) / 25
+                ang = math.radians(lerp_(32, 80, t))
+                L = hw * r.uniform(1.0, 1.25)
+            else:
+                ang = math.radians(r.uniform(38, 48))
+                L = hw / math.cos(math.radians(30))
+            x0 = qx(yy)
+            ex, ey = x0 + side * L * math.cos(ang), yy - L * math.sin(ang)
+            mx, my = x0 + side * L * .55 * math.cos(ang - .18), yy - L * .55 * math.sin(ang - .18) + .6
+            root = r.uniform(1.0, 1.6)
+            nx, ny = -math.sin(ang) * side, -math.cos(ang)
+            p1 = (x0 + nx * root * .5, yy + ny * root * .5 + .4)
+            p2 = (x0 - nx * root * .5, yy - ny * root * .5 - .4)
+            d = (f"M{p1[0]:.2f},{p1[1]:.2f} Q{mx + nx*root*.35:.2f},{my + ny*root*.35:.2f} {ex:.2f},{ey:.2f} "
+                 f"Q{mx - nx*root*.35:.2f},{my - ny*root*.35:.2f} {p2[0]:.2f},{p2[1]:.2f}Z")
+            barbs.append(f'<path d="{d}" fill="{GOLD}" stroke="#7A4A12" stroke-width=".07"/>')
+            shine.append(f'<path class="color" d="M{x0:.2f},{yy:.2f} Q{mx:.2f},{my:.2f} {ex:.2f},{ey:.2f}" '
+                         f'stroke="#FFF4CC" stroke-width=".12" opacity=".55" fill="none"/>')
+        yy -= 1.0 if yy > 8 else .7
+    quill = (f'<path d="M{qx(70):.2f},72 Q{qx(30)+.6:.2f},30 {qx(0):.2f},0" fill="none" stroke="{GOLD}" stroke-width=".9"/>'
+             f'<path class="color" d="M{qx(70)-.2:.2f},72 Q{qx(30)+.4:.2f},30 {qx(0)-.2:.2f},0" fill="none" stroke="#FFF4CC" stroke-width=".25" opacity=".6"/>')
+    swirls = []
+    for k in range(5):
+        a0 = r.uniform(0, 6.28)
+        cx, cy = r.uniform(-16, 16), r.uniform(10, 62)
+        pts, rad, th = [], r.uniform(8, 14), a0
+        while rad > 1.2:
+            pts.append((cx + rad * math.cos(th), cy + rad * math.sin(th)))
+            th += .16
+            rad *= .965
+        dd = "M" + " L".join(f"{a:.2f},{b:.2f}" for a, b in pts)
+        swirls.append(f'<path d="{dd}" fill="none" stroke="{GOLD}" stroke-width=".55" stroke-dasharray="0 1.25" stroke-linecap="round"/>')
+    stars = "".join(f'<path transform="translate({r.uniform(-18,18):.1f} {r.uniform(-20,60):.1f}) scale({r.uniform(.5,.9):.2f})" '
+                    f'd="M0,-1.6 L.35,-.35 L1.6,0 L.35,.35 L0,1.6 L-.35,.35 L-1.6,0 L-.35,-.35Z" fill="#FFF1C4" opacity=".8"/>'
+                    for _ in range(7))
+    eye = almond_eye(RX, RY).replace(f'C-4,{RY*.8}', f'C-4,{RY*.8}')
+    return (f'<g transform="translate({x} {y}) rotate({rot}) scale({s})">'
+            f'{"".join(swirls)}{"".join(barbs)}{"".join(shine)}{quill}{eye}{stars}</g>')
+
+
+def lerp_(a, b, t):
+    return a + (b - a) * t
