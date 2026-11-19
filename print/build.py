@@ -39,71 +39,8 @@ def photo(n):
 
 # ---------------------------------------------------------------- artwork
 def feather_svg(seed=7, cls="feather"):
-    """Original peacock feather, drawn top (eye) to bottom (quill). viewBox 300x1000."""
-    rnd = random.Random(seed)
-    out = []
-    cx = 150
-
-    def rach(t):  # t: 0 top .. 1 base
-        return cx + 18 * math.sin(t * math.pi * 0.9), 40 + 930 * t
-
-    # quill
-    pts = [rach(i / 60) for i in range(61)]
-    d = "M" + " L".join(f"{x:.1f},{y:.1f}" for x, y in pts)
-
-    eye_cy = 215
-    # dense vane round the eye
-    t = 0.0
-    while t < 0.36:
-        x, y = rach(t)
-        dy = (y - eye_cy) / 185
-        half = 108 * math.sqrt(max(0, 1 - dy * dy)) + 22
-        for side in (-1, 1):
-            L = half * rnd.uniform(0.9, 1.08)
-            ang = math.radians(rnd.uniform(-6, 10)) - (dy * 0.9)
-            ex = x + side * L * math.cos(ang)
-            ey = y - L * math.sin(ang) * 0.55
-            c1x = x + side * L * 0.45
-            c1y = y - 6
-            col = rnd.choice(["#7FA03A", "#9BAF45", "#5E8F45", "#B9A548", "#4F8B6A"])
-            out.append(f'<path d="M{x:.1f},{y:.1f} Q{c1x:.1f},{c1y:.1f} {ex:.1f},{ey:.1f}" stroke="{col}" stroke-width="{rnd.uniform(.8,1.5):.2f}" opacity=".85"/>')
-        t += 0.0026
-    # wispy lower barbs
-    t = 0.36
-    while t < 0.94:
-        x, y = rach(t)
-        prog = (t - 0.36) / 0.58
-        for side in (-1, 1):
-            L = (125 - 40 * prog) * rnd.uniform(0.75, 1.1)
-            ex = x + side * L * 0.92
-            ey = y - L * (0.55 + 0.25 * prog)
-            c1x = x + side * L * 0.25
-            c1y = y - L * 0.05
-            c2x = x + side * L * 0.8
-            c2y = y - L * 0.25
-            col = rnd.choice(["#8FA54A", "#A9B26A", "#6F9550", "#C2B067", "#4E8C7C"])
-            out.append(f'<path d="M{x:.1f},{y:.1f} C{c1x:.1f},{c1y:.1f} {c2x:.1f},{c2y:.1f} {ex:.1f},{ey:.1f}" stroke="{col}" stroke-width="{rnd.uniform(.6,1.1):.2f}" opacity="{.75-.35*prog:.2f}"/>')
-        t += 0.0075 + 0.006 * prog
-
-    gid = f"g{seed}"
-    eye = f"""
-    <defs>
-      <radialGradient id="{gid}h" cx="50%" cy="58%" r="50%"><stop offset="0" stop-color="#2B4FC9"/><stop offset=".7" stop-color="#1B2C8E"/><stop offset="1" stop-color="#121255"/></radialGradient>
-      <radialGradient id="{gid}t" cx="50%" cy="55%" r="50%"><stop offset=".6" stop-color="#1FA3AE"/><stop offset="1" stop-color="#14707F"/></radialGradient>
-      <linearGradient id="{gid}g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F3DC9A"/><stop offset=".5" stop-color="#C8A04E"/><stop offset="1" stop-color="#8E6A2A"/></linearGradient>
-    </defs>
-    <ellipse cx="{cx}" cy="{eye_cy}" rx="96" ry="124" fill="#B89A3E" opacity=".45"/>
-    <ellipse cx="{cx}" cy="{eye_cy+4}" rx="80" ry="106" fill="#3E8A50"/>
-    <ellipse cx="{cx}" cy="{eye_cy+8}" rx="66" ry="88" fill="#A0682B"/>
-    <ellipse cx="{cx}" cy="{eye_cy+10}" rx="66" ry="88" fill="none" stroke="url(#{gid}g)" stroke-width="2.4"/>
-    <ellipse cx="{cx}" cy="{eye_cy+12}" rx="52" ry="70" fill="url(#{gid}t)"/>
-    <path d="M{cx},{eye_cy-28} C{cx+44},{eye_cy-52} {cx+50},{eye_cy+30} {cx},{eye_cy+62} C{cx-50},{eye_cy+30} {cx-44},{eye_cy-52} {cx},{eye_cy-28}Z" fill="url(#{gid}h)"/>
-    <ellipse cx="{cx-10}" cy="{eye_cy-4}" rx="9" ry="14" fill="#fff" opacity=".18"/>
-    """
-    return (f'<svg class="{cls}" viewBox="0 -40 300 1060" xmlns="http://www.w3.org/2000/svg">'
-            f'<g fill="none" stroke-linecap="round">{"".join(out)}</g>'
-            f'<path d="{d}" fill="none" stroke="url(#{gid}g)" stroke-width="3.2" stroke-linecap="round"/>'
-            f'{eye}</svg>')
+    """Realistic peacock feather raster from feather.py (rendered by render_feather.js)."""
+    return f'<img class="{cls}" src="assets/feather.png" alt="">'
 
 
 PAISLEY_D = ("M100,295 C35,295 0,240 5,180 C10,110 60,70 95,50 C120,35 130,15 120,5 "
@@ -193,16 +130,16 @@ def brochure():
 .p1 .frame{{position:absolute;inset:{BLEED+5}mm;border:.35mm solid {GOLD};}}
 .p1 .frame{{z-index:0}}
 .p1 .frame:after{{content:"";position:absolute;inset:1.2mm;border:.2mm solid {GOLD};opacity:.6}}
-.p1 .logo{{position:absolute;left:50%;top:{BLEED+15}mm;width:40mm;transform:translateX(-50%)}}
-.p1 .t{{position:absolute;left:0;right:0;top:{BLEED+60}mm;text-align:center}}
+.p1 .logo{{position:absolute;left:50%;top:{BLEED+12}mm;width:31mm;transform:translateX(-50%)}}
+.p1 .t{{position:absolute;left:0;right:0;top:{BLEED+46}mm;text-align:center}}
 .p1 .t .script{{font-size:26pt;color:{GOLD}}}
 .p1 .t .caps{{font-size:15pt;color:{IVORY};margin-top:1mm}}
 .p1 .t .sub{{font-size:5.6pt;letter-spacing:.32em;text-transform:uppercase;color:{CHAMP};opacity:.85}}
-.p1 .feather{{position:absolute;width:17mm;left:calc(50% - 8.5mm);bottom:{BLEED+9}mm;transform:rotate(44deg);transform-origin:50% 96%}}
-.p1 .feather.f2{{transform:rotate(-44deg)}}
+.p1 .feather{{position:absolute;width:24mm;left:calc(50% - 12mm);bottom:{BLEED+5}mm;transform:rotate(28deg);transform-origin:50% 98%}}
+.p1 .feather.f2{{transform:rotate(-28deg)}}
 
 /* p2 love for food */
-.p2 .feather{{position:absolute;width:38mm;left:-13mm;top:-2mm;transform:rotate(-9deg);transform-origin:top center}}
+.p2 .feather{{position:absolute;width:34mm;left:-5mm;top:1mm;transform:rotate(-7deg);transform-origin:top center}}
 .p2 .copy{{position:absolute;left:{BLEED+31}mm;right:7mm;top:{BLEED+9}mm;text-align:center}}
 .p2 .script-svg{{width:100%;height:15mm;display:block}}
 .p2 .caps{{font-size:14pt;color:{INK};margin-top:.5mm}}
@@ -292,7 +229,6 @@ def brochure():
       <div class="script">Glasgow's</div>
       <div class="caps">Wedding &amp; Event<br>Caterers</div>
       {divider()}
-      <div class="sub">Weddings · Anniversaries · Birthdays</div>
     </div>
   </div>
 </section>"""

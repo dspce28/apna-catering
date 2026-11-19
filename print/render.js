@@ -33,6 +33,9 @@ async function guides(page, id, folds, trim) {
   }, { id, folds, trim, MM });
 }
 
+const { execSync } = require('child_process');
+execSync('python3 ' + path.join(__dirname, 'feather.py') + ' && node ' + path.join(__dirname, 'render_feather.js'), { stdio: 'inherit' });
+
 (async () => {
   const browser = await chromium.launch();
   const page = await browser.newPage({ deviceScaleFactor: 2 });
