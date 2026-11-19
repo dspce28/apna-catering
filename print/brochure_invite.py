@@ -170,6 +170,15 @@ def extra_roses(PW, SH):
             f'width:{w}mm;height:{h}mm">')
 
 
+def fold_bouquet(fold_x, PW, SH):
+    """Rose pyramid centred on the back/cover fold, at exactly the cover image's scale and position:
+    its right half coincides with the cover's own roses, its left half is their mirror."""
+    mmpp = (PW + B) / 2048
+    top = -((PW + B) * 1.5 - SH) * 0.3 + 1700 * mmpp
+    return (f'<img src="assets/roses-fold.png" style="position:absolute;left:{fold_x - 1000*mmpp:.3f}mm;top:{top:.3f}mm;'
+            f'width:{2000*mmpp:.3f}mm;height:{1372*mmpp:.3f}mm">')
+
+
 # ------------------------------------------------------------------ assemble
 def build(version):
     PW, PH = VERSIONS[version]
@@ -211,10 +220,10 @@ body{{-webkit-print-color-adjust:exact;print-color-adjust:exact;background:#fff}
   <div style="position:absolute;left:{B+FW}mm;top:0;width:{PW}mm;height:{SH}mm;overflow:hidden;
        background:radial-gradient(ellipse 75% 55% at 62% 50%,#FCE7CB 0%,#F8DDBE 55%,#F2D0AC 100%)">
     <img src="assets/cover-mirror.png" style="position:absolute;left:{PW-(PW+B)}mm;top:{-((PW+B)*1.5-SH)*0.3:.3f}mm;width:{PW+B}mm;height:{(PW+B)*1.5}mm">
-    {extra_roses(PW, SH)}
   </div>
   {place(B + FW, DW, p6_memorable())}
   <img class="full" src="assets/invitation-cover.jpg" style="left:{B+FW+PW}mm;width:{PW+B}mm;object-position:50% 30%">
+  {fold_bouquet(B + FW + PW, PW, SH)}
 </section>"""
     inside = f"""
 <section class="sheet" id="inside">
