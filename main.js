@@ -76,20 +76,11 @@
 
   const playOpening = () => {
     loader.classList.add('first');
-    const yr = $('.ld-year span', loader), now = new Date().getFullYear();
-    const countYear = () => {
-      const t0 = performance.now(), dur = 1100;
-      const tick = (t) => {
-        const p = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - p, 3);
-        yr.textContent = Math.round(1975 + (now - 1975) * e);
-        if (p < 1) requestAnimationFrame(tick);
-      };
-      requestAnimationFrame(tick);
-    };
     steps([
-      [60, cls('s-in')], [380, countYear], [1650, cls('s-thread')],
-      [2150, () => { loader.classList.add('s-open'); reveal(); }],
-      [3250, finish],
+      [80, cls('s-in')], [800, cls('s-crack')], [1100, cls('s-open')], [1480, cls('s-flapback')], [1600, cls('s-rise')],
+      [2350, cls('s-thread')],
+      [2700, () => { loader.classList.add('s-split'); reveal(); }],
+      [3800, finish],
     ]);
   };
 
@@ -389,29 +380,15 @@
 
   /* ---------- Motion layer: smooth scroll, scroll-fill text, stacking cards,
      velocity marquee, hover-reveal dishes, cursor with labels, footer wordmark ---------- */
-  let lenis = null;
-  if (window.Lenis && !reduce) {
-    lenis = new window.Lenis({ lerp: 0.1, wheelMultiplier: 1 });
-    const lraf = (t) => { lenis.raf(t); requestAnimationFrame(lraf); };
-    requestAnimationFrame(lraf);
-    document.addEventListener('click', (e) => {
-      const a = e.target.closest('a[href*="#"]');
-      if (!a || e.defaultPrevented) return;
-      const url = new URL(a.href, location.href);
-      if (url.pathname.replace(/\.html$/, '') !== location.pathname.replace(/\.html$/, '') || !url.hash) return;
-      const t = url.hash === '#top' ? 0 : $(url.hash);
-      if (t === null) return;
-      e.preventDefault();
-      lenis.scrollTo(t, { offset: -80, duration: 1.4 });
-    });
-  }
-
   const fill = $('[data-fill]');
   let fillWords = [];
   if (fill) { splitWords(fill, 'fw'); fillWords = $$('.fw', fill); }
 
   const stackCards = $$('.stack .xcard');
   stackCards.forEach((c, i) => c.style.setProperty('--i', i));
+  let stackTops = [], lastDrawY = -1;
+  const measureStack = () => { stackTops = stackCards.map((c) => parseFloat(getComputedStyle(c).top) || 0); lastDrawY = -1; };
+  measureStack(); addEventListener('resize', measureStack);
 
   const marq = $('.marquee'), mtrack = marq && $('.marquee-track', marq);
   let mx = 0, mhalf = 0;
@@ -422,14 +399,15 @@
   (function motion(now) {
     const dt = Math.min(64, now - lastT); lastT = now;
     const y = scrollY; vel += ((y - lastY) - vel) * 0.2; lastY = y;
-    if (fillWords.length) {
+    const moved = y !== lastDrawY; lastDrawY = y;
+    if (fillWords.length && moved) {
       const r = fill.getBoundingClientRect(), vh = innerHeight;
       const p = clamp01((vh * 0.85 - r.top) / (r.height + vh * 0.45));
       const n = fillWords.length;
       fillWords.forEach((w, i) => { w.style.setProperty('--o', (0.14 + 0.86 * clamp01(p * n * 1.15 - i)).toFixed(2)); });
     }
-    for (let i = 0; i < stackCards.length - 1; i++) {
-      const next = stackCards[i + 1], top = parseFloat(getComputedStyle(next).top) || 0, r = next.getBoundingClientRect().top;
+    for (let i = 0; moved && i < stackCards.length - 1; i++) {
+      const next = stackCards[i + 1], top = stackTops[i + 1], r = next.getBoundingClientRect().top;
       const p = clamp01((innerHeight - r) / (innerHeight - top));
       stackCards[i].style.transform = 'scale(' + (1 - 0.06 * p).toFixed(4) + ')';
       stackCards[i].style.setProperty('--b', (1 - 0.45 * p).toFixed(3));
@@ -516,7 +494,10 @@
     pins.forEach((p) => pio.observe(p));
     if (!reduce) {
       const pinGhosts = pins.map((p) => $('.pin-ghost', p)), pinImgs = pins.map((p) => $('.pin-bg img', p));
+      let pinY = -1;
       (function pinLoop() {
+        if (scrollY === pinY) { requestAnimationFrame(pinLoop); return; }
+        pinY = scrollY;
         const vh = innerHeight;
         pins.forEach((p, i) => {
           const r = p.getBoundingClientRect();
@@ -532,7 +513,10 @@
 
   // grandeur band: slow parallax on the photo
   const grm = $('.gr-media');
+  let grY = -1;
   if (grm && !reduce) (function grLoop() {
+    if (scrollY === grY) { requestAnimationFrame(grLoop); return; }
+    grY = scrollY;
     const r = grm.parentElement.getBoundingClientRect();
     if (r.bottom > 0 && r.top < innerHeight) grm.style.transform = 'translate3d(0,' + ((r.top + r.height / 2 - innerHeight / 2) * -0.12).toFixed(1) + 'px,0)';
     requestAnimationFrame(grLoop);

@@ -120,10 +120,12 @@ CURTAIN = """<div class="loader is-on" aria-hidden="true">
   <div class="ld-half ld-top"></div>
   <div class="ld-half ld-bot"></div>
   <i class="ld-thread"></i>
-  <div class="ld-core">
-    <img class="ld-mark" src="img/logo-256.png" alt="" width="150" height="150">
-    <p class="ld-year"><span>1975</span></p>
-    <p class="ld-tag">Fifty years of celebrations</p>
+  <div class="ld-env">
+    <div class="ld-back"></div>
+    <div class="ld-letter"><small>You are invited to a feast</small><i>Apna Catering</i><small>Wedding caterers &middot; Since 1975</small></div>
+    <div class="ld-front"></div>
+    <div class="ld-flap"></div>
+    <div class="ld-seal"><div class="l"><img src="img/logo-256.png" alt=""></div><div class="r"><img src="img/logo-256.png" alt=""></div></div>
   </div>
   <canvas class="ld-powder"></canvas>
   <img class="ld-logo" src="img/logo-256.png" alt="" width="132" height="132">
@@ -202,7 +204,7 @@ def shell(active, title, description, body, preload=""):
     page_class = active.replace(".html", "")
     return (head + f'<body class="page-{page_class}">\n' + CURTAIN + part("sprites") + nav(active)
             + "\n<main>\n" + body + "\n</main>\n\n" + footer() + "\n" + part("mobilebar")
-            + '\n<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js" defer></script>\n<script src="main.js" defer></script>\n</body>\n</html>\n')
+            + '\n<script src="main.js" defer></script>\n</body>\n</html>\n')
 
 
 HERO_PRELOAD = '<link rel="preload" as="image" href="img/gw-buffet.webp" imagesrcset="img/gw-buffet.webp 1200w, img/gw-buffet-2400.webp 2400w, img/gw-buffet-2720.webp 2720w" imagesizes="100vw">'
