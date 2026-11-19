@@ -13,7 +13,6 @@
      Between pages: gold, saffron and rose powder settles into a rangoli around the logo
      on the way out, and a breeze clears it away on the next page. */
   const loader = $('.loader');
-  const firstVisit = !store.get('seen');
   const reveal = () => document.body.classList.add('loaded');
   const finish = () => { if (!loader) return; loader.classList.remove('is-on'); loader.classList.add('gone'); };
 
@@ -74,16 +73,6 @@
   const steps = (list) => list.forEach(([ms, fn]) => setTimeout(fn, ms));
   const cls = (c) => () => loader.classList.add(c);
 
-  const playOpening = () => {
-    loader.classList.add('first');
-    steps([
-      [80, cls('s-in')], [800, cls('s-crack')], [1100, cls('s-open')], [1480, cls('s-flapback')], [1600, cls('s-rise')],
-      [2350, cls('s-thread')],
-      [2700, () => { loader.classList.add('s-split'); reveal(); }],
-      [3800, finish],
-    ]);
-  };
-
   const playClear = () => {
     loader.classList.add('trans');
     void loader.offsetWidth; // paint the settled state first so the logo and veil fade rather than vanish
@@ -93,8 +82,10 @@
   };
 
   const runLoader = () => {
-    if (!loader || reduce) { store.set('seen', true); reveal(); finish(); return; }
-    if (firstVisit) { store.set('seen', true); playOpening(); return; }
+    const arriving = document.documentElement.classList.contains('arriving');
+    try { sessionStorage.removeItem('apna-trans'); } catch (e) { /* private mode */ }
+    if (!loader || reduce || !arriving) { reveal(); finish(); return; }
+    loader.classList.add('is-on');
     playClear();
   };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', runLoader); else runLoader();
@@ -113,7 +104,7 @@
     const clean = (p) => p.replace(/\.html$/, '').replace(/\/index$/, '/');
     if (clean(url.pathname) === clean(location.pathname)) return; // same page anchor
     e.preventDefault();
-    store.set('seen', true);
+    store.set('trans', true);
     loader.className = 'loader is-on trans closing';
     powder.run('fall', 750, () => setTimeout(() => { location.href = url.href; }, 80));
   });
@@ -521,6 +512,102 @@
     if (r.bottom > 0 && r.top < innerHeight) grm.style.transform = 'translate3d(0,' + ((r.top + r.height / 2 - innerHeight / 2) * -0.12).toFixed(1) + 'px,0)';
     requestAnimationFrame(grLoop);
   })();
+
+  // events we cater: a single pinned stage; each photo + card wipes up, scrubbed by scroll
+  const evx = $('.evx');
+  if (evx) {
+    const bgs = $$('.evx-bg', evx), cards = $$('.evx-card', evx), dots = $$('.evx-dots i', evx), n = bgs.length;
+    let evY = -1;
+    const evDraw = () => {
+      const r = evx.getBoundingClientRect(), span = r.height - innerHeight;
+      const p = Math.max(0, Math.min(1, -r.top / span)) * (n - 1);
+      for (let i = 1; i < n; i++) {
+        const local = Math.max(0, Math.min(1, p - (i - 1)));
+        const e = local < .5 ? 2 * local * local : 1 - Math.pow(-2 * local + 2, 2) / 2;
+        bgs[i].style.setProperty('--r', e.toFixed(4));
+        cards[i].style.setProperty('--r', e.toFixed(4));
+      }
+      const cur = Math.min(n - 1, Math.round(p));
+      dots.forEach((d, i) => d.classList.toggle('on', i === cur));
+    };
+    if (reduce) { evDraw(); addEventListener('scroll', evDraw, { passive: true }); }
+    else (function evLoop() { if (scrollY !== evY) { evY = scrollY; evDraw(); } requestAnimationFrame(evLoop); })();
+    addEventListener('resize', () => { evY = -1; });
+  }
+
+  // indoor / outdoor: wipe the fogged glass with the pointer; the fog slowly returns
+  const gStage = $('[data-glass]');
+  if (gStage) {
+    const fog = $('.glass-fog', gStage), fctx = fog.getContext('2d');
+    const imgs = $$('.glass-img', gStage), words = $$('.glass-word span', gStage), texts = $$('.glass-text', gStage), tabsG = $$('.glass-toggle button', gStage);
+    let kind = 'indoor', fogImg = null, W = 0, H = 0, dpr = 1, last = null, regrow = 0;
+    const current = () => imgs.find((im) => im.dataset.kind === kind);
+    const makeFog = () => {
+      const im = current(); if (!im.complete || !im.naturalWidth) { im.addEventListener('load', makeFog, { once: true }); return; }
+      const r = gStage.getBoundingClientRect(); dpr = Math.min(2, devicePixelRatio || 1);
+      W = fog.width = Math.round(r.width * dpr); H = fog.height = Math.round(r.height * dpr);
+      // blur by shrinking and enlarging (works in every browser), then frost it
+      const tiny = document.createElement('canvas'); tiny.width = Math.max(8, Math.round(W / 28)); tiny.height = Math.max(8, Math.round(H / 28));
+      const tc = tiny.getContext('2d');
+      const s = Math.max(tiny.width / im.naturalWidth, tiny.height / im.naturalHeight);
+      tc.drawImage(im, (tiny.width - im.naturalWidth * s) / 2, (tiny.height - im.naturalHeight * s) / 2, im.naturalWidth * s, im.naturalHeight * s);
+      fogImg = document.createElement('canvas'); fogImg.width = W; fogImg.height = H;
+      const fc = fogImg.getContext('2d'); fc.imageSmoothingEnabled = true; fc.imageSmoothingQuality = 'high';
+      fc.drawImage(tiny, 0, 0, W, H);
+      fc.fillStyle = 'rgba(30,38,48,.32)'; fc.fillRect(0, 0, W, H);
+      const g = fc.createLinearGradient(0, 0, 0, H); g.addColorStop(0, 'rgba(210,225,235,.18)'); g.addColorStop(1, 'rgba(20,24,30,.25)');
+      fc.fillStyle = g; fc.fillRect(0, 0, W, H);
+      fctx.globalCompositeOperation = 'source-over'; fctx.globalAlpha = 1; fctx.clearRect(0, 0, W, H); fctx.drawImage(fogImg, 0, 0);
+      gStage.classList.remove('wiped');
+    };
+    const wipe = (x, y) => {
+      const R = 110 * dpr;
+      fctx.globalCompositeOperation = 'destination-out'; fctx.globalAlpha = 1;
+      const steps = last ? Math.ceil(Math.hypot(x - last[0], y - last[1]) / (R * .25)) : 1;
+      for (let k = 1; k <= steps; k++) {
+        const px = last ? last[0] + (x - last[0]) * k / steps : x, py = last ? last[1] + (y - last[1]) * k / steps : y;
+        const g = fctx.createRadialGradient(px, py, 0, px, py, R);
+        g.addColorStop(0, 'rgba(0,0,0,.9)'); g.addColorStop(.6, 'rgba(0,0,0,.5)'); g.addColorStop(1, 'rgba(0,0,0,0)');
+        fctx.fillStyle = g; fctx.beginPath(); fctx.arc(px, py, R, 0, Math.PI * 2); fctx.fill();
+      }
+      last = [x, y]; regrow = performance.now() + 900; gStage.classList.add('wiped');
+    };
+    gStage.addEventListener('pointermove', (e) => {
+      if (e.target.closest('.glass-copy')) { last = null; return; }
+      const r = fog.getBoundingClientRect(); wipe((e.clientX - r.left) * dpr, (e.clientY - r.top) * dpr);
+    });
+    gStage.addEventListener('pointerleave', () => { last = null; });
+    (function fogLoop(t) {
+      if (fogImg && t > regrow) { fctx.globalCompositeOperation = 'source-over'; fctx.globalAlpha = .025; fctx.drawImage(fogImg, 0, 0); fctx.globalAlpha = 1; }
+      requestAnimationFrame(fogLoop);
+    })(0);
+    const setKind = (k) => {
+      kind = k;
+      imgs.forEach((im) => { const on = im.dataset.kind === k; if (on) im.loading = 'eager'; im.classList.toggle('on', on); });
+      words.forEach((w) => w.classList.toggle('on', w.dataset.word === k));
+      texts.forEach((t) => { t.hidden = t.dataset.text !== k; });
+      tabsG.forEach((b) => b.setAttribute('aria-selected', b.dataset.kind === k));
+      makeFog();
+    };
+    tabsG.forEach((b) => b.addEventListener('click', () => setKind(b.dataset.kind)));
+    new IntersectionObserver((es, o) => es.forEach((e) => { if (e.isIntersecting) { setKind('indoor'); o.disconnect(); } }), { rootMargin: '200px' }).observe(gStage);
+    addEventListener('resize', () => { if (fogImg) makeFog(); });
+  }
+
+  // menu board: the pinned photo follows the category you are reading; dishes rise in
+  const mb = $('.mboard');
+  if (mb) {
+    const photos = $$('.mb-photo img', mb), now = $('.mb-now', mb);
+    const cio = new IntersectionObserver((es) => es.forEach((e) => {
+      if (!e.isIntersecting) return;
+      const k = e.target.dataset.cat;
+      photos.forEach((p) => { const on = p.dataset.for === k; if (on) p.loading = 'eager'; p.classList.toggle('on', on); });
+      now.textContent = $('.mb-head h3', e.target).textContent;
+    }), { rootMargin: '-45% 0px -45% 0px' });
+    $$('.mb-cat', mb).forEach((c) => cio.observe(c));
+    const iio = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); iio.unobserve(e.target); } }), { threshold: .2 });
+    $$('.mb-item', mb).forEach((it, i) => { it.style.transitionDelay = (i % 4) * 0.07 + 's'; iio.observe(it); });
+  }
 
   // wedding journey: Sikh / Hindu tabs, steps rise in once visible
   const jtabs = $$('.jtabs [role=tab]');

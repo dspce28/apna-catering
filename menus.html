@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Menus — Signature Indian Wedding Menus | Apna Catering Glasgow</title>
 <meta name="description" content="Four signature Indian wedding menus, an interactive menu builder and a gallery from the Apna Catering kitchen.">
-<meta name="theme-color" content="#4a0b15">
+<meta name="theme-color" content="#17110e">
 <link rel="icon" type="image/png" href="img/favicon.png">
 <link rel="apple-touch-icon" href="img/logo-256.png">
 <meta property="og:title" content="Apna Catering — Since 1975">
@@ -22,18 +22,9 @@
 </script>
 </head>
 <body class="page-menus">
-<div class="loader is-on" aria-hidden="true">
+<script>try{if(sessionStorage.getItem('apna-trans'))document.documentElement.classList.add('arriving')}catch(e){}</script>
+<div class="loader" aria-hidden="true">
   <div class="ld-veil"></div>
-  <div class="ld-half ld-top"></div>
-  <div class="ld-half ld-bot"></div>
-  <i class="ld-thread"></i>
-  <div class="ld-env">
-    <div class="ld-back"></div>
-    <div class="ld-letter"><small>You are invited to a feast</small><i>Apna Catering</i><small>Wedding caterers &middot; Since 1975</small></div>
-    <div class="ld-front"></div>
-    <div class="ld-flap"></div>
-    <div class="ld-seal"><div class="l"><img src="img/logo-256.png" alt=""></div><div class="r"><img src="img/logo-256.png" alt=""></div></div>
-  </div>
   <canvas class="ld-powder"></canvas>
   <img class="ld-logo" src="img/logo-256.png" alt="" width="132" height="132">
 </div>
@@ -90,6 +81,65 @@
     <p class="ph-lede">Four signature menus our families return to, and a builder to design your own in sixty seconds.</p>
   </div>
   <div class="ph-scroll" aria-hidden="true"><span></span></div>
+</section>
+<!-- MENU BOARD: pinned photo on the left, the dishes scroll on the right -->
+<section class="mboard" id="dishes">
+  <div class="mb-grid">
+    <div class="mb-side">
+      <div class="mb-photo">
+        <img src="img/chaat.webp" alt="" data-for="starters" class="on" loading="lazy"><img src="img/p-chefflame.webp" alt="" data-for="tandoor" class="" loading="lazy"><img src="img/p-karahi.webp" alt="" data-for="mains" class="" loading="lazy"><img src="img/p-biryanibowl.webp" alt="" data-for="rice" class="" loading="lazy"><img src="img/p-patisserie.webp" alt="" data-for="desserts" class="" loading="lazy">
+        <div class="mb-label"><p class="eyebrow center">Our dishes</p><h2>Our menu</h2><p class="mb-now">Chaat &amp; Starters</p></div>
+      </div>
+    </div>
+    <div class="mb-list">
+      <div class="mb-cat" data-cat="starters" data-img="img/chaat.webp">
+        <div class="mb-head"><h3>Chaat &amp; Starters</h3><span>Served on arrival and at the mehndi</span></div>
+        <ul>
+          <li class="mb-item"><img src="img/chaat.webp" alt="" loading="lazy" width="64" height="64"><div><h4>Gol Gappe</h4><p>Crisp puri, spiced potato, tamarind and mint water</p></div><span class="mb-tag">Live · Veg</span></li>
+          <li class="mb-item"><img src="img/chaat.webp" alt="" loading="lazy" width="64" height="64"><div><h4>Papdi Chaat</h4><p>Yoghurt, chutneys, pomegranate and sev</p></div><span class="mb-tag">Veg</span></li>
+          <li class="mb-item"><img src="img/samosa.webp" alt="" loading="lazy" width="64" height="64"><div><h4>Punjabi Samosa</h4><p>Spiced potato and pea, mint chutney</p></div><span class="mb-tag">Veg</span></li>
+          <li class="mb-item"><img src="img/plated.webp" alt="" loading="lazy" width="64" height="64"><div><h4>Amritsari Fish</h4><p>Gram-flour batter, ajwain, lemon</p></div><span class="mb-tag">Halal</span></li>
+        </ul>
+      </div>
+      <div class="mb-cat" data-cat="tandoor" data-img="img/p-chefflame.webp">
+        <div class="mb-head"><h3>Live Tandoor &amp; Grill</h3><span>Cooked in front of your guests</span></div>
+        <ul>
+          <li class="mb-item"><img src="img/kebab.webp" alt="" loading="lazy" width="64" height="64"><div><h4>Chicken Tikka</h4><p>Overnight yoghurt and Kashmiri chilli marinade</p></div><span class="mb-tag">Halal · Live</span></li>
+          <li class="mb-item"><img src="img/paneer.webp" alt="" loading="lazy" width="64" height="64"><div><h4>Paneer Tikka</h4><p>Charred peppers, onion and chaat masala</p></div><span class="mb-tag">Veg · Live</span></li>
+          <li class="mb-item"><img src="img/kebab.webp" alt="" loading="lazy" width="64" height="64"><div><h4>Seekh Kebab</h4><p>Minced lamb, ginger, green chilli and coriander</p></div><span class="mb-tag">Halal · Live</span></li>
+          <li class="mb-item"><img src="img/kebab.webp" alt="" loading="lazy" width="64" height="64"><div><h4>Haryali Tikka</h4><p>Mint, coriander and green chilli chicken</p></div><span class="mb-tag">Halal</span></li>
+        </ul>
+      </div>
+      <div class="mb-cat" data-cat="mains" data-img="img/p-karahi.webp">
+        <div class="mb-head"><h3>Curries &amp; Mains</h3><span>The heart of the wedding feast</span></div>
+        <ul>
+          <li class="mb-item"><img src="img/curry.webp" alt="" loading="lazy" width="64" height="64"><div><h4>Butter Chicken</h4><p>Tandoori chicken in a silky tomato and butter sauce</p></div><span class="mb-tag">Halal</span></li>
+          <li class="mb-item"><img src="img/p-karahi.webp" alt="" loading="lazy" width="64" height="64"><div><h4>Lamb Rogan Josh</h4><p>Slow-cooked Kashmiri lamb, fennel and cardamom</p></div><span class="mb-tag">Halal</span></li>
+          <li class="mb-item"><img src="img/thali.webp" alt="" loading="lazy" width="64" height="64"><div><h4>Dal Makhani</h4><p>Black lentils simmered overnight with cream</p></div><span class="mb-tag">Veg</span></li>
+          <li class="mb-item"><img src="img/dish-palak.webp" alt="" loading="lazy" width="64" height="64"><div><h4>Sarson da Saag</h4><p>Mustard greens with makki di roti and white butter</p></div><span class="mb-tag">Veg</span></li>
+        </ul>
+      </div>
+      <div class="mb-cat" data-cat="rice" data-img="img/p-biryanibowl.webp">
+        <div class="mb-head"><h3>Rice &amp; Breads</h3><span>Made fresh on the day</span></div>
+        <ul>
+          <li class="mb-item"><img src="img/biryani.webp" alt="" loading="lazy" width="64" height="64"><div><h4>Lamb Dum Biryani</h4><p>Saffron, fried onions and mint, sealed and slow-cooked</p></div><span class="mb-tag">Halal</span></li>
+          <li class="mb-item"><img src="img/biryani2.webp" alt="" loading="lazy" width="64" height="64"><div><h4>Vegetable Pulao</h4><p>Basmati with whole spices and garden vegetables</p></div><span class="mb-tag">Veg</span></li>
+          <li class="mb-item"><img src="img/naan.webp" alt="" loading="lazy" width="64" height="64"><div><h4>Butter Naan</h4><p>From the tandoor, brushed with butter</p></div><span class="mb-tag">Veg</span></li>
+          <li class="mb-item"><img src="img/naan.webp" alt="" loading="lazy" width="64" height="64"><div><h4>Bhatura</h4><p>Puffed and golden, served with chole</p></div><span class="mb-tag">Veg</span></li>
+        </ul>
+      </div>
+      <div class="mb-cat" data-cat="desserts" data-img="img/p-patisserie.webp">
+        <div class="mb-head"><h3>Desserts &amp; Mithai</h3><span>For the last dance and the doli</span></div>
+        <ul>
+          <li class="mb-item"><img src="img/halwa.webp" alt="" loading="lazy" width="64" height="64"><div><h4>Rasmalai</h4><p>Soft paneer dumplings in saffron milk</p></div><span class="mb-tag">Veg</span></li>
+          <li class="mb-item"><img src="img/halwa.webp" alt="" loading="lazy" width="64" height="64"><div><h4>Gulab Jamun</h4><p>Warm, in rose and cardamom syrup</p></div><span class="mb-tag">Veg</span></li>
+          <li class="mb-item"><img src="img/halwa.webp" alt="" loading="lazy" width="64" height="64"><div><h4>Fresh Jalebi</h4><p>Made live and served hot</p></div><span class="mb-tag">Veg · Live</span></li>
+          <li class="mb-item"><img src="img/p-cupcakes.webp" alt="" loading="lazy" width="64" height="64"><div><h4>Kulfi</h4><p>Pistachio and mango, on a stick</p></div><span class="mb-tag">Veg</span></li>
+        </ul>
+      </div>
+      <p class="mb-note">Every menu is built around your family. Dishes can be swapped, and all can be made vegetarian, satvik, Jain or nut-free on request.</p>
+    </div>
+  </div>
 </section>
 <!-- SIGNATURE MENUS -->
 <section class="menus section light" id="menus">

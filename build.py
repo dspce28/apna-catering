@@ -115,18 +115,9 @@ def floral_tile():
 _T, _TILE = floral_tile()
 
 
-CURTAIN = """<div class="loader is-on" aria-hidden="true">
+CURTAIN = """<script>try{if(sessionStorage.getItem('apna-trans'))document.documentElement.classList.add('arriving')}catch(e){}</script>
+<div class="loader" aria-hidden="true">
   <div class="ld-veil"></div>
-  <div class="ld-half ld-top"></div>
-  <div class="ld-half ld-bot"></div>
-  <i class="ld-thread"></i>
-  <div class="ld-env">
-    <div class="ld-back"></div>
-    <div class="ld-letter"><small>You are invited to a feast</small><i>Apna Catering</i><small>Wedding caterers &middot; Since 1975</small></div>
-    <div class="ld-front"></div>
-    <div class="ld-flap"></div>
-    <div class="ld-seal"><div class="l"><img src="img/logo-256.png" alt=""></div><div class="r"><img src="img/logo-256.png" alt=""></div></div>
-  </div>
   <canvas class="ld-powder"></canvas>
   <img class="ld-logo" src="img/logo-256.png" alt="" width="132" height="132">
 </div>
@@ -220,9 +211,9 @@ def build():
             "index.html",
             "Apna Catering — Indian Wedding & Event Caterers, Glasgow · Since 1975",
             "Apna Catering: Glasgow's Indian & Asian wedding caterers since 1975. Sikh, Hindu and Muslim weddings, engagements, birthdays and corporate events across Scotland.",
-            hero_with_filigree() + part("marquee") + part("pins") + part("statement") + part("journey") + part("grandeur") + part("heritage") + more("about.html", "Read our story")
-            + part("kitchen") + part("steps") + part("menus") + more("menus.html", "Explore menus and build your own")
-            + part("quotes") + cta(),
+            hero_with_filigree() + part("marquee") + part("heritage") + more("about.html", "Read our story") + part("pins") + part("glass") + part("journey") + part("statement")
+            + part("kitchen") + part("steps") + part("grandeur") + part("menus") + more("menus.html", "Explore menus and build your own")
+            + part("quotes") + part("faq") + cta(),
             HERO_PRELOAD,
         ),
         "about.html": shell(
@@ -246,7 +237,7 @@ def build():
             "Menus — Signature Indian Wedding Menus | Apna Catering Glasgow",
             "Four signature Indian wedding menus, an interactive menu builder and a gallery from the Apna Catering kitchen.",
             page_hero("Our menus", "Start with a classic,<br><em>make it yours.</em>", "Four signature menus our families return to, and a builder to design your own in sixty seconds.", "p-darkcurry", "Curry served in a dark ceramic bowl")
-            + part("menus") + part("builder") + part("gallery")
+            + part("menuboard") + part("menus") + part("builder") + part("gallery")
             + cta("Your menu is <em>ready to taste.</em>", "Send us your selection and we’ll arrange a tasting.", "p-patisserie"),
         ),
         "contact.html": shell(
