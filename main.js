@@ -74,22 +74,22 @@
   const steps = (list) => list.forEach(([ms, fn]) => setTimeout(fn, ms));
   const cls = (c) => () => loader.classList.add(c);
 
-  const playInvitation = () => {
+  const playOpening = () => {
     loader.classList.add('first');
-    const veil = $('.ld-veil', loader), letter = $('.ld-letter', loader);
+    const yr = $('.ld-year span', loader), now = new Date().getFullYear();
+    const countYear = () => {
+      const t0 = performance.now(), dur = 1100;
+      const tick = (t) => {
+        const p = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - p, 3);
+        yr.textContent = Math.round(1975 + (now - 1975) * e);
+        if (p < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    };
     steps([
-      [100, cls('s-in')], [800, cls('s-crack')], [1100, cls('s-open')], [1480, cls('s-flapback')], [1600, cls('s-rise')],
-      [2400, () => {
-        // open a hole the size of the risen card, then grow it to the whole screen
-        const r = letter.getBoundingClientRect(), W = innerWidth, H = innerHeight;
-        const hole = (x1, y1, x2, y2) => `polygon(evenodd,0 0,100% 0,100% 100%,0 100%,0 0,${x1}px ${y1}px,${x1}px ${y2}px,${x2}px ${y2}px,${x2}px ${y1}px,${x1}px ${y1}px)`;
-        veil.style.clipPath = hole(r.left, r.top, r.right, r.bottom);
-        void veil.offsetWidth;
-        loader.classList.add('s-reveal');
-        veil.style.clipPath = hole(-2, -2, W + 2, H + 2);
-        reveal();
-      }],
-      [3400, finish],
+      [60, cls('s-in')], [380, countYear], [1650, cls('s-thread')],
+      [2150, () => { loader.classList.add('s-open'); reveal(); }],
+      [3250, finish],
     ]);
   };
 
@@ -103,7 +103,7 @@
 
   const runLoader = () => {
     if (!loader || reduce) { store.set('seen', true); reveal(); finish(); return; }
-    if (firstVisit) { store.set('seen', true); playInvitation(); return; }
+    if (firstVisit) { store.set('seen', true); playOpening(); return; }
     playClear();
   };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', runLoader); else runLoader();
@@ -529,6 +529,14 @@
       })();
     }
   }
+
+  // grandeur band: slow parallax on the photo
+  const grm = $('.gr-media');
+  if (grm && !reduce) (function grLoop() {
+    const r = grm.parentElement.getBoundingClientRect();
+    if (r.bottom > 0 && r.top < innerHeight) grm.style.transform = 'translate3d(0,' + ((r.top + r.height / 2 - innerHeight / 2) * -0.12).toFixed(1) + 'px,0)';
+    requestAnimationFrame(grLoop);
+  })();
 
   // wedding journey: Sikh / Hindu tabs, steps rise in once visible
   const jtabs = $$('.jtabs [role=tab]');

@@ -1,4 +1,35 @@
-# Apna Catering — AI image prompts (Gemini)
+# Apna Catering — AI image prompts
+
+## Round 2 — "big fat wedding" set (use these first)
+
+Three of these are already generated and live on the site: `gw-buffet`, `gw-mandap` and `gw-sikh`.
+Generate the seven below in Gemini at the highest resolution, keep the file names, and send them back.
+Each prompt is complete on its own. You don't need the style block.
+
+**gw-tandoor.jpg** (3:4)
+> Vertical 3:4 portrait. Photorealistic dramatic photograph of a live tandoor and grill station at a luxury Indian wedding at night: a chef's hands in a crisp white jacket turning skewers of chicken tikka, paneer tikka and seekh kebabs over roaring orange flames and glowing charcoal, smoke and sparks rising, the counter dressed with marigold garlands and brass lanterns, blurred fairy lights and wedding guests in jewel-toned outfits far behind. Cinematic, warm, rich contrast. Face not visible. No text, no logos.
+
+**gw-chaat.jpg** (3:4) replaces the Mehndi & Sangeet panel photo
+> Vertical 3:4 portrait. Photorealistic photograph of a decorated live chaat counter at a vibrant Indian mehndi night: crisp gol gappe pani puri arranged in pyramids on brass platters, glass jars of tamarind and mint water, papdi chaat in small gold-rimmed bowls garnished with pomegranate and sev, the stall canopy draped in hot pink and marigold-orange fabric with hanging marigold strings, brass lanterns and fairy lights, colourful festive bokeh behind. No faces, no text, no logos, no plastic.
+
+**gw-desserts.jpg** (4:3)
+> Landscape 4:3. Photorealistic luxury food photograph of an Indian wedding dessert display: tiered gold cake stands holding rasmalai in crystal cups, glossy gulab jamun in gold bowls, spirals of crisp orange jalebi, kaju katli with silver leaf, pistachio barfi and kulfi on sticks, scattered red rose petals and saffron strands, on a deep crimson velvet table runner with gold candelabras and soft candlelight. No text, no logos, no steel.
+
+**gw-thali.jpg** (4:3)
+> Landscape 4:3. Photorealistic overhead three-quarter food photograph of a royal Indian wedding feast thali: a large gold-plated thali with small gold katoris of dal makhani, paneer butter masala, lamb rogan josh, saffron biryani with fried onions and mint, raita, pickles, buttery naan and jalebi, garnished with silver leaf, on a crimson and gold embroidered tablecloth with marigold petals and a lit brass diya. No text, no logos, no steel plates.
+
+**gw-reception.jpg** (16:9) replaces the Reception panel photo
+> Wide 16:9. Photorealistic photograph of a luxurious Indian wedding reception hall before guests arrive: round tables dressed in ivory and deep crimson linen with gold charger plates, gold-rimmed white bone china, gold cutlery and crystal glassware, tall centrepieces of red roses, orange marigolds and hanging jasmine, a grand stage with a floral backdrop and two ornate gold thrones, crystal chandeliers and warm amber uplighting. No people, no text, no logos.
+
+**gw-milni.jpg** (4:3)
+> Landscape 4:3. Photorealistic food photograph of a Punjabi wedding morning spread for a Gurdwara breakfast and Milni: hot puri chole and aloo paratha with white butter on brass thalis, masala chai in brass tumblers, fresh pakoras and samosas, golden jalebi and besan ladoo, a saffron-coloured cloth with marigold garlands, soft morning sunlight. Vegetarian only. No people, no text, no logos, no steel.
+
+**gw-service.jpg** (3:4)
+> Vertical 3:4 portrait. Photorealistic luxury photograph of a waiter in a black tuxedo jacket and white gloves carrying a silver tray of elegant Indian canapés (mini samosas, paneer tikka bites, chaat cones with pomegranate) through a glamorous wedding reception lit by crystal chandeliers, guests in rich silk sarees, lehengas and sherwanis softly blurred behind, deep red and gold decor, rose petals. Focus on the tray and gloved hands, face cropped out. No text, no logos.
+
+---
+
+## Round 1 (original set)
 
 Demo images to replace the stock photos until real event photography is available.
 Each prompt is mapped to the file it replaces. Generate, download at the highest
