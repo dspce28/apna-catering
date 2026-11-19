@@ -609,6 +609,30 @@
     $$('.mb-item', mb).forEach((it, i) => { it.style.transitionDelay = (i % 4) * 0.07 + 's'; iio.observe(it); });
   }
 
+  // timelines follow the scroll: the journey line draws and lights each ceremony; a gold thread runs through the steps
+  const stepsWrap = $('.steps-wrap'), stepsPath = $('.steps-path');
+  let tlY = -1;
+  const tlDraw = () => {
+    const vh = innerHeight, line = $('.jpanel.on .journey-line');
+    if (line) {
+      const r = line.getBoundingClientRect(), vertical = innerWidth <= 900;
+      const p = vertical ? Math.max(0, Math.min(1, (vh * 0.72 - r.top) / r.height)) : Math.max(0, Math.min(1, (vh * 0.86 - r.top) / (vh * 0.55)));
+      line.style.setProperty('--jp', p.toFixed(4));
+      const items = $$('li', line), n = items.length;
+      items.forEach((li, i) => {
+        const at = vertical ? (li.offsetTop + 20) / r.height : i / (n - 1);
+        li.classList.toggle('lit', p >= at - 0.005);
+      });
+    }
+    if (stepsWrap && stepsPath) {
+      const r = stepsWrap.getBoundingClientRect();
+      stepsPath.style.setProperty('--sp', Math.max(0, Math.min(1, (vh * 0.9 - r.top) / (r.height * 0.9))).toFixed(4));
+    }
+  };
+  if (reduce) { $$('.journey-line').forEach((l) => l.style.setProperty('--jp', 1)); $$('.journey-line li').forEach((li) => li.classList.add('lit')); if (stepsPath) stepsPath.style.setProperty('--sp', 1); }
+  else (function tlLoop() { if (scrollY !== tlY) { tlY = scrollY; tlDraw(); } requestAnimationFrame(tlLoop); })();
+  $$('.jtabs [role=tab]').forEach((t) => t.addEventListener('click', () => { tlY = -1; }));
+
   // wedding journey: Sikh / Hindu tabs, steps rise in once visible
   const jtabs = $$('.jtabs [role=tab]');
   if (jtabs.length) {
