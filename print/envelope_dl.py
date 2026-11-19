@@ -9,6 +9,8 @@ import math
 import os
 import random
 
+from mockup_art import floral, paisley_lace, peacock, velvet_defs
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 
 EW, EH = 220, 110          # finished envelope
@@ -43,6 +45,7 @@ def defs():
   <radialGradient id="teal" cx=".5" cy=".55" r=".55"><stop offset=".5" stop-color="#2FA6A2"/><stop offset="1" stop-color="#125E6A"/></radialGradient>
   <radialGradient id="blue" cx=".45" cy=".4" r=".6"><stop offset="0" stop-color="#3550C4"/><stop offset=".6" stop-color="#1A2A92"/><stop offset="1" stop-color="#0A1250"/></radialGradient>
   <radialGradient id="vig" cx=".5" cy=".5" r=".75"><stop offset=".55" stop-color="#2A0006" stop-opacity="0"/><stop offset="1" stop-color="#2A0006" stop-opacity=".55"/></radialGradient>
+  {velvet_defs()}
   <pattern id="damask2" width="30" height="30" patternUnits="userSpaceOnUse" patternTransform="rotate(28) scale(1.9) translate(7 11)">{damask_tile()}</pattern>
   <pattern id="damask" width="30" height="30" patternUnits="userSpaceOnUse" patternTransform="scale(1.35)">{damask_tile()}</pattern>
 </defs>"""
@@ -76,9 +79,24 @@ def damask_tile():
             f'<g stroke="#5A000F" opacity=".55">{edge}</g>')
 
 
-def background():
-    return (f'<g class="bg"><rect x="-5" y="-5" width="{EW+10}" height="{EH+10}" fill="url(#damask)"/>'
-            f'<rect x="-5" y="-5" width="{EW+10}" height="{EH+10}" fill="url(#damask2)" opacity=".32"/>'
+FLORAL_JOBS = {}   # seed -> (w, h, dpi); rasterised by render_envelope_dl.js
+
+
+def floral_img(w, h, seed, dpi=400):
+    FLORAL_JOBS[seed] = (w, h, dpi)
+    return (f'<image href="assets/floral-{seed}.jpg" x="-10" y="-10" width="{w+20}" height="{h+20}" '
+            f'preserveAspectRatio="none"/>')
+
+
+def write_floral_svgs():
+    for seed, (w, h, dpi) in FLORAL_JOBS.items():
+        with open(os.path.join(HERE, "assets", f"floral-{seed}.svg"), "w") as f:
+            f.write(f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 {w+20} {h+20}" '
+                    f'width="{w+20}mm" height="{h+20}mm" data-dpi="{dpi}"><defs>{velvet_defs()}</defs>{floral(w, h, seed)}</svg>')
+
+
+def background(seed=1):
+    return (f'<g class="bg">{floral_img(EW, EH, seed)}'
             f'<rect x="-5" y="-5" width="{EW+10}" height="{EH+10}" fill="url(#vig)"/></g>')
 
 
@@ -204,8 +222,8 @@ def ornament(cx, cy, s=1.0):
 # ------------------------------------------------------------------ faces
 def back_art(mode):
     global PAISLEY, HERO
-    PAISLEY = paisley(156, 99, -70, .17)
-    HERO = feather(184, 66, -10, 1.28, seed=3)
+    PAISLEY = paisley_lace(163, 103, -76, .19)
+    HERO = peacock(186, 63, -7, 1.05)
     """mode: 'flap' (net flap piece), 'pocket' (net back panel), 'preview' (as seen sealed)."""
     art = [background()]
     art.append(PAISLEY)
@@ -229,7 +247,7 @@ def front_art():
     divider = (f'<path d="M62,76 H102 M118,76 H158" stroke="url(#gold)" stroke-width=".35"/>'
                + ornament(110, 72.6, .62).replace('translate(110 72.6)', 'translate(110 75.8) rotate(90)'))
     return f"""<svg class="face" viewBox="0 0 {EW} {EH}" width="{EW}mm" height="{EH}mm" overflow="visible">
-      {background()}
+      {background(2)}
       <g fill="url(#goldT)" text-anchor="middle">
         <text x="110" y="45" font-family="Great Vibes" font-size="17.5">Desi Glasgow</text>
         <text x="111" y="63.5" font-family="Great Vibes" font-size="17.5">Caterer</text>
@@ -276,7 +294,7 @@ body.foil .bg, body.foil .color, body.foil .sheetbg{{display:none}}
 body.foil stop.g{{stop-color:#000 !important}}
 """
     sheetbg = (f'<svg class="die sheetbg" viewBox="0 0 {NW} {NH}">'
-               f'<rect width="{NW}" height="{NH}" fill="url(#damask)"/></svg>')
+               f'<g transform="translate(10 10)">{floral_img(NW, NH, 3, 300)}</g></svg>')
     net = f"""
 <section class="sheet" id="net">
   {sheetbg}
@@ -300,6 +318,7 @@ body.foil stop.g{{stop-color:#000 !important}}
         f.write(f'<svg xmlns="http://www.w3.org/2000/svg" width="{NW}mm" height="{NH}mm" viewBox="0 0 {NW} {NH}">'
                 f'<path id="CutContour" d="{cut}" fill="none" stroke="#FF00FF" stroke-width=".25"/>'
                 f'<path id="Crease" d="{folds}" fill="none" stroke="#00B4D8" stroke-width=".25" stroke-dasharray="2 1.4"/></svg>')
+    write_floral_svgs()
     print(f"envelope-dl.html: net {NW} x {NH} mm, finished {EW} x {EH} mm")
 
 

@@ -7,6 +7,18 @@ fs.mkdirSync(out, { recursive: true });
 
 (async () => {
   const b = await chromium.launch();
+  // rasterise the floral backgrounds once (tonal texture -> 300-400 dpi JPEG)
+  for (const f of fs.readdirSync(path.join(__dirname, 'assets')).filter((n) => /^floral-\d+\.svg$/.test(n))) {
+    const svg = fs.readFileSync(path.join(__dirname, 'assets', f), 'utf8');
+    const [wmm, hmm] = [...svg.matchAll(/(width|height)="([\d.]+)mm"/g)].map((m) => +m[2]);
+    const dpi = +svg.match(/data-dpi="(\d+)"/)[1];
+    const vp = { width: Math.ceil((wmm * 96) / 25.4), height: Math.ceil((hmm * 96) / 25.4) };
+    const fp = await b.newPage({ viewport: vp, deviceScaleFactor: dpi / 96 });
+    await fp.goto('file://' + path.join(__dirname, 'assets', f));
+    await fp.screenshot({ path: path.join(__dirname, 'assets', f.replace('.svg', '.jpg')), type: 'jpeg', quality: 92 });
+    await fp.close();
+    console.log('rasterised', f, dpi + 'dpi');
+  }
   const p = await b.newPage({ deviceScaleFactor: 2 });
   const load = async () => {
     await p.goto('file://' + path.join(__dirname, 'envelope-dl.html'));
