@@ -148,18 +148,26 @@ def p5_special():
 
 
 def p6_memorable():
-    cx = 41          # text column mirrors the cover's right-hand text block
+    cx = 38          # text column mirrors the cover's right-hand text block
     L, Wd = cx - 33, 66
-    art = svg(DW, DH, wing_divider(cx, 45, 20) + gold_ring(cx, 69, 14.5) + wing_divider(cx, 92, 20))
+    art = svg(DW, DH, wing_divider(cx, 45, 20) + gold_ring(cx, 69, 14.5) + wing_divider(cx, 89, 20))
     col = f"left:{L}mm;width:{Wd}mm"
     return f"""{art}
       <div class="box script" style="{col};top:24mm;font-size:26pt">It's your day</div>
       <div class="box caps" style="{col};top:36.5mm;font-size:9pt;letter-spacing:.1em">Make it memorable</div>
       <img class="logo" src="assets/logo-256.png" style="left:{cx-12.5}mm;top:56.5mm;width:25mm">
-      <div class="box caps" style="{col};top:98mm;font-size:5.8pt;letter-spacing:.22em">Book your celebration</div>
-      <div class="box body" style="{col};top:103mm;font-size:12pt;font-weight:700;color:{MAROON};line-height:1.3">07818 478036<br>07828 218002</div>
-      <div class="box body" style="{col};top:116.5mm;font-size:8pt">hello@apnacatering.co.uk</div>
-      <div class="box script" style="{col};top:121.5mm;font-size:14pt">apnacatering.co.uk</div>"""
+      <div class="box caps" style="{col};top:93mm;font-size:5.8pt;letter-spacing:.22em">Book your celebration</div>
+      <div class="box body" style="{col};top:98mm;font-size:12pt;font-weight:700;color:{MAROON};line-height:1.3">07818 478036<br>07828 218002</div>
+      <div class="box body" style="{col};top:110.5mm;font-size:8pt">hello@apnacatering.co.uk</div>
+      <div class="box script" style="{col};top:115mm;font-size:14pt">apnacatering.co.uk</div>"""
+
+
+def extra_roses(PW, SH):
+    """Soft-edged mirrored rose mound that completes the page-6 bouquet; base runs into the bleed."""
+    w = 64
+    h = w * 1110 / 1040
+    return (f'<img src="assets/roses-mound.png" style="position:absolute;left:{PW-21-w/2}mm;top:{SH+1-h}mm;'
+            f'width:{w}mm;height:{h}mm">')
 
 
 # ------------------------------------------------------------------ assemble
@@ -202,6 +210,7 @@ body{{-webkit-print-color-adjust:exact;print-color-adjust:exact;background:#fff}
   {place(B, DF, p5_special())}
   <div style="position:absolute;left:{B+FW}mm;top:0;width:{PW}mm;height:{SH}mm;overflow:hidden">
     <img src="assets/cover-mirror.png" style="position:absolute;left:{PW-(PW+B)}mm;top:{-((PW+B)*1.5-SH)*0.3:.3f}mm;width:{PW+B}mm;height:{(PW+B)*1.5}mm">
+    {extra_roses(PW, SH)}
   </div>
   {place(B + FW, DW, p6_memorable())}
   <img class="full" src="assets/invitation-cover.jpg" style="left:{B+FW+PW}mm;width:{PW+B}mm;object-position:50% 30%">
