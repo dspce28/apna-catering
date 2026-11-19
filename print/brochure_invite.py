@@ -148,8 +148,8 @@ def p5_special():
 
 
 def p6_memorable():
-    cx = 29          # text column mirrors the cover's right-hand text block
-    L, Wd = cx - 25, 50
+    cx = DW / 2      # centred on the page
+    L, Wd = cx - 30, 60
     art = svg(DW, DH, wing_divider(cx, 45, 20) + gold_ring(cx, 69, 14.5) + wing_divider(cx, 89, 20))
     col = f"left:{L}mm;width:{Wd}mm"
     return f"""{art}
