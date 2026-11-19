@@ -22,7 +22,7 @@
     const cv = loader && $('.ld-powder', loader);
     if (!cv) return null;
     const ctx = cv.getContext('2d');
-    const TAU = Math.PI * 2, SAFFRON = ['#e8892b', '#f0a84a', '#f5b85c', '#d9731f'], ROSE = ['#d6508a', '#b8336e', '#e57aa6', '#8f2457'], GOLD = ['#d6b06a', '#f1dfba', '#c9a052'];
+    const TAU = Math.PI * 2, SAFFRON = ['#e8892b', '#f0a84a', '#f5b85c', '#d9731f'], ROSE = ['#8f1d1d', '#a8262a', '#611414', '#c0392b'], GOLD = ['#cfae5a', '#eedcaa', '#b8953f'];
     let parts = [], W = 0, H = 0, dpr = 1, raf = 0;
     const build = () => {
       let seed = 1975;
@@ -43,7 +43,7 @@
       for (let i = 0; i < 8; i++) petal((i + .5) / 8 * TAU, .25, .52, .11, 46, ROSE, 9);
       const ring = (r, n) => { for (let i = 0; i < n * k; i++) { const a = rnd(0, TAU), rr = r + rnd(-.007, .007); add(Math.cos(a) * rr, Math.sin(a) * rr, pick(GOLD), 1.3); } };
       ring(.22, 110); ring(.5, 120); ring(1, 200);
-      for (let i = 0; i < 24; i++) { const a = i / 24 * TAU; for (let j = 0; j < 7; j++) add(Math.cos(a) * 1.08 + rnd(-.012, .012), Math.sin(a) * 1.08 + rnd(-.012, .012), '#f8f1e8', 1.4); }
+      for (let i = 0; i < 24; i++) { const a = i / 24 * TAU; for (let j = 0; j < 7; j++) add(Math.cos(a) * 1.08 + rnd(-.012, .012), Math.sin(a) * 1.08 + rnd(-.012, .012), '#f4ede3', 1.4); }
     };
     // mode 'fall': powder lands over `ms`; mode 'wind': settled powder blows away over `ms`
     const run = (mode, ms, done) => {
@@ -386,6 +386,121 @@
     addEventListener('pointermove', (e) => { tx = e.clientX; ty = e.clientY; });
     (function loop() { cx += (tx - cx) * 0.12; cy += (ty - cy) * 0.12; cur.style.transform = `translate3d(${cx}px,${cy}px,0)`; requestAnimationFrame(loop); })();
   }
+
+  /* ---------- Motion layer: smooth scroll, scroll-fill text, stacking cards,
+     velocity marquee, hover-reveal dishes, cursor with labels, footer wordmark ---------- */
+  let lenis = null;
+  if (window.Lenis && !reduce) {
+    lenis = new window.Lenis({ lerp: 0.1, wheelMultiplier: 1 });
+    const lraf = (t) => { lenis.raf(t); requestAnimationFrame(lraf); };
+    requestAnimationFrame(lraf);
+    document.addEventListener('click', (e) => {
+      const a = e.target.closest('a[href*="#"]');
+      if (!a || e.defaultPrevented) return;
+      const url = new URL(a.href, location.href);
+      if (url.pathname.replace(/\.html$/, '') !== location.pathname.replace(/\.html$/, '') || !url.hash) return;
+      const t = url.hash === '#top' ? 0 : $(url.hash);
+      if (t === null) return;
+      e.preventDefault();
+      lenis.scrollTo(t, { offset: -80, duration: 1.4 });
+    });
+  }
+
+  const fill = $('[data-fill]');
+  let fillWords = [];
+  if (fill) { splitWords(fill, 'fw'); fillWords = $$('.fw', fill); }
+
+  const stackCards = $$('.stack .xcard');
+  stackCards.forEach((c, i) => c.style.setProperty('--i', i));
+
+  const marq = $('.marquee'), mtrack = marq && $('.marquee-track', marq);
+  let mx = 0, mhalf = 0;
+  if (mtrack && !reduce) { marq.classList.add('js'); mhalf = mtrack.scrollWidth / 2; addEventListener('resize', () => { mhalf = mtrack.scrollWidth / 2; }); }
+
+  let lastY = scrollY, vel = 0, lastT = performance.now();
+  const clamp01 = (v) => Math.max(0, Math.min(1, v));
+  (function motion(now) {
+    const dt = Math.min(64, now - lastT); lastT = now;
+    const y = scrollY; vel += ((y - lastY) - vel) * 0.2; lastY = y;
+    if (fillWords.length) {
+      const r = fill.getBoundingClientRect(), vh = innerHeight;
+      const p = clamp01((vh * 0.85 - r.top) / (r.height + vh * 0.45));
+      const n = fillWords.length;
+      fillWords.forEach((w, i) => { w.style.setProperty('--o', (0.14 + 0.86 * clamp01(p * n * 1.15 - i)).toFixed(2)); });
+    }
+    for (let i = 0; i < stackCards.length - 1; i++) {
+      const next = stackCards[i + 1], top = parseFloat(getComputedStyle(next).top) || 0, r = next.getBoundingClientRect().top;
+      const p = clamp01((innerHeight - r) / (innerHeight - top));
+      stackCards[i].style.transform = 'scale(' + (1 - 0.06 * p).toFixed(4) + ')';
+      stackCards[i].style.setProperty('--b', (1 - 0.45 * p).toFixed(3));
+    }
+    if (mtrack && mhalf && !reduce) {
+      const speed = 0.045 * dt + Math.min(40, Math.abs(vel)) * 0.35;
+      mx -= speed; if (-mx >= mhalf) mx += mhalf;
+      const skew = Math.max(-8, Math.min(8, vel * -0.25));
+      mtrack.style.transform = 'translate3d(' + mx.toFixed(1) + 'px,0,0) skewX(' + skew.toFixed(2) + 'deg)';
+    }
+    requestAnimationFrame(motion);
+  })(performance.now());
+
+  // hover a dish name to see it, floating under the cursor
+  const dlist = $('.dish-list'), dfloat = $('.dl-float');
+  if (dlist && dfloat && fine && !reduce) {
+    const imgs = $$('img', dfloat);
+    imgs.forEach((im) => { im.loading = 'eager'; });
+    let fx = 0, fy = 0, tx = 0, ty = 0, active = false;
+    dlist.addEventListener('pointerenter', (e) => { fx = tx = e.clientX; fy = ty = e.clientY; active = true; dfloat.classList.add('on'); });
+    dlist.addEventListener('pointerleave', () => {
+      active = false; dfloat.classList.remove('on'); imgs.forEach((im) => im.classList.remove('on'));
+      dfloat.style.transform = 'translate3d(' + fx + 'px,' + fy + 'px,0) scale(.6)';
+    });
+    dlist.addEventListener('pointermove', (e) => { tx = e.clientX; ty = e.clientY; });
+    $$('[data-dl]', dlist).forEach((a) => a.addEventListener('pointerenter', () => {
+      imgs.forEach((im, i) => im.classList.toggle('on', i === +a.dataset.dl));
+    }));
+    (function follow() {
+      if (active) {
+        const dx = tx - fx; fx += dx * 0.14; fy += (ty - fy) * 0.14;
+        const rot = Math.max(-12, Math.min(12, dx * 0.12));
+        dfloat.style.transform = 'translate3d(' + fx.toFixed(1) + 'px,' + fy.toFixed(1) + 'px,0) rotate(' + rot.toFixed(2) + 'deg) scale(1)';
+      }
+      requestAnimationFrame(follow);
+    })();
+  }
+
+  // custom cursor: a dot, and a ring that grows over links and shows a label where useful
+  if (fine && !reduce) {
+    $$('.g').forEach((el) => { el.dataset.cursor = el.dataset.cursor || 'View'; });
+    $$('.occasions a[data-occasion]').forEach((el) => { el.dataset.cursor = el.dataset.cursor || 'Explore'; });
+    $$('.mcard').forEach((el) => { el.dataset.cursor = el.dataset.cursor || 'Menu'; });
+    const dot = document.createElement('div'); dot.className = 'cur-dot';
+    const ring = document.createElement('div'); ring.className = 'cur-ring'; ring.innerHTML = '<b></b>';
+    document.body.append(dot, ring);
+    const lbl = $('b', ring);
+    let rx = innerWidth / 2, ry = innerHeight / 2, px = rx, py = ry;
+    addEventListener('pointermove', (e) => {
+      px = e.clientX; py = e.clientY;
+      dot.style.transform = 'translate3d(' + px + 'px,' + py + 'px,0)';
+      const t = e.target.closest('[data-cursor], a, button, label, input, select, textarea');
+      const label = t && t.dataset.cursor;
+      ring.classList.toggle('label', !!label);
+      ring.classList.toggle('hover', !!t && !label);
+      if (label) lbl.textContent = label;
+    });
+    addEventListener('pointerdown', () => ring.classList.add('down'));
+    addEventListener('pointerup', () => ring.classList.remove('down'));
+    document.addEventListener('pointerleave', () => { dot.style.opacity = ring.style.opacity = 0; });
+    document.addEventListener('pointerenter', () => { dot.style.opacity = ring.style.opacity = 1; });
+    (function rloop() {
+      rx += (px - rx) * 0.18; ry += (py - ry) * 0.18;
+      ring.style.transform = 'translate3d(' + rx.toFixed(1) + 'px,' + ry.toFixed(1) + 'px,0)';
+      requestAnimationFrame(rloop);
+    })();
+  }
+
+  // footer wordmark letters rise into view
+  const wm = $('.wordmark');
+  if (wm) new IntersectionObserver((es, o) => es.forEach((e) => { if (e.isIntersecting) { wm.classList.add('in'); o.disconnect(); } }), { threshold: 0.3 }).observe(wm);
 
   /* ---------- Occasion cards remember the choice for the contact page ---------- */
   $$('[data-occasion]').forEach((a) => a.addEventListener('click', () => store.set('occasion', a.dataset.occasion)));

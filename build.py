@@ -168,7 +168,7 @@ def cta(title_html="Let’s make it <em>memorable.</em>", text="Tell us your dat
 
 
 def more(href, label):
-    return f'<div class="wrap more-link reveal-up"><a href="{href}" class="link-arrow">{label} →</a></div>'
+    return f'<div class="more-link reveal-up"><a href="{href}" class="link-arrow">{label} →</a></div>'
 
 
 WHY = '''<!-- WHY APNA -->
@@ -201,7 +201,7 @@ def shell(active, title, description, body, preload=""):
     page_class = active.replace(".html", "")
     return (head + f'<body class="page-{page_class}">\n' + CURTAIN + part("sprites") + nav(active)
             + "\n<main>\n" + body + "\n</main>\n\n" + footer() + "\n" + part("mobilebar")
-            + '\n<script src="main.js" defer></script>\n</body>\n</html>\n')
+            + '\n<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js" defer></script>\n<script src="main.js" defer></script>\n</body>\n</html>\n')
 
 
 HERO_PRELOAD = '<link rel="preload" as="image" href="img/hero.webp" imagesrcset="img/hero.webp 1200w, img/hero-2400.webp 2400w, img/hero-3840.webp 3840w" imagesizes="(max-width: 900px) 82vw, 480px">'
@@ -218,8 +218,8 @@ def build():
             "index.html",
             "Apna Catering — Indian Wedding & Event Caterers, Glasgow · Since 1975",
             "Apna Catering: Glasgow's Indian & Asian wedding caterers since 1975. Sikh, Hindu and Muslim weddings, engagements, birthdays and corporate events across Scotland.",
-            hero_with_filigree() + part("marquee") + part("heritage") + more("about.html", "Read our story")
-            + part("occasions") + part("menus") + more("menus.html", "Explore menus and build your own")
+            hero_with_filigree() + part("marquee") + part("statement") + part("heritage") + more("about.html", "Read our story")
+            + part("occasions") + part("kitchen") + part("menus") + more("menus.html", "Explore menus and build your own")
             + part("quotes") + cta(),
             HERO_PRELOAD,
         ),
