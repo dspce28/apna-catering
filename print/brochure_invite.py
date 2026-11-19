@@ -66,19 +66,19 @@ def feather(x, y, w, rot):
 
 # ------------------------------------------------------------------ pages (design coords, A6)
 def p2_love():
-    art = svg(DW, DH, roses(46, -3, 56) + wing_divider(DW / 2 - 6, 39, 24) + feather(19, 124, 30, -18))
+    art = svg(DW, DH, rose_frame(DW, 3) + wing_divider(DW / 2, 41, 22) + feather(DW / 2, 116, 22, 72))
     return f"""{art}
-      <div class="t caps" style="top:13mm;font-size:6pt;letter-spacing:.24em;left:-12mm">Our story</div>
-      <div class="t script" style="top:18mm;font-size:34pt;left:-12mm">Love for Food</div>
-      <div class="box calli" style="left:10mm;width:85mm;top:44mm">
+      <div class="t caps" style="top:16mm;font-size:6pt;letter-spacing:.24em">Our story</div>
+      <div class="t script" style="top:20.5mm;font-size:32pt">Love for Food</div>
+      <div class="box calli" style="left:14mm;width:{DW-28}mm;top:46mm;font-size:10.4pt;line-height:1.36">
         Welcome to Apna Catering, Glasgow's wedding &amp; event caterers with a passion for fine food. We specialise in quality
         Indian &amp; Asian delicacies, blessing weddings with an inventive menu of delights. With an incredibly experienced team
         we uphold the values of our customers, creating meal plans of true prestige, and have built a reputation for excellence
-        in hospitality.<br><span style="display:block;height:2.2mm"></span>
+        in hospitality.<span style="display:block;height:1.8mm"></span>
         We specialise in Sikh, Hindu and Muslim wedding catering. If you are inspired by authentic Indian food, allow
         Apna Catering to share that passion with you.
       </div>
-      <div class="box script" style="left:42mm;width:56mm;top:127mm;font-size:17pt">With love, Apna Catering</div>"""
+      <div class="t script" style="top:123mm;font-size:16pt">With love, Apna Catering</div>"""
 
 
 def roses_bl(x, y, w, flip=""):
@@ -90,22 +90,23 @@ def roses_bl(x, y, w, flip=""):
 def p34_spread():
     W = DW + DF
     pics = ""
-    for n, (x, y, w, h) in {1: (10, 30, 37, 104), 2: (53, 98, 45, 36), 4: (109, 98, 45, 36), 3: (160, 30, 37, 104)}.items():
+    for n, (x, y, w, h) in {1: (12, 28, 35, 92), 2: (55, 84, 41, 36), 4: (111, 84, 41, 36), 3: (160, 28, 35, 92)}.items():
         href, tag = photo(n)
         pics += framed(href, x, y, w, h, tag)
     art = svg(W, DH,
               f'<defs><linearGradient id="fadeB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F7E8CF" stop-opacity="0"/>'
-              f'<stop offset=".3" stop-color="#F7E8CF" stop-opacity=".9"/><stop offset="1" stop-color="#F3DFC0" stop-opacity=".97"/></linearGradient></defs>'
-              f'<rect x="-4" y="66" width="{W+8}" height="{DH-62}" fill="url(#fadeB)"/>'
-              + ribbon(W / 2, 15, 84)
-              + pics
-              + wing_divider(75.5, 89, 22) + wing_divider(131.5, 89, 22)
-              + roses_bl(0, DH - 40, 30) + roses_bl(W - 26, DH - 40, 30, "x")
-              + f'<path d="M48,{DH-7} H{W-48}" stroke="url(#gold)" stroke-width=".4"/>')
+              f'<stop offset=".45" stop-color="#F7E8CF" stop-opacity=".55"/><stop offset="1" stop-color="#F3DFC0" stop-opacity=".92"/></linearGradient></defs>'
+              f'<rect x="-4" y="52" width="{W+8}" height="{DH-48}" fill="url(#fadeB)"/>'
+              + f'<defs><filter id="soft"><feGaussianBlur stdDeviation="2.2"/></filter></defs>'
+              + f'<rect x="54" y="57" width="99" height="25" rx="5" fill="#FBF0DC" fill-opacity=".9" filter="url(#soft)"/>'
+              + f'<rect x="56" y="122" width="95" height="11" rx="4" fill="#FBF0DC" fill-opacity=".85" filter="url(#soft)"/>'
+              + rose_frame(W) + ribbon(W / 2, 17, 84) + pics
+              + wing_divider(75.5, 76, 22) + wing_divider(131.5, 76, 22))
     return f"""{art}
-      <div class="rib" style="left:{W/2-42}mm;top:11.6mm;width:84mm">Wedding Banquets · Served with Love</div>
-      <div class="box script" style="left:50mm;width:51mm;top:73mm;font-size:18pt">From our kitchen…</div>
-      <div class="box script" style="left:106mm;width:51mm;top:73mm;font-size:18pt">…to your table</div>"""
+      <div class="rib" style="left:{W/2-42}mm;top:13.6mm;width:84mm">Wedding Banquets · Served with Love</div>
+      <div class="box script" style="left:50mm;width:51mm;top:61mm;font-size:19pt">From our kitchen…</div>
+      <div class="box script" style="left:106mm;width:51mm;top:61mm;font-size:19pt">…to your table</div>
+      <div class="box script" style="left:50mm;width:{W-100}mm;top:125.5mm;font-size:15pt">Celebrating love, one feast at a time</div>"""
 
 
 M = 7          # frame inset (same on every page)
@@ -132,34 +133,36 @@ def gold_ring(cx, cy, r):
 
 
 def p5_special():
-    events = ["Weddings", "Mehndi &amp; Sangeet", "Anniversaries", "Birthdays", "Corporate events", "Religious functions"]
+    events = ["Weddings", "Mehndi &amp; Sangeet", "Engagements", "Anniversaries", "Birthdays", "Corporate events"]
     li = "".join(f"<li>{e}</li>" for e in events)
     cx = DF / 2
-    oval = (f'<clipPath id="ov"><ellipse cx="{cx}" cy="64" rx="24" ry="17"/></clipPath>'
-            f'<image href="../img/p-mandap-2400.webp" x="{cx-24}" y="47" width="48" height="34" preserveAspectRatio="xMidYMid slice" clip-path="url(#ov)"/>'
-            f'<ellipse cx="{cx}" cy="64" rx="24" ry="17" fill="none" stroke="url(#gold)" stroke-width=".7"/>'
-            f'<ellipse cx="{cx}" cy="64" rx="26.2" ry="19.2" fill="none" stroke="url(#gold)" stroke-width=".5" stroke-dasharray="0 1.25" stroke-linecap="round"/>')
-    art = svg(DF, DH, rose_frame(DF, 3) + wing_divider(cx, 39, 22) + oval + wing_divider(cx, 93, 22))
+    oval = (f'<clipPath id="ov"><ellipse cx="{cx}" cy="63" rx="29" ry="20"/></clipPath>'
+            f'<image href="../img/p-mandap-2400.webp" x="{cx-29}" y="43" width="58" height="40" preserveAspectRatio="xMidYMid slice" clip-path="url(#ov)"/>'
+            f'<ellipse cx="{cx}" cy="63" rx="29" ry="20" fill="none" stroke="url(#gold)" stroke-width=".75"/>'
+            f'<ellipse cx="{cx}" cy="63" rx="31.3" ry="22.3" fill="none" stroke="url(#gold)" stroke-width=".55" stroke-dasharray="0 1.25" stroke-linecap="round"/>')
+    art = svg(DF, DH, rose_frame(DF, 3) + wing_divider(cx, 38.5, 22) + oval + wing_divider(cx, 90, 22))
     return f"""{art}
-      <div class="t script" style="top:18mm;font-size:27pt">Celebrate</div>
-      <div class="t caps" style="top:31mm;font-size:9.5pt;letter-spacing:.12em">Special Events</div>
+      <div class="t script" style="top:15mm;font-size:31pt">Celebrate</div>
+      <div class="t caps" style="top:28.5mm;font-size:10.5pt;letter-spacing:.12em">Special Events</div>
+      <div class="box body it" style="left:15mm;width:{DF-30}mm;top:93mm;font-size:9.8pt;line-height:1.32">
+        Every family celebrates in its own way. We tailor each menu to your traditions and your day.</div>
       <ul class="evl">{li}</ul>
-      <div class="t script" style="top:124mm;font-size:14pt">Menus tailored to your day</div>"""
+      <div class="t script" style="top:126mm;font-size:14pt">Menus tailored to your day</div>"""
 
 
 def p6_memorable():
     cx = DW / 2      # centred on the page
-    L, Wd = cx - 30, 60
-    art = svg(DW, DH, wing_divider(cx, 45, 20) + gold_ring(cx, 69, 14.5) + wing_divider(cx, 89, 20))
+    L, Wd = cx - 32, 64
+    art = svg(DW, DH, wing_divider(cx, 41, 26) + gold_ring(cx, 61.5, 17.5) + wing_divider(cx, 84, 26))
     col = f"left:{L}mm;width:{Wd}mm"
     return f"""{art}
-      <div class="box script" style="{col};top:24mm;font-size:26pt">It's your day</div>
-      <div class="box caps" style="{col};top:36.5mm;font-size:9pt;letter-spacing:.1em">Make it memorable</div>
-      <img class="logo" src="assets/logo-256.png" style="left:{cx-12.5}mm;top:56.5mm;width:25mm">
-      <div class="box caps" style="{col};top:93mm;font-size:5.8pt;letter-spacing:.22em">Book your celebration</div>
-      <div class="box body" style="{col};top:98mm;font-size:12pt;font-weight:700;color:{MAROON};line-height:1.3">07818 478036<br>07828 218002</div>
-      <div class="box body" style="{col};top:110.5mm;font-size:8pt">hello@apnacatering.co.uk</div>
-      <div class="box script" style="{col};top:115mm;font-size:14pt">apnacatering.co.uk</div>"""
+      <div class="box script" style="{col};top:15.5mm;font-size:32pt">It's your day</div>
+      <div class="box caps" style="{col};top:30.5mm;font-size:11pt;letter-spacing:.1em">Make it memorable</div>
+      <img class="logo" src="assets/logo-256.png" style="left:{cx-15}mm;top:46.5mm;width:30mm">
+      <div class="box caps" style="{col};top:88mm;font-size:7pt;letter-spacing:.22em">Book your celebration</div>
+      <div class="box body" style="{col};top:92.5mm;font-size:14.5pt;font-weight:700;color:{MAROON};line-height:1.25">07818 478036<br>07828 218002</div>
+      <div class="box body" style="{col};top:106.5mm;font-size:9.5pt">hello@apnacatering.co.uk</div>
+      <div class="box script" style="{col};top:111mm;font-size:16pt">apnacatering.co.uk</div>"""
 
 
 def extra_roses(PW, SH):
@@ -210,7 +213,7 @@ body{{-webkit-print-color-adjust:exact;print-color-adjust:exact;background:#fff}
 .bul{{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:700;color:#8A5A18;font-size:9.6pt;line-height:1.5}}
 .rib{{position:absolute;text-align:center;font-family:'Cinzel',serif;font-weight:700;color:#FBEFD6;font-size:7.2pt;letter-spacing:.08em;text-transform:uppercase}}
 .logo{{position:absolute}}
-.evl{{position:absolute;left:21mm;right:14mm;top:99.5mm;list-style:none;columns:2;column-gap:4mm;font-family:'Cormorant Garamond',serif;font-weight:700;font-size:8.6pt;line-height:1.55;color:{INK};text-align:left}}
+.evl{{position:absolute;left:19mm;right:12mm;top:104.5mm;list-style:none;columns:2;column-gap:4mm;font-family:'Cormorant Garamond',serif;font-weight:700;font-size:9.4pt;line-height:1.5;color:{INK};text-align:left}}
 .evl li:before{{content:'\\25C6';color:#A8752A;font-size:5pt;margin-right:1.6mm;vertical-align:middle}}
 """
     outside = f"""
@@ -228,7 +231,7 @@ body{{-webkit-print-color-adjust:exact;print-color-adjust:exact;background:#fff}
     inside = f"""
 <section class="sheet" id="inside">
   <img class="bgimg" src="assets/cream-bg.jpg">
-  <img class="full" src="../img/p-banquet-3840.webp" style="left:{B+PW}mm;width:{PW+FW+B}mm;object-position:50% 40%">
+  <img class="full" src="../img/occ-anniv-3840.webp" style="left:{B+PW}mm;width:{PW+FW+B}mm;object-position:50% 45%">
   {place(B, DW, p2_love())}
   {place(B + PW, DW + DF, p34_spread())}
 </section>"""
