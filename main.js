@@ -498,6 +498,25 @@
     })();
   }
 
+  // wedding journey: Sikh / Hindu tabs, steps rise in once visible
+  const jtabs = $$('.jtabs [role=tab]');
+  if (jtabs.length) {
+    const jsec = $('.journey');
+    const showJ = (key) => {
+      jtabs.forEach((t) => t.setAttribute('aria-selected', t.dataset.jtab === key));
+      $$('.jpanel').forEach((p) => {
+        const on = p.dataset.jpanel === key;
+        p.hidden = !on; p.classList.toggle('on', on); p.classList.remove('shown');
+        if (on) requestAnimationFrame(() => requestAnimationFrame(() => { if (jsec.classList.contains('seen')) p.classList.add('shown'); }));
+      });
+    };
+    jtabs.forEach((t) => t.addEventListener('click', () => showJ(t.dataset.jtab)));
+    new IntersectionObserver((es, o) => es.forEach((e) => {
+      if (!e.isIntersecting) return;
+      jsec.classList.add('seen'); const p = $('.jpanel.on'); if (p) p.classList.add('shown'); o.disconnect();
+    }), { threshold: 0.25 }).observe(jsec);
+  }
+
   // footer wordmark letters rise into view
   const wm = $('.wordmark');
   if (wm) new IntersectionObserver((es, o) => es.forEach((e) => { if (e.isIntersecting) { wm.classList.add('in'); o.disconnect(); } }), { threshold: 0.3 }).observe(wm);

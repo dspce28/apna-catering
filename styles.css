@@ -822,3 +822,25 @@ body.loaded .rose{opacity:1;transform:none}
 .tframe figcaption{font-family:var(--script);font-size:26px;color:var(--crimson);text-align:center;padding:12px 4px 4px}
 .team-sign{font-family:var(--script);font-size:clamp(34px,4vw,48px);color:var(--crimson);text-align:center;margin-top:50px}
 @media (max-width:900px){.team-grid{grid-template-columns:1fr 1fr}.tframe.tall img{aspect-ratio:3/4}}
+
+/* wedding journey (Sikh / Hindu) */
+.journey .muted{margin-bottom:34px}
+.jtabs{display:flex;justify-content:center;gap:10px;margin:0 auto 54px;flex-wrap:wrap}
+.jtabs button{font-family:var(--caps);font-size:13px;letter-spacing:.2em;text-transform:uppercase;padding:13px 26px;border-radius:99px;border:1px solid rgba(184,137,58,.6);color:var(--crimson);transition:background .4s,color .4s}
+.jtabs button[aria-selected=true]{background:var(--crimson);color:var(--ivory);border-color:var(--crimson)}
+.jpanel{text-align:center}
+.journey-line{list-style:none;display:grid;grid-template-columns:repeat(5,1fr);gap:22px;position:relative;margin-bottom:50px;text-align:left}
+.journey-line::before{content:"";position:absolute;left:4%;right:4%;top:27px;height:1px;background:linear-gradient(90deg,transparent,rgba(184,137,58,.8) 10%,rgba(184,137,58,.8) 90%,transparent)}
+.journey-line li{position:relative;opacity:0;transform:translateY(24px);transition:opacity .8s var(--ease),transform .8s var(--ease);transition-delay:calc(var(--s) * .12s)}
+.jpanel.on.shown .journey-line li{opacity:1;transform:none}
+.j-no{display:grid;place-items:center;width:54px;height:54px;border-radius:50%;background:var(--paper);border:1px solid rgba(184,137,58,.8);box-shadow:0 0 0 5px var(--ivory);font-family:var(--script);font-size:26px;color:var(--crimson);margin-bottom:22px;position:relative}
+.j-when{display:block;font-family:var(--caps);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:#9a6f2a;margin-bottom:6px}
+.journey-line h3{font-family:var(--serif);font-weight:500;font-size:28px;line-height:1.1;color:var(--crimson);margin-bottom:10px}
+.journey-line p{font-size:14.5px;color:var(--muted-dark)}
+.journey-also{text-align:center;margin-top:40px;font-size:14.5px;color:var(--muted-dark)}
+.journey-also a{color:var(--crimson);border-bottom:1px solid rgba(184,137,58,.6)}
+@media (max-width:900px){
+  .journey-line{grid-template-columns:1fr;gap:26px;padding-left:76px}
+  .journey-line::before{left:27px;right:auto;top:10px;bottom:10px;width:1px;height:auto;background:linear-gradient(transparent,rgba(184,137,58,.8) 6%,rgba(184,137,58,.8) 94%,transparent)}
+  .j-no{position:absolute;left:-76px;top:-6px;margin:0}
+}

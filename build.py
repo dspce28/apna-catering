@@ -221,7 +221,7 @@ def build():
             "index.html",
             "Apna Catering — Indian Wedding & Event Caterers, Glasgow · Since 1975",
             "Apna Catering: Glasgow's Indian & Asian wedding caterers since 1975. Sikh, Hindu and Muslim weddings, engagements, birthdays and corporate events across Scotland.",
-            hero_with_filigree() + part("marquee") + part("statement") + part("heritage") + more("about.html", "Read our story")
+            hero_with_filigree() + part("marquee") + part("statement") + part("journey") + part("heritage") + more("about.html", "Read our story")
             + part("occasions") + part("kitchen") + part("menus") + more("menus.html", "Explore menus and build your own")
             + part("quotes") + cta(),
             HERO_PRELOAD,
