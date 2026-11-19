@@ -81,45 +81,53 @@ def p2_love():
       <div class="box script" style="left:42mm;width:56mm;top:127mm;font-size:17pt">With love, Apna Catering</div>"""
 
 
+def roses_bl(x, y, w, flip=""):
+    h = w * 742 / 640
+    tr = {"": "", "x": f"translate({2*x+w} 0) scale(-1 1)"}[flip]
+    return f'<image href="assets/roses-bl.png" x="{x}" y="{y}" width="{w}" height="{h}" transform="{tr}"/>'
+
+
 def p34_spread():
     W = DW + DF
-    insets = ""
-    slots = [(9, 99, 38, 34, "img/thali-2400.webp", ""), (54, 99, 38, 34, None, 1),
-             (114, 99, 38, 34, None, 4), (159, 99, 38, 34, "img/p-biryanibowl-2400.webp", "")]
-    for x, y, w, h, src, n in slots:
-        if src:
-            insets += framed("../" + src, x, y, w, h)
-        else:
-            href, tag = photo(n)
-            insets += framed(href, x, y, w, h, tag)
+    pics = ""
+    for n, (x, y, w, h) in {1: (10, 30, 37, 104), 2: (53, 98, 45, 36), 4: (109, 98, 45, 36), 3: (160, 30, 37, 104)}.items():
+        href, tag = photo(n)
+        pics += framed(href, x, y, w, h, tag)
     art = svg(W, DH,
               f'<defs><linearGradient id="fadeB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F7E8CF" stop-opacity="0"/>'
-              f'<stop offset=".35" stop-color="#F7E8CF" stop-opacity=".88"/><stop offset="1" stop-color="#F3DFC0" stop-opacity=".97"/></linearGradient></defs>'
-              f'<rect x="-4" y="78" width="{W+8}" height="{DH-74}" fill="url(#fadeB)"/>'
-              + ribbon(52.5, 15, 64) + ribbon(W - 51, 15, 64) + insets
-              + wing_divider(52.5, 92, 26) + wing_divider(W - 51, 92, 26)
-              + f'<path d="M8,{DH-7} H{W-8}" stroke="url(#gold)" stroke-width=".4"/>')
+              f'<stop offset=".3" stop-color="#F7E8CF" stop-opacity=".9"/><stop offset="1" stop-color="#F3DFC0" stop-opacity=".97"/></linearGradient></defs>'
+              f'<rect x="-4" y="66" width="{W+8}" height="{DH-62}" fill="url(#fadeB)"/>'
+              + ribbon(W / 2, 15, 84)
+              + pics
+              + wing_divider(75.5, 89, 22) + wing_divider(131.5, 89, 22)
+              + roses_bl(0, DH - 40, 30) + roses_bl(W - 26, DH - 40, 30, "x")
+              + f'<path d="M48,{DH-7} H{W-48}" stroke="url(#gold)" stroke-width=".4"/>')
     return f"""{art}
-      <div class="rib" style="left:{52.5-32}mm;top:11.6mm;width:64mm">Wedding Banquets</div>
-      <div class="rib" style="left:{W-51-32}mm;top:11.6mm;width:64mm">Served with Love</div>
-      <div class="box script" style="left:5mm;width:95mm;top:81mm;font-size:17pt">From our kitchen…</div>
-      <div class="box script" style="left:{W-98.5}mm;width:95mm;top:81mm;font-size:17pt">…to your table</div>"""
+      <div class="rib" style="left:{W/2-42}mm;top:11.6mm;width:84mm">Wedding Banquets · Served with Love</div>
+      <div class="box script" style="left:50mm;width:51mm;top:73mm;font-size:18pt">From our kitchen…</div>
+      <div class="box script" style="left:106mm;width:51mm;top:73mm;font-size:18pt">…to your table</div>"""
 
 
 def p5_special():
-    art = svg(DF, DH, roses(DF - 50, -3, 50) + wing_divider(DF / 2, 41, 26))
+    events = ["Weddings", "Mehndi &amp; Sangeet", "Anniversaries", "Birthdays", "Corporate events", "Religious functions"]
+    li = "".join(f"<li>{e}</li>" for e in events)
+    oval = (f'<clipPath id="ov"><ellipse cx="{DF/2}" cy="58" rx="25" ry="17"/></clipPath>'
+            f'<image href="../img/p-mandap-2400.webp" x="{DF/2-25}" y="41" width="50" height="34" preserveAspectRatio="xMidYMid slice" clip-path="url(#ov)"/>'
+            f'<ellipse cx="{DF/2}" cy="58" rx="25" ry="17" fill="none" stroke="url(#gold)" stroke-width=".7"/>'
+            f'<ellipse cx="{DF/2}" cy="58" rx="27.2" ry="19.2" fill="none" stroke="url(#gold)" stroke-width=".5" stroke-dasharray="0 1.25" stroke-linecap="round"/>')
+    frame = (f'<rect x="6" y="6" width="{DF-12}" height="{DH-12}" fill="none" stroke="url(#gold)" stroke-width=".5"/>'
+             f'<rect x="7.6" y="7.6" width="{DF-15.2}" height="{DH-15.2}" fill="none" stroke="url(#gold)" stroke-width=".2"/>')
+    art = svg(DF, DH, frame + oval + wing_divider(DF / 2, 84, 24)
+              + roses(DF - 54, -4, 54) + roses_bl(-6, DH - 52, 42)
+              + roses(-8, -6, 30, "x") + roses_bl(DF - 30, DH - 34, 30, "x")
+              + ribbon(DF / 2, 128, 64, 10))
     return f"""{art}
-      <div class="t script" style="top:12mm;font-size:30pt">Catering</div>
-      <div class="t caps" style="top:27mm;font-size:13pt;letter-spacing:.05em">Special Events</div>
-      <div class="t bul" style="top:46mm">Weddings &nbsp;◆&nbsp; Anniversaries &nbsp;◆&nbsp; Birthdays</div>
-      <div class="box body" style="left:10mm;width:{DF-20}mm;top:55mm">
-        At Apna Catering we display a hunger to provide a sophisticated catering service to the Asian community, crafting
-        innovative menus that are admirably diverse.<span style="display:block;height:2mm"></span>
-        With Asian weddings we understand that religious traditions must be adhered to, with each family celebrating in
-        their own fashion. We offer our unique services to Muslims, Sikhs, Hindus and those who simply adore the beauty of
-        Asian cuisine.
-      </div>
-      {svg(DF, DH, framed('../img/occ-anniv-2400.webp', 12, 104, 36, 28) + framed('../img/occ-cake-2400.webp', 54, 104, 36, 28))}"""
+      <div class="t script" style="top:13mm;font-size:30pt">Celebrate</div>
+      <div class="t caps" style="top:28.5mm;font-size:11.5pt;letter-spacing:.06em">Special Events</div>
+      <div class="box body it" style="left:13mm;width:{DF-26}mm;top:87.5mm;font-size:9.4pt;line-height:1.35">
+        Every family celebrates in its own way. We tailor each menu to your traditions, your guests and your day.</div>
+      <ul class="evl">{li}</ul>
+      <div class="rib" style="left:{DF/2-32}mm;top:125.6mm;width:64mm;font-size:6.6pt">Menus tailored to your day</div>"""
 
 
 def p6_memorable():
@@ -169,6 +177,8 @@ body{{-webkit-print-color-adjust:exact;print-color-adjust:exact;background:#fff}
 .bul{{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:700;color:#8A5A18;font-size:9.6pt;line-height:1.5}}
 .rib{{position:absolute;text-align:center;font-family:'Cinzel',serif;font-weight:700;color:#FBEFD6;font-size:7.2pt;letter-spacing:.08em;text-transform:uppercase}}
 .logo{{position:absolute}}
+.evl{{position:absolute;left:16mm;right:12mm;top:104mm;list-style:none;columns:2;column-gap:4mm;font-family:'Cormorant Garamond',serif;font-weight:700;font-size:8.6pt;line-height:1.55;color:{INK};text-align:left}}
+.evl li:before{{content:'\\25C6';color:#A8752A;font-size:5pt;margin-right:1.6mm;vertical-align:middle}}
 """
     outside = f"""
 <section class="sheet" id="outside">
