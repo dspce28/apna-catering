@@ -108,6 +108,9 @@ def gold_defs():
   <linearGradient id="gold" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="30" y2="18" spreadMethod="reflect">
     <stop class="g" offset="0" stop-color="#FBE7A8"/><stop class="g" offset=".35" stop-color="#E0B25A"/>
     <stop class="g" offset=".62" stop-color="#A8752A"/><stop class="g" offset="1" stop-color="#F1D287"/></linearGradient>
+  <linearGradient id="goldDk" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="30" y2="18" spreadMethod="reflect">
+    <stop class="g" offset="0" stop-color="#C99A45"/><stop class="g" offset=".4" stop-color="#9E6E22"/>
+    <stop class="g" offset=".7" stop-color="#7A5214"/><stop class="g" offset="1" stop-color="#B8863A"/></linearGradient>
   {velvet_defs()}{eye_defs()}
 </defs></svg>"""
 

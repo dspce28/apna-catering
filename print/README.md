@@ -33,3 +33,12 @@ One design, two sizes:
 - `out/brochure-FIT-print-bleed.pdf` — folded 98 × 140 (flat 291 × 140 + 3 mm bleed). Fits the client's Canva envelope (≈147.6 × 104 mm inside, measured from the PDF).
 Page 1 outside (p5 tuck-in | p6 back | p1 cover), page 2 inside (p2 story | p3 + p4 photo spread).
 Style: #6C000C damask (mirrored tile, rasterised 400 dpi), Luxurious Script / Cinzel Decorative / Cormorant Garamond, glossy gold peacock feather with almond eye.
+
+## "Jharokha" brochure (unique design, uses the client's envelope assets)
+
+    python3 print/brochure_unique.py && node print/render_a6.js unique
+
+Ivory silk outside (contrasts with the red envelope), red tapestry reveal inside, Mughal-arch windows for the
+cover, story card and photos. Outputs `out/brochure-UNIQUE-A6-print-bleed.pdf` and `out/brochure-UNIQUE-FIT-print-bleed.pdf`.
+Assets: `assets/tapestry-tile.jpg` / `tapestry-bg.jpg` (from the client's tapestry; right half rebuilt from the mirrored
+left half, removing the corner mark; ~217 dpi effective), `assets/feather-gold.png` (client feather, keep ≤ 45 mm wide).

@@ -8,6 +8,7 @@ fs.mkdirSync(out, { recursive: true });
 
 const VERS = { a6: { PW: 105, PH: 148 }, fit: { PW: 98, PH: 140 } };
 const B = 3;
+const base = process.argv[2] || '';
 
 (async () => {
   const b = await chromium.launch();
@@ -24,10 +25,10 @@ const B = 3;
   const p = await b.newPage({ deviceScaleFactor: 2 });
   for (const [v, { PW, PH }] of Object.entries(VERS)) {
     const FW = PW - 3;
-    await p.goto('file://' + path.join(dir, `brochure-${v}.html`));
+    await p.goto('file://' + path.join(dir, base ? `brochure-${base}-${v}.html` : `brochure-${v}.html`));
     await p.evaluate(() => document.fonts.ready);
     await p.waitForTimeout(600);
-    const tag = v.toUpperCase();
+    const tag = (base ? base.toUpperCase() + '-' : '') + v.toUpperCase();
     await p.pdf({ path: path.join(out, `brochure-${tag}-print-bleed.pdf`), preferCSSPageSize: true, printBackground: true });
     const guides = { outside: [B + FW, B + FW + PW], inside: [B + PW, B + 2 * PW] };
     for (const [id, folds] of Object.entries(guides)) {
