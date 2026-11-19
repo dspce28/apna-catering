@@ -23,10 +23,10 @@ def svg(w, h, body):
 def ribbon(cx, cy, w, h=9):
     x0, x1 = cx - w / 2, cx + w / 2
     n = 3.2
-    return (f'<defs><linearGradient id="rib" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9B1A30"/>'
+    return ('<g>' + f'<defs><linearGradient id="rib" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9B1A30"/>'
             f'<stop offset=".5" stop-color="#7A0F22"/><stop offset="1" stop-color="#5C0816"/></linearGradient></defs>'
             f'<path d="M{x0-n},{cy-h/2} H{x1+n} L{x1},{cy} L{x1+n},{cy+h/2} H{x0-n} L{x0},{cy} Z" fill="url(#rib)"/>'
-            f'<path d="M{x0-n+1.2},{cy-h/2+.9} H{x1+n-1.2} M{x0-n+1.2},{cy+h/2-.9} H{x1+n-1.2}" stroke="url(#gold)" stroke-width=".35"/>')
+            f'<path d="M{x0-n+1.2},{cy-h/2+.9} H{x1+n-1.2} M{x0-n+1.2},{cy+h/2-.9} H{x1+n-1.2}" stroke="url(#gold)" stroke-width=".35"/>' + '</g>')
 
 
 def gold_box(x, y, w, h):
@@ -45,10 +45,10 @@ def photo(n):
 def framed(href, x, y, w, h, tag="", pos="xMidYMid slice"):
     t = (f'<rect x="{x+.8}" y="{y+h-4.6}" width="{w-1.6}" height="3.8" fill="#E0245E"/>'
          f'<text x="{x+1.6}" y="{y+h-1.8}" font-size="2" font-family="Arial" font-weight="700" fill="#fff">{tag}</text>') if tag else ""
-    return (f'<rect x="{x-1.6}" y="{y-1.6}" width="{w+3.2}" height="{h+3.2}" fill="#FFF8EC"/>'
+    return (f'<g><rect x="{x-1.6}" y="{y-1.6}" width="{w+3.2}" height="{h+3.2}" fill="#FFF8EC"/>'
             f'<image href="{href}" x="{x}" y="{y}" width="{w}" height="{h}" preserveAspectRatio="{pos}"/>'
             f'<rect x="{x-1.6}" y="{y-1.6}" width="{w+3.2}" height="{h+3.2}" fill="none" stroke="url(#gold)" stroke-width=".55"/>'
-            f'<rect x="{x-.5}" y="{y-.5}" width="{w+1}" height="{h+1}" fill="none" stroke="url(#gold)" stroke-width=".2"/>{t}')
+            f'<rect x="{x-.5}" y="{y-.5}" width="{w+1}" height="{h+1}" fill="none" stroke="url(#gold)" stroke-width=".2"/>{t}</g>')
 
 
 def roses(x, y, w, flip=""):
@@ -118,8 +118,8 @@ def rose_frame(W, left_bleed=0):
     th = TOPW * 470 / 758
     bh = BOTW * 742 / 640
     o = M + 3   # push the cut edge of each cluster out into the bleed
-    frame = (f'<rect x="{M}" y="{M}" width="{W-2*M}" height="{DH-2*M}" fill="none" stroke="url(#gold)" stroke-width=".6"/>'
-             f'<rect x="{M+1.6}" y="{M+1.6}" width="{W-2*M-3.2}" height="{DH-2*M-3.2}" fill="none" stroke="url(#gold)" stroke-width=".22"/>')
+    frame = ('<g>' + f'<rect x="{M}" y="{M}" width="{W-2*M}" height="{DH-2*M}" fill="none" stroke="url(#gold)" stroke-width=".6"/>'
+             f'<rect x="{M+1.6}" y="{M+1.6}" width="{W-2*M-3.2}" height="{DH-2*M-3.2}" fill="none" stroke="url(#gold)" stroke-width=".22"/>' + '</g>')
     corners = (roses(M - o, M - o, TOPW, "x") + roses(W - M + o - TOPW, M - o, TOPW)
                + roses_bl(M - o, DH - M + o - bh, BOTW) + roses_bl(W - M + o - BOTW, DH - M + o - bh, BOTW, "x"))
     _cl = f"rf{int(W)}{left_bleed}"
@@ -128,18 +128,18 @@ def rose_frame(W, left_bleed=0):
 
 
 def gold_ring(cx, cy, r):
-    return (f'<circle cx="{cx}" cy="{cy}" r="{r}" fill="#FFF8EC" stroke="url(#gold)" stroke-width=".6"/>'
-            f'<circle cx="{cx}" cy="{cy}" r="{r+1.9}" fill="none" stroke="url(#gold)" stroke-width=".5" stroke-dasharray="0 1.25" stroke-linecap="round"/>')
+    return ('<g>' + f'<circle cx="{cx}" cy="{cy}" r="{r}" fill="#FFF8EC" stroke="url(#gold)" stroke-width=".6"/>'
+            f'<circle cx="{cx}" cy="{cy}" r="{r+1.9}" fill="none" stroke="url(#gold)" stroke-width=".5" stroke-dasharray="0 1.25" stroke-linecap="round"/>' + '</g>')
 
 
 def p5_special():
     events = ["Weddings", "Mehndi &amp; Sangeet", "Engagements", "Anniversaries", "Birthdays", "Corporate events"]
     li = "".join(f"<li>{e}</li>" for e in events)
     cx = DF / 2
-    oval = (f'<clipPath id="ov"><ellipse cx="{cx}" cy="63" rx="29" ry="20"/></clipPath>'
+    oval = ('<g>' + f'<clipPath id="ov"><ellipse cx="{cx}" cy="63" rx="29" ry="20"/></clipPath>'
             f'<image href="../img/p-mandap-2400.webp" x="{cx-29}" y="43" width="58" height="40" preserveAspectRatio="xMidYMid slice" clip-path="url(#ov)"/>'
             f'<ellipse cx="{cx}" cy="63" rx="29" ry="20" fill="none" stroke="url(#gold)" stroke-width=".75"/>'
-            f'<ellipse cx="{cx}" cy="63" rx="31.3" ry="22.3" fill="none" stroke="url(#gold)" stroke-width=".55" stroke-dasharray="0 1.25" stroke-linecap="round"/>')
+            f'<ellipse cx="{cx}" cy="63" rx="31.3" ry="22.3" fill="none" stroke="url(#gold)" stroke-width=".55" stroke-dasharray="0 1.25" stroke-linecap="round"/>' + '</g>')
     art = svg(DF, DH, rose_frame(DF, 3) + wing_divider(cx, 38.5, 22) + oval + wing_divider(cx, 90, 22))
     return f"""{art}
       <div class="t script" style="top:15mm;font-size:31pt">Celebrate</div>
@@ -178,7 +178,7 @@ def fold_bouquet(fold_x, PW, SH):
     its right half coincides with the cover's own roses, its left half is their mirror."""
     mmpp = (PW + B) / 2048
     top = -((PW + B) * 1.5 - SH) * 0.3 + 1700 * mmpp
-    return (f'<img src="assets/roses-fold.png" style="position:absolute;left:{fold_x - 1000*mmpp:.3f}mm;top:{top:.3f}mm;'
+    return (f'<img class="span" src="assets/roses-fold.png" style="position:absolute;left:{fold_x - 1000*mmpp:.3f}mm;top:{top:.3f}mm;'
             f'width:{2000*mmpp:.3f}mm;height:{1372*mmpp:.3f}mm">')
 
 

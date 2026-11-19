@@ -1,0 +1,473 @@
+<title>Desi Glasgow Brochure Studio</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Parisienne&family=Cinzel:wght@500;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Inter:wght@400;500;600&display=swap">
+<style id="css">
+/* Layout: dark studio chrome (toolbar top, layers right), brochure sheets at true mm scale on a pan/zoom stage. */
+:root{
+  --chrome:#1E1418; --chrome-2:#2A1C21; --line:#3D2A31; --ink:#F3E7DA; --muted:#B8A39A;
+  --accent:#D9A84E; --sel:#3FA9F5; --warn:#E0245E;
+  --ui:Inter,system-ui,sans-serif; color-scheme:dark;
+}
+html,body{height:100%}
+body{background:var(--chrome);color:var(--ink);font:13px/1.4 var(--ui);overflow:hidden}
+.app{display:grid;grid-template-rows:auto 1fr;height:100%}
+.bar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:8px max(12px,env(safe-area-inset-right,0px)) 8px max(12px,env(safe-area-inset-left,0px));background:var(--chrome-2);border-bottom:1px solid var(--line)}
+.bar .grp{display:flex;gap:4px;align-items:center;padding-right:8px;margin-right:2px;border-right:1px solid var(--line)}
+.bar .grp:last-child{border-right:0}
+.brand{font:600 13px var(--ui);color:var(--accent);margin-right:6px;white-space:nowrap}
+button,select,label.btn{font:500 12px var(--ui);color:var(--ink);background:#33242A;border:1px solid var(--line);border-radius:6px;padding:6px 9px;cursor:pointer;white-space:nowrap}
+button:hover,label.btn:hover{background:#43303A}
+button:focus-visible,select:focus-visible{outline:2px solid var(--sel);outline-offset:1px}
+button:disabled{opacity:.35;cursor:default}
+button.primary{background:var(--accent);color:#2A1A10;border-color:var(--accent);font-weight:600}
+button.on{background:#4A3540;border-color:var(--accent)}
+input[type=color]{width:30px;height:28px;padding:0;border:1px solid var(--line);border-radius:6px;background:none;cursor:pointer}
+.status{margin-left:auto;color:var(--muted);font-size:12px;white-space:nowrap}
+.main{display:grid;grid-template-columns:1fr 240px;min-height:0}
+.stagewrap{overflow:auto;position:relative;background:#120C0F;touch-action:none}
+.stage{transform-origin:0 0;padding:24px;width:max-content}
+.sheet{position:relative;width:318mm;height:154mm;background-size:330mm 160mm;background-position:0 0;box-shadow:0 6px 30px rgba(0,0,0,.5);margin-bottom:28px}
+.sheetname{font:600 11px var(--ui);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 26px}
+.panel{position:absolute;top:0;height:154mm;overflow:hidden}
+.panel .plabel{display:none}
+.el{position:absolute;transform-origin:50% 50%}
+.el.svgel{pointer-events:none}
+.el.svgel svg{display:block;width:100%;height:100%;overflow:visible}
+.el.svgel svg *{pointer-events:visiblePainted}
+.el.imgel img{display:block;width:100%;height:100%;max-width:none;user-select:none;-webkit-user-drag:none}
+.el.textel>.inner{position:static!important;left:auto!important;right:auto!important;top:auto!important;width:auto!important}
+.el.hid{display:none}
+.el [contenteditable=true]{outline:1px dashed var(--sel);cursor:text}
+.guides{position:absolute;inset:0;pointer-events:none;z-index:50}
+.guides .trim{position:absolute;left:3mm;top:3mm;right:3mm;bottom:3mm;outline:1px solid rgba(0,255,120,.7)}
+.guides .fold{position:absolute;top:0;bottom:0;border-left:1px dashed rgba(0,220,255,.85)}
+.guides .pn{position:absolute;top:-18px;font:600 10px var(--ui);color:var(--muted);letter-spacing:.06em}
+.selbox{position:absolute;z-index:60;border:1.5px solid var(--sel);pointer-events:none;transform-origin:50% 50%}
+.selbox .h{position:absolute;width:12px;height:12px;background:#fff;border:1.5px solid var(--sel);border-radius:2px;pointer-events:auto;touch-action:none}
+.selbox .h.se{right:-7px;bottom:-7px;cursor:nwse-resize}
+.selbox .h.e{right:-7px;top:calc(50% - 6px);cursor:ew-resize}
+.selbox .h.rot{left:calc(50% - 6px);top:-30px;border-radius:50%;cursor:grab}
+.selbox .h.rot::after{content:"";position:absolute;left:4px;top:11px;width:1.5px;height:16px;background:var(--sel)}
+.side{border-left:1px solid var(--line);background:var(--chrome-2);overflow:auto;padding:10px}
+.side h3{font:600 11px var(--ui);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:10px 0 6px}
+.layer{display:flex;align-items:center;gap:6px;padding:5px 6px;border-radius:5px;cursor:pointer;font-size:12px}
+.layer:hover{background:#33242A}
+.layer.sel{background:#3A2A33;outline:1px solid var(--sel)}
+.layer span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.layer button{padding:2px 6px;font-size:11px}
+.layer .k{font-size:10px;color:var(--muted);width:30px}
+.hint{color:var(--muted);font-size:12px;line-height:1.5;margin-top:12px}
+.banner{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);background:#33242A;border:1px solid var(--accent);border-radius:8px;padding:10px 14px;display:flex;gap:10px;align-items:center;z-index:100;max-width:calc(100% - 32px)}
+@media (max-width:760px){.main{grid-template-columns:1fr}.side{display:none}.brand{display:none}}
+/* brochure typography, copied from the print build */
+.t{position:absolute;left:0;right:0;text-align:center}
+.box{position:absolute;text-align:center}
+.script{font-family:'Great Vibes',cursive;color:#7A0F22;line-height:1.1}
+.caps{font-family:'Cinzel',serif;font-weight:700;color:#7A0F22;text-transform:uppercase}
+.calli{font-family:'Parisienne',cursive;color:#4A1A1E;font-size:11.3pt;line-height:1.36}
+.body{font-family:'Cormorant Garamond',serif;font-weight:600;color:#4A1A1E;font-size:9.4pt;line-height:1.45}
+.it{font-style:italic;font-size:10pt;color:#7A0F22}
+.bul{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:700;color:#8A5A18;font-size:9.6pt;line-height:1.5}
+.rib{position:absolute;text-align:center;font-family:'Cinzel',serif;font-weight:700;color:#FBEFD6;font-size:7.2pt;letter-spacing:.08em;text-transform:uppercase}
+.evl{list-style:none;columns:2;column-gap:4mm;font-family:'Cormorant Garamond',serif;font-weight:700;font-size:9.4pt;line-height:1.5;color:#4A1A1E;text-align:left;margin:0;padding:0}
+.evl li:before{content:'\25C6';color:#A8752A;font-size:5pt;margin-right:1.6mm;vertical-align:middle}
+.logo{position:absolute}
+/* print mode (#print): sheets only, 1:1, one per page */
+body.print{background:#fff;overflow:visible;margin:0}
+body.print .app{display:block;height:auto}
+body.print .sheet{overflow:hidden}
+body.print .stage>.sheet:last-child{break-after:auto}
+body.print .bar,body.print .side,body.print .sheetname,body.print .guides,body.print .selbox,body.print .banner{display:none!important}
+body.print .main{display:block}
+body.print .stagewrap{overflow:visible;background:#fff}
+body.print .stage{padding:0;transform:none!important}
+body.print .sheet{box-shadow:none;margin:0;break-after:page}
+@page{size:318mm 154mm;margin:0}
+</style>
+
+<div class="app">
+  <div class="bar" role="toolbar" aria-label="Editor tools">
+    <span class="brand">Brochure Studio</span>
+    <div class="grp">
+      <button id="undo" title="Undo (Ctrl+Z)">Undo</button>
+      <button id="redo" title="Redo (Ctrl+Shift+Z)">Redo</button>
+    </div>
+    <div class="grp">
+      <button id="zout" aria-label="Zoom out">−</button>
+      <button id="zfit">Fit</button>
+      <button id="zin" aria-label="Zoom in">+</button>
+      <button id="guides" class="on" title="Show trim and fold lines">Guides</button>
+    </div>
+    <div class="grp">
+      <button id="addText">Add text</button>
+      <label class="btn" for="addImgFile">Add image</label>
+      <input id="addImgFile" type="file" accept="image/*" hidden>
+    </div>
+    <div class="grp" id="selTools">
+      <button id="fsDown" title="Smaller text">A−</button>
+      <button id="fsUp" title="Larger text">A+</button>
+      <input id="color" type="color" title="Text colour" aria-label="Text colour">
+      <label class="btn" for="replaceFile" id="replaceBtn">Replace image</label>
+      <input id="replaceFile" type="file" accept="image/*" hidden>
+      <button id="rotL" title="Rotate −5°">⟲</button>
+      <button id="rotR" title="Rotate +5°">⟳</button>
+      <button id="back" title="Send backward">Back</button>
+      <button id="front" title="Bring forward">Front</button>
+      <button id="dup">Duplicate</button>
+      <button id="del">Delete</button>
+    </div>
+    <div class="grp">
+      <button id="save" class="primary">Save</button>
+    </div>
+    <span class="status" id="status" role="status"></span>
+  </div>
+  <div class="main">
+    <div class="stagewrap" id="wrap"><div class="stage" id="stage"></div></div>
+    <aside class="side">
+      <h3>Layers</h3>
+      <div id="layers"></div>
+      <p class="hint">Drag to move. Corner handle resizes (hold Shift to stretch). Top handle rotates. Double-click text to type. Arrow keys nudge 0.5 mm, Shift+arrow 5 mm. Save keeps your changes at this link; then ask Claude for the print PDF.</p>
+    </aside>
+  </div>
+</div>
+<div id="defs"></div>
+
+<script type="application/json" id="state">/*STATE*/</script>
+<script id="app">
+(() => {
+'use strict';
+const MM = 96 / 25.4;
+let S = JSON.parse(document.getElementById('state').textContent);
+const $ = (id) => document.getElementById(id);
+const stage = $('stage'), wrap = $('wrap'), statusEl = $('status');
+const printMode = location.hash === '#print';
+if (printMode) document.body.classList.add('print');
+let zoom = 1, sel = null, editing = null, showGuides = true, dirty = false;
+const undo = [], redo = [];
+let artifactApi = null, assetsApi = null;
+
+function setStatus(t) { statusEl.textContent = t; }
+function snapshot() { undo.push(JSON.stringify(S)); if (undo.length > 80) undo.shift(); redo.length = 0; markDirty(); }
+function markDirty() { dirty = true; setStatus('Unsaved changes'); try { localStorage.setItem('draft', JSON.stringify({ rev: S.rev || 0, at: Date.now(), S })); } catch (e) {} syncButtons(); }
+function find(id) {
+  for (const sh of S.sheets) for (const pn of sh.panels) { const i = pn.els.findIndex((e) => e.id === id); if (i >= 0) return { sh, pn, i, el: pn.els[i] }; }
+  return null;
+}
+function uid() { return 'n' + Math.random().toString(36).slice(2, 9); }
+
+// ---------- rendering
+function renderDefs() {
+  $('defs').innerHTML = `<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>${S.globalDefs}${S.defs}</defs></svg>`;
+}
+function elNode(e) {
+  const d = document.createElement('div');
+  d.className = 'el ' + e.kind + 'el' + (e.hidden ? ' hid' : '');
+  d.dataset.id = e.id;
+  d.style.cssText = `left:${e.x}mm;top:${e.y}mm;width:${e.w}mm;` + (e.kind === 'text' ? '' : `height:${e.h}mm;`) + (e.rot ? `transform:rotate(${e.rot}deg);` : '');
+  if (e.kind === 'svg') {
+    d.innerHTML = `<svg viewBox="${e.vb.join(' ')}" preserveAspectRatio="none">${e.svg}</svg>`;
+  } else if (e.kind === 'img') {
+    const im = document.createElement('img');
+    im.src = e.src; im.alt = ''; im.draggable = false;
+    if (e.fit) { im.style.objectFit = e.fit; if (e.pos) im.style.objectPosition = e.pos; }
+    d.appendChild(im);
+  } else {
+    const inner = document.createElement(e.tag || 'div');
+    inner.className = 'inner ' + (e.cls || '');
+    inner.setAttribute('style', e.style || '');
+    inner.innerHTML = e.html;
+    d.appendChild(inner);
+  }
+  return d;
+}
+function render() {
+  stage.innerHTML = '';
+  for (const sh of S.sheets) {
+    const name = document.createElement('p'); name.className = 'sheetname'; name.textContent = sh.name + ' sheet · 318 × 154 mm with bleed';
+    stage.appendChild(name);
+    const sd = document.createElement('div');
+    sd.className = 'sheet'; sd.dataset.sheet = sh.id;
+    sd.style.backgroundImage = `url(${sh.bg})`;
+    for (const pn of sh.panels) {
+      const pd = document.createElement('div');
+      pd.className = 'panel'; pd.dataset.panel = pn.id;
+      pd.style.left = pn.x + 'mm'; pd.style.width = pn.w + 'mm';
+      pn.els.forEach((e) => pd.appendChild(elNode(e)));
+      sd.appendChild(pd);
+    }
+    if (showGuides && !printMode) {
+      const g = document.createElement('div'); g.className = 'guides';
+      g.innerHTML = '<div class="trim"></div>' + sh.panels.slice(1).map((p) => `<div class="fold" style="left:${p.x}mm"></div>`).join('') +
+        sh.panels.map((p) => `<div class="pn" style="left:${p.x + 4}mm">${p.name}</div>`).join('');
+      sd.appendChild(g);
+    }
+    stage.appendChild(sd);
+  }
+  drawSel(); renderLayers(); syncButtons();
+}
+function rerenderEl(id) {
+  const f = find(id); if (!f) return;
+  const old = stage.querySelector(`.el[data-id="${id}"]`);
+  if (old) old.replaceWith(elNode(f.el));
+  drawSel();
+}
+
+// ---------- selection overlay
+function drawSel() {
+  stage.querySelectorAll('.selbox').forEach((n) => n.remove());
+  if (!sel || printMode) return;
+  const f = find(sel); if (!f) { sel = null; return; }
+  const node = stage.querySelector(`.el[data-id="${sel}"]`);
+  const sd = stage.querySelector(`.sheet[data-sheet="${f.sh.id}"]`);
+  const h = f.el.kind === 'text' ? node.offsetHeight / MM : f.el.h;
+  const b = document.createElement('div'); b.className = 'selbox';
+  b.style.cssText = `left:${f.pn.x + f.el.x}mm;top:${f.el.y}mm;width:${f.el.w}mm;height:${h}mm;` + (f.el.rot ? `transform:rotate(${f.el.rot}deg)` : '');
+  b.innerHTML = '<div class="h rot" data-h="rot"></div>' + (f.el.kind === 'text' ? '<div class="h e" data-h="e"></div>' : '') + '<div class="h se" data-h="se"></div>';
+  sd.appendChild(b);
+}
+function select(id) {
+  if (editing && editing !== id) stopEdit();
+  sel = id; drawSel(); renderLayers(); syncButtons();
+}
+
+// ---------- layers
+function labelOf(e) {
+  if (e.label) return e.label;
+  if (e.kind === 'text') { const t = document.createElement('div'); t.innerHTML = e.html; return (t.textContent || 'Text').trim().replace(/\s+/g, ' ').slice(0, 34) || 'Text'; }
+  const src = e.kind === 'img' ? e.src : e.img;
+  if (src) { const n = src.split('/').pop().replace(/\.\w+$/, ''); return ({ 'roses-tr': 'Roses', 'roses-bl': 'Roses', 'roses-fold': 'Rose bouquet', 'cover-mirror': 'Curtain & roses', cover: 'Cover artwork', garden: 'Garden background', mandap: 'Mandap photo', feather: 'Peacock feather', logo: 'Logo' })[n] || (n.startsWith('photo') ? 'Photo ' + n.slice(6) : src.startsWith('data:') || src.includes('_blob') ? 'Image' : n); }
+  if (e.svg.includes('<text')) return 'Script heading';
+  if (/<circle[^>]*r="1[0-9]/.test(e.svg)) return 'Gold ring';
+  if (e.svg.includes('id="rib"')) return 'Ribbon';
+  if (e.svg.includes('<rect') && e.w > 60 && e.h > 100) return 'Gold frame';
+  if (e.svg.includes('fadeB')) return 'Soft fade';
+  if (e.svg.includes('<rect') && e.svg.includes('FBF0DC')) return 'Cream panel';
+  if (e.w > 15 && e.h < 8) return 'Gold divider';
+  return 'Ornament';
+}
+function renderLayers() {
+  const L = $('layers'); if (!L) return;
+  L.innerHTML = '';
+  for (const sh of S.sheets) for (const pn of sh.panels) {
+    const h = document.createElement('h3'); h.textContent = pn.name; L.appendChild(h);
+    [...pn.els].reverse().forEach((e) => {
+      const row = document.createElement('div'); row.className = 'layer' + (e.id === sel ? ' sel' : '');
+      row.innerHTML = `<span class="k">${e.kind === 'text' ? 'Text' : 'Art'}</span><span></span><button aria-label="Show or hide">${e.hidden ? 'Show' : 'Hide'}</button>`;
+      row.children[1].textContent = labelOf(e);
+      row.addEventListener('click', (ev) => { if (ev.target.tagName === 'BUTTON') return; select(e.id); scrollToSel(); });
+      row.querySelector('button').addEventListener('click', () => { snapshot(); e.hidden = !e.hidden; rerenderEl(e.id); renderLayers(); });
+      L.appendChild(row);
+    });
+  }
+}
+function scrollToSel() {
+  const n = stage.querySelector(`.el[data-id="${sel}"]`); if (!n) return;
+  const r = n.getBoundingClientRect(), w = wrap.getBoundingClientRect();
+  if (r.top < w.top || r.bottom > w.bottom || r.left < w.left || r.right > w.right) wrap.scrollBy({ left: r.left - w.left - 60, top: r.top - w.top - 60, behavior: 'smooth' });
+}
+
+// ---------- toolbar state
+function syncButtons() {
+  const f = sel && find(sel); const k = f ? f.el.kind : null;
+  for (const id of ['rotL', 'rotR', 'back', 'front', 'dup', 'del']) $(id).disabled = !f;
+  $('fsDown').disabled = $('fsUp').disabled = $('color').disabled = k !== 'text';
+  const canReplace = k === 'img' || (k === 'svg' && f.el.img);
+  $('replaceBtn').style.opacity = canReplace ? 1 : .35; $('replaceBtn').style.pointerEvents = canReplace ? 'auto' : 'none';
+  $('undo').disabled = !undo.length; $('redo').disabled = !redo.length;
+  if (k === 'text') {
+    const n = stage.querySelector(`.el[data-id="${sel}"] .inner`);
+    if (n) { const c = getComputedStyle(n).color.match(/\d+/g); if (c) $('color').value = '#' + c.slice(0, 3).map((v) => (+v).toString(16).padStart(2, '0')).join(''); }
+  }
+}
+
+// ---------- pointer interactions
+let drag = null;
+stage.addEventListener('pointerdown', (ev) => {
+  if (printMode) return;
+  const handle = ev.target.closest('.h');
+  if (handle && sel) { startDrag(ev, handle.dataset.h); return; }
+  const node = ev.target.closest('.el');
+  if (!node) { if (!ev.target.closest('[contenteditable=true]')) { stopEdit(); select(null); } return; }
+  if (editing === node.dataset.id) return;
+  select(node.dataset.id);
+  startDrag(ev, 'move');
+});
+function startDrag(ev, mode) {
+  const f = find(sel); if (!f) return;
+  ev.preventDefault();
+  const node = stage.querySelector(`.el[data-id="${sel}"]`);
+  const r = node.getBoundingClientRect();
+  drag = { mode, x0: ev.clientX, y0: ev.clientY, e0: { ...f.el }, moved: false, cx: r.left + r.width / 2, cy: r.top + r.height / 2, shift: ev.shiftKey };
+  wrap.setPointerCapture?.(ev.pointerId);
+}
+window.addEventListener('pointermove', (ev) => {
+  if (!drag) return;
+  const f = find(sel); if (!f) return;
+  const dx = (ev.clientX - drag.x0) / (MM * zoom), dy = (ev.clientY - drag.y0) / (MM * zoom);
+  if (!drag.moved && Math.hypot(dx, dy) < 0.4) return;
+  if (!drag.moved) { snapshot(); drag.moved = true; }
+  const e = f.el, o = drag.e0;
+  if (drag.mode === 'move') { e.x = +(o.x + dx).toFixed(2); e.y = +(o.y + dy).toFixed(2); }
+  else if (drag.mode === 'e') { e.w = Math.max(5, +(o.w + dx).toFixed(2)); }
+  else if (drag.mode === 'se') {
+    if (e.kind === 'text') { e.w = Math.max(5, +(o.w + dx).toFixed(2)); }
+    else if (ev.shiftKey) { e.w = Math.max(3, +(o.w + dx).toFixed(2)); e.h = Math.max(3, +(o.h + dy).toFixed(2)); }
+    else { const k = Math.max(0.05, (o.w + (dx + dy * o.w / o.h) / 2) / o.w); e.w = +(o.w * k).toFixed(2); e.h = +(o.h * k).toFixed(2); }
+  } else if (drag.mode === 'rot') {
+    const a = Math.atan2(ev.clientY - drag.cy, ev.clientX - drag.cx) * 180 / Math.PI + 90;
+    e.rot = ev.shiftKey ? Math.round(a) : Math.round(a / 5) * 5;
+  }
+  const node = stage.querySelector(`.el[data-id="${sel}"]`);
+  node.style.left = e.x + 'mm'; node.style.top = e.y + 'mm'; node.style.width = e.w + 'mm';
+  if (e.kind !== 'text') node.style.height = e.h + 'mm';
+  node.style.transform = e.rot ? `rotate(${e.rot}deg)` : '';
+  drawSel();
+});
+window.addEventListener('pointerup', () => { if (drag && drag.moved) markDirty(); drag = null; });
+
+// ---------- text editing
+stage.addEventListener('dblclick', (ev) => {
+  const node = ev.target.closest('.el.textel'); if (!node) return;
+  const inner = node.querySelector('.inner');
+  editing = node.dataset.id; snapshot();
+  inner.contentEditable = 'true'; inner.focus();
+  const range = document.createRange(); range.selectNodeContents(inner); const s = getSelection(); s.removeAllRanges(); s.addRange(range);
+});
+function stopEdit() {
+  if (!editing) return;
+  const f = find(editing); const node = stage.querySelector(`.el[data-id="${editing}"] .inner`);
+  if (f && node) { node.contentEditable = 'false'; if (f.el.html !== node.innerHTML) { f.el.html = node.innerHTML; markDirty(); } }
+  editing = null; renderLayers(); drawSel();
+}
+stage.addEventListener('focusout', (ev) => { if (ev.target.isContentEditable) stopEdit(); });
+
+// ---------- style helpers
+function styleGet(e, prop) { const m = (e.style || '').match(new RegExp('(?:^|;)\\s*' + prop + '\\s*:\\s*([^;]+)')); return m ? m[1].trim() : null; }
+function styleSet(e, prop, val) {
+  const parts = (e.style || '').split(';').map((s) => s.trim()).filter((s) => s && !s.startsWith(prop + ':') && !s.startsWith(prop + ' :'));
+  parts.push(prop + ':' + val); e.style = parts.join(';');
+}
+function fontSize(delta) {
+  const f = find(sel); if (!f || f.el.kind !== 'text') return;
+  const n = stage.querySelector(`.el[data-id="${sel}"] .inner`);
+  const cur = parseFloat(styleGet(f.el, 'font-size')) || parseFloat(getComputedStyle(n).fontSize) * 0.75;
+  snapshot(); styleSet(f.el, 'font-size', Math.max(4, +(cur + delta).toFixed(1)) + 'pt'); rerenderEl(sel);
+}
+$('fsUp').onclick = () => fontSize(1);
+$('fsDown').onclick = () => fontSize(-1);
+$('color').addEventListener('input', (ev) => { const f = find(sel); if (!f || f.el.kind !== 'text') return; if (!drag) { snapshot(); } styleSet(f.el, 'color', ev.target.value); rerenderEl(sel); });
+$('rotL').onclick = () => { const f = find(sel); if (!f) return; snapshot(); f.el.rot = ((f.el.rot || 0) - 5) % 360; rerenderEl(sel); };
+$('rotR').onclick = () => { const f = find(sel); if (!f) return; snapshot(); f.el.rot = ((f.el.rot || 0) + 5) % 360; rerenderEl(sel); };
+function restack(dir) {
+  const f = find(sel); if (!f) return; const j = f.i + dir; if (j < 0 || j >= f.pn.els.length) return;
+  snapshot(); const [e] = f.pn.els.splice(f.i, 1); f.pn.els.splice(j, 0, e); render();
+}
+$('back').onclick = () => restack(-1);
+$('front').onclick = () => restack(1);
+$('dup').onclick = () => { const f = find(sel); if (!f) return; snapshot(); const c = JSON.parse(JSON.stringify(f.el)); c.id = uid(); c.x += 4; c.y += 4; f.pn.els.splice(f.i + 1, 0, c); sel = c.id; render(); };
+$('del').onclick = () => { const f = find(sel); if (!f) return; snapshot(); f.pn.els.splice(f.i, 1); sel = null; render(); };
+
+// ---------- images
+async function imageUrl(file) {
+  if (assetsApi) {
+    try { setStatus('Uploading image…'); const r = await assetsApi.upload(file); return r.url; }
+    catch (e) { setStatus('Upload failed, keeping the image inside the page instead'); }
+  }
+  return await new Promise((res, rej) => {
+    const img = new Image(); const u = URL.createObjectURL(file);
+    img.onload = () => { const k = Math.min(1, 2400 / Math.max(img.width, img.height)); const c = document.createElement('canvas'); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k); c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(u); res(c.toDataURL('image/jpeg', 0.9)); };
+    img.onerror = rej; img.src = u;
+  });
+}
+$('replaceFile').addEventListener('change', async (ev) => {
+  const file = ev.target.files[0]; ev.target.value = ''; const f = sel && find(sel); if (!file || !f) return;
+  const url = await imageUrl(file); snapshot();
+  if (f.el.kind === 'img') f.el.src = url;
+  else { f.el.svg = f.el.svg.replace(/(<image[^>]*?\shref=")[^"]*(")/, `$1${url}$2`); f.el.img = url; }
+  rerenderEl(sel); renderLayers(); setStatus('Image replaced · unsaved');
+});
+function targetPanel() { const f = sel && find(sel); if (f) return f; const sh = S.sheets[0]; return { sh, pn: sh.panels[1] }; }
+$('addImgFile').addEventListener('change', async (ev) => {
+  const file = ev.target.files[0]; ev.target.value = ''; if (!file) return;
+  const url = await imageUrl(file); const im = new Image();
+  im.onload = () => { const { pn } = targetPanel(); const w = Math.min(60, pn.w - 20), h = w * im.height / im.width; snapshot(); const e = { id: uid(), kind: 'img', src: url, x: (pn.w - w) / 2, y: 40, w, h }; pn.els.push(e); sel = e.id; render(); scrollToSel(); };
+  im.src = url;
+});
+$('addText').onclick = () => { const { pn } = targetPanel(); snapshot(); const e = { id: uid(), kind: 'text', tag: 'div', cls: 'box script', style: 'font-size:20pt', html: 'Your text', x: 10, y: 70, w: Math.min(80, pn.w - 20), h: 10 }; pn.els.push(e); sel = e.id; render(); scrollToSel(); };
+
+// ---------- undo / zoom / guides / keys
+function applyHist(from, to) { if (!from.length) return; to.push(JSON.stringify(S)); S = JSON.parse(from.pop()); if (sel && !find(sel)) sel = null; renderDefs(); render(); markDirty(); }
+$('undo').onclick = () => applyHist(undo, redo);
+$('redo').onclick = () => applyHist(redo, undo);
+function setZoom(z) { zoom = Math.max(0.2, Math.min(4, z)); stage.style.transform = `scale(${zoom})`; }
+function fit() { const avail = wrap.clientWidth - 20; setZoom(avail / (318 * MM + 48)); }
+$('zin').onclick = () => setZoom(zoom * 1.2);
+$('zout').onclick = () => setZoom(zoom / 1.2);
+$('zfit').onclick = fit;
+$('guides').onclick = () => { showGuides = !showGuides; $('guides').classList.toggle('on', showGuides); render(); };
+window.addEventListener('keydown', (ev) => {
+  if (ev.target.isContentEditable) { if (ev.key === 'Escape') stopEdit(); return; }
+  if (ev.target.tagName === 'INPUT' || ev.target.tagName === 'SELECT') return;
+  const mod = ev.ctrlKey || ev.metaKey;
+  if (mod && ev.key.toLowerCase() === 'z') { ev.preventDefault(); ev.shiftKey ? applyHist(redo, undo) : applyHist(undo, redo); return; }
+  if (mod && ev.key.toLowerCase() === 's') { ev.preventDefault(); save(); return; }
+  const f = sel && find(sel); if (!f) return;
+  const step = ev.shiftKey ? 5 : 0.5;
+  const mv = { ArrowLeft: [-step, 0], ArrowRight: [step, 0], ArrowUp: [0, -step], ArrowDown: [0, step] }[ev.key];
+  if (mv) { ev.preventDefault(); snapshot(); f.el.x = +(f.el.x + mv[0]).toFixed(2); f.el.y = +(f.el.y + mv[1]).toFixed(2); rerenderEl(sel); }
+  if (ev.key === 'Delete' || ev.key === 'Backspace') { ev.preventDefault(); $('del').click(); }
+  if (ev.key === 'Escape') select(null);
+});
+wrap.addEventListener('wheel', (ev) => { if (ev.ctrlKey) { ev.preventDefault(); setZoom(zoom * (ev.deltaY < 0 ? 1.1 : 1 / 1.1)); } }, { passive: false });
+
+// ---------- save (republish this page with the state embedded)
+const RESET = ':root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}';
+function buildDoc() {
+  const head = document.querySelector('title').outerHTML + document.querySelector('link[href*="fonts.googleapis"]').outerHTML;
+  const css = '<style id="css">' + $('css').textContent + '</style>';
+  const state = JSON.stringify({ ...S, rev: (S.rev || 0) + 1 }).replace(/</g, '\\u003c');
+  return '<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>' + RESET + '</style></head><body>' +
+    head + '\n' + css + '\n' + TEMPLATE_APP_MARKUP + '\n<div id="defs"></div>\n<script type="application/json" id="state">' + state + '<\/script>\n<script id="app">' + $('app').textContent + '<\/script></body></html>';
+}
+const TEMPLATE_APP_MARKUP = document.querySelector('.app').outerHTML;
+async function save() {
+  stopEdit();
+  if (!artifactApi) { setStatus('Saving is not available in this view. Your draft is kept in this browser.'); return; }
+  try {
+    setStatus('Saving…'); $('save').disabled = true;
+    await artifactApi.publish(buildDoc());
+    try { localStorage.removeItem('draft'); } catch (e) {}
+    setStatus('Saved');
+  } catch (e) {
+    const c = e && e.code;
+    setStatus(c === 'conflict' ? 'Someone else saved first; reloading their version' : c === 'not_writer' || c === 'not_granted' ? 'You can view this page but not save to it' : 'Save failed: ' + (e.message || c || 'unknown error'));
+  } finally { $('save').disabled = false; }
+}
+$('save').onclick = save;
+
+// ---------- start
+renderDefs(); render();
+if (!printMode) {
+  requestAnimationFrame(fit);
+  try {
+    const d = JSON.parse(localStorage.getItem('draft') || 'null');
+    if (d && d.rev === (S.rev || 0) && d.S) {
+      const b = document.createElement('div'); b.className = 'banner';
+      b.innerHTML = '<span>You have unsaved edits from your last visit.</span><button class="primary">Restore</button><button>Discard</button>';
+      b.children[1].onclick = () => { snapshot(); S = d.S; renderDefs(); render(); b.remove(); };
+      b.children[2].onclick = () => { try { localStorage.removeItem('draft'); } catch (e) {} b.remove(); };
+      document.body.appendChild(b);
+    }
+  } catch (e) {}
+  setStatus('All changes saved');
+  let tries = 0;
+  (function hook() {
+    if (window.claude && window.claude.use) {
+      window.claude.use('artifact').then((a) => { artifactApi = a; if (!a) setStatus('Viewing only · edits stay in this browser'); });
+      window.claude.use('assets').then((a) => { assetsApi = a; });
+    } else if (tries++ < 30) setTimeout(hook, 100);
+    else setStatus('Saving needs the Claude viewer · edits stay in this browser');
+  })();
+  window.addEventListener('resize', () => { if (!drag) fit(); });
+}
+})();
+</script>

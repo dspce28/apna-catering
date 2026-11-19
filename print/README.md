@@ -42,3 +42,11 @@ Ivory silk outside (contrasts with the red envelope), red tapestry reveal inside
 cover, story card and photos. Outputs `out/brochure-UNIQUE-A6-print-bleed.pdf` and `out/brochure-UNIQUE-FIT-print-bleed.pdf`.
 Assets: `assets/tapestry-tile.jpg` / `tapestry-bg.jpg` (from the client's tapestry; right half rebuilt from the mirrored
 left half, removing the corner mark; ~217 dpi effective), `assets/feather-gold.png` (client feather, keep ≤ 45 mm wide).
+
+## Brochure Studio (browser editor)
+
+`print/editor/` turns the invitation-theme brochure into an editable page (published as a claude.ai artifact).
+- `node print/editor/convert.js` → `state.json` (every rose, frame, photo, divider and text block as its own element, in mm)
+- `python3 print/editor/build.py` → `index.html` (template + state)
+- Saved edits republish the page with the state embedded. To print: save the published page next to `a/` and run
+  `node print/editor/print_saved.js <saved.html>` → `out/brochure-EDITED-A6-print-bleed.pdf`.
