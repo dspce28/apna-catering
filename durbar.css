@@ -195,6 +195,7 @@ h1,h2,h3,h4{font-weight:400;letter-spacing:0}
 .food{position:absolute;transform:translate(-50%,-50%);cursor:pointer;background:none;padding:0}
 .food img{width:100%;height:auto;display:block;filter:drop-shadow(4px 8px 7px rgba(40,20,0,.45))}
 .food.bowl img{border-radius:50%;filter:none}
+.food.extra{padding:1.1%;border-radius:50%;background:radial-gradient(circle at 40% 30%,#f6dfa0,#c99a4a 55%,#7f5a20);box-shadow:0 8px 14px -6px rgba(0,0,0,.6),inset 0 0 0 1px rgba(255,240,200,.5)}
 .food.settle{animation:settle .55s cubic-bezier(.2,1.5,.4,1)}
 @keyframes settle{0%{transform:translate(-50%,-50%) scale(1.12)}100%{transform:translate(-50%,-50%) scale(1)}}
 .food.leave{animation:leave .35s ease-in forwards}
@@ -258,8 +259,8 @@ h1,h2,h3,h4{font-weight:400;letter-spacing:0}
 
 /* ---- 3D menu booklet ---- */
 .bk-filter{margin:-6px 0 30px}
-.bk-wrap{perspective:2600px;display:flex;justify-content:center;padding:20px 0 34px}
-.book{--pw:min(420px,41vw);--tilt:0deg;position:relative;width:calc(var(--pw) * 2);height:calc(var(--pw) * 1.4);transform-style:preserve-3d;outline:none;
+.bk-wrap{perspective:2600px;display:flex;justify-content:center;padding:14px 0 30px}
+.book{--pw:min(420px,41vw,calc((100svh - 250px) / 1.4));--tilt:0deg;position:relative;width:calc(var(--pw) * 2);height:calc(var(--pw) * 1.4);transform-style:preserve-3d;outline:none;
   transform:translateX(calc(var(--pw) * -.5)) rotateX(var(--tilt));transition:transform 1.1s var(--ease)}
 .book.pre{--tilt:28deg}
 .book[data-state=open]{transform:translateX(0) rotateX(var(--tilt))}

@@ -373,11 +373,11 @@ def thali():
         groups += f'<div class="tgroup" data-group="{k}"><h4>{title}{f" <small>{note}</small>" if note else ""}</h4><div class="toks">{toks}</div></div>'
     return f'''<section class="sec thali-sec" id="thali">
   <div class="wrap">
-    <div class="center"><p class="eyebrow" data-fade>Design your thali</p><h2 class="h2" data-fade>Serve your own <em>maharaja thali.</em></h2><p class="lede" data-fade>Pick from the counter and we’ll serve it straight onto the thali: curries into the katoris, everything else onto the plate. Tap anything on the thali to take it off.</p></div>
+    <div class="center"><p class="eyebrow" data-fade>Design your thali</p><h2 class="h2" data-fade>Serve your own <em>maharaja thali.</em></h2><p class="lede" data-fade>Pick anything from the counter, as many as you like, and we’ll serve it straight onto the thali: curries into the katoris, everything else onto the plate. Tap anything on the thali to take it off.</p></div>
     <div class="th" data-fade>
       <div class="th-stage">
         <div class="thali" aria-label="Your thali"><img class="thali-img" src="img/thali-royal.webp" alt="An empty royal brass thali with six katoris" width="1200" height="1094" loading="lazy"><div class="th-food"></div></div>
-        <p class="th-count"><b>0</b> of 11 places served</p>
+        <p class="th-count"><b>0</b> of 16 places served</p>
       </div>
       <div class="th-tray">
         <div class="mfilter th-filter" role="group" aria-label="Filter dishes"><button aria-pressed="true" data-f="all">All</button><button aria-pressed="false" data-f="veg">Veg</button><button aria-pressed="false" data-f="jain">Jain</button><button aria-pressed="false" data-f="nonveg">Non-veg</button></div>

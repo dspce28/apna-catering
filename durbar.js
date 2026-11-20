@@ -117,43 +117,44 @@
      DESIGN YOUR THALI: food is served from the counter onto a real brass thali.
      Positions are fractions of the thali image (centre x, centre y, width).
      ========================================================= */
-  const PLACES = {
-    bowl: [[.155, .44, .135], [.236, .26, .135], [.402, .156, .135], [.598, .156, .135], [.759, .26, .135], [.839, .447, .135]],
-    rice: [[.47, .55, .25]],
-    bread: [[.71, .60, .27]],
-    starter: [[.28, .67, .21], [.48, .835, .21]],
-    sweet: [[.69, .83, .16]],
+  // six katoris for gravies, and ten free spots on the plate that any dish can take
+  const KATORI = [[.155, .44, .135], [.236, .26, .135], [.402, .156, .135], [.598, .156, .135], [.759, .26, .135], [.839, .447, .135]];
+  const SPOTS = [[.50, .52, .23], [.73, .60, .21], [.27, .62, .21], [.50, .77, .19], [.70, .81, .17], [.30, .81, .17],
+                 [.50, .31, .13], [.85, .67, .10], [.15, .67, .10], [.50, .905, .11]];
+  const PREFER = {  // which plate spot each kind of dish looks for first
+    rice: [0, 6, 3, 1, 2, 4, 5, 7, 8, 9], bread: [1, 2, 3, 0, 4, 5, 6, 7, 8, 9], starter: [2, 1, 3, 4, 5, 0, 6, 7, 8, 9],
+    sweet: [4, 5, 3, 9, 6, 7, 8, 2, 1, 0], bowl: [6, 7, 8, 9, 4, 5, 3, 2, 1, 0],
   };
-  const KIND_NAME = { bowl: 'katori', rice: 'rice', bread: 'bread', starter: 'starter', sweet: 'sweet' };
   $$('.thali-sec').forEach((sec) => {
     const plate = $('.thali', sec), layer = $('.th-food', sec), toks = $$('.tok', sec), msg = $('.th-msg', sec), count = $('.th-count b', sec);
-    const served = {}; Object.keys(PLACES).forEach((k) => { served[k] = PLACES[k].map(() => null); });
-    const total = Object.values(PLACES).reduce((n, a) => n + a.length, 0);
-    $('.th-count', sec).lastChild.textContent = ` of ${total} places served`;
-    const all = () => Object.values(served).flat().filter(Boolean);
+    const served = { katori: KATORI.map(() => null), spot: SPOTS.map(() => null) };
+    const POS = { katori: KATORI, spot: SPOTS };
+    $('.th-count', sec).lastChild.textContent = ` of ${KATORI.length + SPOTS.length} places served`;
+    const all = () => [...served.katori, ...served.spot].filter(Boolean);
     const sync = () => {
       const on = new Set(all().map((d) => d.cut));
       toks.forEach((t) => t.classList.toggle('on', on.has(t.dataset.cut)));
       count.textContent = all().length;
-      store.set('thali2', served);
+      store.set('thali3', served);
     };
-    const place = (kind, i, d, animateFrom) => {
-      const [x, y, w] = PLACES[kind][i];
+    const place = (pool, i, d, animateFrom) => {
+      const [x, y, w] = POS[pool][i], bowl = d.kind === 'bowl';
       const el = document.createElement('button');
-      el.type = 'button'; el.className = 'food ' + (kind === 'bowl' ? 'bowl' : 'plated'); el.dataset.kind = kind; el.dataset.i = i;
+      el.type = 'button'; el.className = 'food ' + (bowl ? 'bowl' : 'plated') + (bowl && pool === 'spot' ? ' extra' : '');
+      el.dataset.pool = pool; el.dataset.i = i;
       el.style.left = x * 100 + '%'; el.style.top = y * 100 + '%'; el.style.width = w * 100 + '%';
       el.setAttribute('aria-label', d.name + ', tap to take it off');
       el.innerHTML = `<img src="img/cut/${d.cut}.webp" alt="">`;
-      const old = $(`.food[data-kind="${kind}"][data-i="${i}"]`, layer); if (old) old.remove();
+      const old = $(`.food[data-pool="${pool}"][data-i="${i}"]`, layer); if (old) old.remove();
       el.addEventListener('click', () => {
-        served[kind][i] = null; el.classList.add('leave'); setTimeout(() => el.remove(), 350);
+        served[pool][i] = null; el.classList.add('leave'); setTimeout(() => el.remove(), 350);
         msg.textContent = `${d.name} taken off.`; sync();
       });
       if (!animateFrom || reduce) { layer.appendChild(el); return; }
       // fly from the counter to its place on the thali, as if served by hand
       el.style.visibility = 'hidden'; layer.appendChild(el);
       const to = el.getBoundingClientRect(), from = animateFrom.getBoundingClientRect();
-      const fly = document.createElement('div'); fly.className = 'flyer'; fly.innerHTML = `<img src="img/cut/${d.cut}.webp" alt=""${kind === 'bowl' ? ' style="border-radius:50%"' : ''}>`;
+      const fly = document.createElement('div'); fly.className = 'flyer'; fly.innerHTML = `<img src="img/cut/${d.cut}.webp" alt=""${bowl ? ' style="border-radius:50%"' : ''}>`;
       fly.style.left = to.left + 'px'; fly.style.top = to.top + 'px'; fly.style.width = to.width + 'px';
       document.body.appendChild(fly);
       const s0 = from.width / to.width, dx = from.left + from.width / 2 - (to.left + to.width / 2), dy = from.top + from.height / 2 - (to.top + to.height / 2);
@@ -165,15 +166,13 @@
       a.onfinish = () => { fly.remove(); el.style.visibility = ''; el.classList.add('settle'); };
     };
     const serve = (tok, fromEl) => {
-      const d = { cut: tok.dataset.cut, name: tok.dataset.name }, kind = tok.dataset.kind, slots = served[kind];
-      const here = slots.findIndex((x) => x && x.cut === d.cut);
-      if (here >= 0) { msg.textContent = `${d.name} is already on your thali.`; return; }
-      let i = slots.findIndex((x) => !x);
-      if (i < 0) {
-        if (kind === 'bowl') { msg.textContent = 'All six katoris are full. Tap one on the thali to empty it.'; return; }
-        i = slots.length - 1; msg.textContent = `${slots[i].name} swapped for ${d.name}.`;
-      } else msg.textContent = `${d.name} served.`;
-      slots[i] = d; place(kind, i, d, fromEl || $('img', tok)); sync();
+      const d = { cut: tok.dataset.cut, name: tok.dataset.name, kind: tok.dataset.kind };
+      if (all().some((x) => x.cut === d.cut)) { msg.textContent = `${d.name} is already on your thali.`; return; }
+      let pool = 'katori', i = d.kind === 'bowl' ? served.katori.findIndex((x) => !x) : -1;
+      if (i < 0) { pool = 'spot'; i = (PREFER[d.kind] || PREFER.starter).find((k) => !served.spot[k]) ?? -1; }
+      if (i < 0) { msg.textContent = 'Your thali is full. Tap any dish on it to make room.'; return; }
+      msg.textContent = d.kind === 'bowl' && pool === 'spot' ? `${d.name} served in an extra katori.` : `${d.name} served.`;
+      served[pool][i] = d; place(pool, i, d, fromEl || $('img', tok)); sync();
     };
     // tap to serve, or drag onto the thali
     toks.forEach((tok) => {
@@ -201,7 +200,7 @@
       toks.forEach((t) => t.classList.toggle('out', b.dataset.f !== 'all' && !t.dataset.diet.split(' ').includes(b.dataset.f)));
       $$('.tgroup', sec).forEach((g) => g.classList.toggle('empty', !$$('.tok:not(.out)', g).length));
     }));
-    const clear = () => { Object.keys(served).forEach((k) => served[k].fill(null)); layer.innerHTML = ''; sync(); };
+    const clear = () => { served.katori.fill(null); served.spot.fill(null); layer.innerHTML = ''; sync(); };
     $('.th-clear', sec).addEventListener('click', () => { clear(); msg.textContent = 'Thali cleared.'; });
     // chef's choice: a balanced thali, served one dish at a time
     $('.th-chef', sec).addEventListener('click', () => {
@@ -220,8 +219,8 @@
       const pill = $('.picks'); if (pill) { $('b', pill).textContent = picks.length; pill.classList.add('on'); }
       msg.innerHTML = `Added ${names.length} ${names.length === 1 ? 'dish' : 'dishes'} to your enquiry. <a href="contact.html" class="link">Send it →</a>`;
     });
-    const saved = store.get('thali2', null);
-    if (saved) Object.keys(PLACES).forEach((k) => (saved[k] || []).forEach((d, i) => { if (d && i < PLACES[k].length) { served[k][i] = d; place(k, i, d); } }));
+    const saved = store.get('thali3', null);
+    if (saved) ['katori', 'spot'].forEach((p) => (saved[p] || []).forEach((d, i) => { if (d && d.kind && i < POS[p].length) { served[p][i] = d; place(p, i, d); } }));
     sync();
   });
 
