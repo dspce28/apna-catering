@@ -128,6 +128,20 @@
 </footer>
 <nav class="mbar" aria-label="Quick contact"><a href="tel:+447818478036">Call</a><a href="https://wa.me/447818478036" target="_blank" rel="noopener">WhatsApp</a><a href="contact.html" class="go">Quote</a></nav>
 <a class="picks" href="contact.html"><b>0</b>Dishes picked · enquire</a>
+<div class="palpick" role="group" aria-label="Colour"><span>Colour</span>
+<button data-pal="emerald" style="background:#071a15" aria-label="Emerald"></button><button data-pal="wine" style="background:#1c0509" aria-label="Wine"></button><button data-pal="sapphire" style="background:#091126" aria-label="Sapphire"></button><button data-pal="aubergine" style="background:#1a0a1f" aria-label="Aubergine"></button><button data-pal="peacock" style="background:#041e22" aria-label="Peacock"></button><button data-pal="onyx" style="background:#0c0c0e" aria-label="Onyx"></button><output></output></div>
+<script>
+(function(){var h=document.documentElement,names={emerald:'Emerald',wine:'Wine',sapphire:'Sapphire',aubergine:'Aubergine',peacock:'Peacock',onyx:'Onyx'};
+function set(p,save){if(!names[p])p='emerald';h.setAttribute('data-pal',p);
+document.querySelectorAll('.palpick button').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.pal===p)});
+var o=document.querySelector('.palpick output');if(o)o.textContent=names[p];
+var m=document.querySelector('meta[name=theme-color]');if(m)m.content=getComputedStyle(h).getPropertyValue('--on-gold').trim();
+if(save)try{localStorage.setItem('apna-pal',p)}catch(e){}
+window.dispatchEvent(new Event('resize'));}
+var q=new URLSearchParams(location.search).get('pal'),s=null;try{s=localStorage.getItem('apna-pal')}catch(e){}
+set(q||s||'emerald',!!q);
+document.querySelectorAll('.palpick button').forEach(function(b){b.addEventListener('click',function(){set(b.dataset.pal,true)})});})();
+</script>
 <script src="site.js" defer></script>
 </body>
 </html>

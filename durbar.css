@@ -2,45 +2,61 @@
    Night wine, candle ivory and gold. Playfair Display and Manrope. One motif: the client's brocade,
    faint, on two sections. Candlelit photography. Cinematic motion (same scroll stages). */
 :root{
-  --ivory:#1c0509; --sand:#25070d; --white:#2c0a11;
+  --ivory:rgb(var(--bg-rgb)); --sand:rgb(var(--bg2-rgb)); --white:var(--panel);
   --maroon:#f6ead2; --maroon-2:#fff6e2; --gold:#d4a85a; --gold-lt:#e9cf94;
   --text:#f6ead2; --mute:#cdb79c; --line:rgba(246,234,210,.14); --line-gold:rgba(212,168,90,.45);
-  --serif:"Playfair Display",Georgia,serif; --frost:rgba(28,5,9,.6);
-  --brocade-bg:linear-gradient(rgba(37,7,13,.86),rgba(37,7,13,.9)),url(img/brocade.webp) center/560px auto repeat;
+  --serif:"Playfair Display",Georgia,serif; --frost:rgba(var(--bg-rgb),.6);
+  --brocade-bg:linear-gradient(rgba(var(--bg2-rgb),.84),rgba(var(--bg2-rgb),.88)),linear-gradient(var(--tint),var(--tint)),url(img/brocade.webp) center/560px auto repeat;
 }
+
+/* ---------- the dark base, swappable (the gold and candle ivory stay) ---------- */
+:root,[data-pal=emerald]{--bg-rgb:7,26,21;--bg2-rgb:10,35,28;--panel:#0f2c23;--tint:#0f4a38;--on-gold:#071a15}
+[data-pal=wine]{--bg-rgb:28,5,9;--bg2-rgb:37,7,13;--panel:#2c0a11;--tint:#7d1526;--on-gold:#1c0509}
+[data-pal=sapphire]{--bg-rgb:9,17,38;--bg2-rgb:13,24,52;--panel:#152243;--tint:#1d3a7a;--on-gold:#091126}
+[data-pal=aubergine]{--bg-rgb:26,10,31;--bg2-rgb:35,14,42;--panel:#2b1332;--tint:#4a1f55;--on-gold:#1a0a1f}
+[data-pal=peacock]{--bg-rgb:4,30,34;--bg2-rgb:7,41,46;--panel:#0b3238;--tint:#0f5a60;--on-gold:#041e22}
+[data-pal=onyx]{--bg-rgb:12,12,14;--bg2-rgb:20,20,23;--panel:#1b1b1f;--tint:#2a2a2e;--on-gold:#0c0c0e}
+
+/* palette picker (for choosing with the client; remove once a palette is chosen) */
+.palpick{position:fixed;left:16px;bottom:16px;z-index:60;display:flex;align-items:center;gap:8px;padding:8px 10px 8px 14px;border-radius:99px;background:rgba(var(--bg-rgb),.92);box-shadow:0 0 0 1px var(--line-gold),0 16px 30px -16px #000;font-size:10.5px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--gold-lt)}
+.palpick button{width:26px;height:26px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(212,168,90,.5);transition:transform .3s}
+.palpick button[aria-pressed=true]{box-shadow:0 0 0 2px var(--gold),inset 0 0 0 1px rgba(212,168,90,.5);transform:scale(1.12)}
+.palpick output{min-width:84px;color:var(--text)}
+@media (max-width:700px){.palpick{bottom:84px;left:12px}.palpick output{display:none}}
+
 body{background:var(--ivory);color:var(--text)}
 h1,h2,h3,h4{font-weight:400;letter-spacing:0}
 .display{font-size:clamp(48px,7.2vw,112px)}
-::selection{background:var(--gold);color:#1c0509}
+::selection{background:var(--gold);color:var(--on-gold)}
 
 /* buttons: gold leaf, ghost in gold */
-.btn{background:linear-gradient(135deg,#f1d79c,#d4a85a 55%,#9c7330);color:#1c0509;box-shadow:0 14px 30px -14px rgba(212,168,90,.6)}
+.btn{background:linear-gradient(135deg,#f1d79c,#d4a85a 55%,#9c7330);color:var(--on-gold);box-shadow:0 14px 30px -14px rgba(212,168,90,.6)}
 .btn:hover{background:linear-gradient(135deg,#f6e2b4,#ddb46a 55%,#a77d38)}
 .btn.line{background:none;color:var(--gold);box-shadow:inset 0 0 0 1px var(--line-gold)}
 .btn.line:hover{background:rgba(212,168,90,.12);color:var(--gold-lt)}
 .link{color:var(--gold-lt)}
 
 /* nav */
-.nav.scrolled{background:rgba(28,5,9,.88);box-shadow:0 1px 0 var(--line-gold)}
+.nav.scrolled{background:rgba(var(--bg-rgb),.88);box-shadow:0 1px 0 var(--line-gold)}
 .brand span{color:var(--text)}
 .burger span{background:var(--gold-lt)}
 
 /* heroes: candlelit photo, dark vignette */
-.hero::before{background:radial-gradient(70% 60% at 50% 55%,rgba(28,5,9,.35),rgba(28,5,9,.8)),linear-gradient(180deg,rgba(28,5,9,.7) 0%,rgba(28,5,9,0) 25%,rgba(28,5,9,.25) 55%,rgba(28,5,9,.92) 85%,var(--ivory) 100%)}
+.hero::before{background:radial-gradient(70% 60% at 50% 55%,rgba(var(--bg-rgb),.35),rgba(var(--bg-rgb),.8)),linear-gradient(180deg,rgba(var(--bg-rgb),.7) 0%,rgba(var(--bg-rgb),0) 25%,rgba(var(--bg-rgb),.25) 55%,rgba(var(--bg-rgb),.92) 85%,var(--ivory) 100%)}
 .hero .lede{color:var(--text)}
 .hero-foot{border-top-color:var(--line-gold)}
 .hero-foot b{color:var(--gold-lt)}
-.phero::before{background:linear-gradient(90deg,rgba(28,5,9,.92) 0%,rgba(28,5,9,.72) 40%,rgba(28,5,9,.15) 78%),linear-gradient(180deg,rgba(28,5,9,.6) 0%,transparent 25%,transparent 62%,var(--ivory) 100%)}
+.phero::before{background:linear-gradient(90deg,rgba(var(--bg-rgb),.92) 0%,rgba(var(--bg-rgb),.72) 40%,rgba(var(--bg-rgb),.15) 78%),linear-gradient(180deg,rgba(var(--bg-rgb),.6) 0%,transparent 25%,transparent 62%,var(--ivory) 100%)}
 .phero .lede{color:var(--text)}
-@media (max-width:700px){.phero::before{background:linear-gradient(180deg,rgba(28,5,9,.7) 0%,rgba(28,5,9,.55) 40%,rgba(28,5,9,.9) 70%,var(--ivory) 100%)}}
+@media (max-width:700px){.phero::before{background:linear-gradient(180deg,rgba(var(--bg-rgb),.7) 0%,rgba(var(--bg-rgb),.55) 40%,rgba(var(--bg-rgb),.9) 70%,var(--ivory) 100%)}}
 
 /* arches: a hairline of gold instead of an ivory mat */
 .arch.framed{box-shadow:0 30px 60px -30px #000}
 .arch{background:var(--sand)}
 
 /* events stage */
-.st-bg::after{background:linear-gradient(180deg,rgba(28,5,9,.55),rgba(28,5,9,.1) 35%,rgba(28,5,9,.45))}
-.st-head{background:rgba(28,5,9,.78);box-shadow:0 0 0 1px var(--line-gold)}
+.st-bg::after{background:linear-gradient(180deg,rgba(var(--bg-rgb),.55),rgba(var(--bg-rgb),.1) 35%,rgba(var(--bg-rgb),.45))}
+.st-head{background:rgba(var(--bg-rgb),.78);box-shadow:0 0 0 1px var(--line-gold)}
 .st-panel{background:var(--ivory);box-shadow:0 40px 90px -30px #000,0 0 0 1px var(--line-gold)}
 .st-card{background:var(--ivory)}
 .st-dots i{background:rgba(246,234,210,.3)}
@@ -50,24 +66,24 @@ h1,h2,h3,h4{font-weight:400;letter-spacing:0}
 .cat-head{border-bottom-color:var(--gold)}
 .dish .add{color:var(--gold-lt)}
 .dish .add:hover{box-shadow:inset 0 0 0 1px var(--gold)}
-.dish .add[aria-pressed=true]{background:var(--gold);color:#1c0509}
-.picks{background:var(--gold);color:#1c0509}
-.picks b{background:#1c0509;color:var(--gold-lt)}
+.dish .add[aria-pressed=true]{background:var(--gold);color:var(--on-gold)}
+.picks{background:var(--gold);color:var(--on-gold)}
+.picks b{background:var(--on-gold);color:var(--gold-lt)}
 
 /* glass: candle-smoke frost */
 .glass-copy .lede{color:var(--text)}
-.glass-toggle{background:rgba(28,5,9,.7)}
-.glass-toggle button[aria-selected=true]{background:var(--gold);color:#1c0509}
+.glass-toggle{background:rgba(var(--bg-rgb),.7)}
+.glass-toggle button[aria-selected=true]{background:var(--gold);color:var(--on-gold)}
 .glass-hint{color:var(--gold-lt)}
 
 /* the one motif: brocade, faint, on two sections (testimonials and the closing call to action) */
-.sand{background:var(--brocade-bg)}
+.sand{background:var(--brocade-bg);background-blend-mode:normal,color,normal}
 .sec.sand .h2,.sec.sand blockquote{color:var(--text)}
 
 /* tabs, chips, forms */
 .tabs button{color:var(--text)}
-.tabs button[aria-selected=true]{background:var(--gold);color:#1c0509}
-.chips input:checked+span{background:var(--gold);color:#1c0509}
+.tabs button[aria-selected=true]{background:var(--gold);color:var(--on-gold)}
+.chips input:checked+span{background:var(--gold);color:var(--on-gold)}
 .form{background:var(--white);box-shadow:0 0 0 1px var(--line-gold),0 40px 80px -40px #000}
 .field input,.field textarea{color:var(--text);color-scheme:dark}
 .field input::placeholder,.field textarea::placeholder{color:rgba(246,234,210,.35)}
@@ -80,7 +96,7 @@ h1,h2,h3,h4{font-weight:400;letter-spacing:0}
 .foot{border-top-color:var(--line-gold)}
 .foot-tag{color:var(--text)}
 @media (max-width:700px){
-  .mbar{background:rgba(28,5,9,.95);box-shadow:0 0 0 1px var(--line-gold),0 16px 30px -16px #000}
+  .mbar{background:rgba(var(--bg-rgb),.95);box-shadow:0 0 0 1px var(--line-gold),0 16px 30px -16px #000}
   .mbar a{color:var(--gold-lt)}
-  .mbar a.go{background:var(--gold);color:#1c0509}
+  .mbar a.go{background:var(--gold);color:var(--on-gold)}
 }
