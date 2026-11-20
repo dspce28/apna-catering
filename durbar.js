@@ -114,68 +114,115 @@
   }
 
   /* =========================================================
-     DESIGN YOUR THALI
+     DESIGN YOUR THALI: food is served from the counter onto a real brass thali.
+     Positions are fractions of the thali image (centre x, centre y, width).
      ========================================================= */
+  const PLACES = {
+    bowl: [[.155, .44, .135], [.236, .26, .135], [.402, .156, .135], [.598, .156, .135], [.759, .26, .135], [.839, .447, .135]],
+    rice: [[.47, .55, .25]],
+    bread: [[.71, .60, .27]],
+    starter: [[.28, .67, .21], [.48, .835, .21]],
+    sweet: [[.69, .83, .16]],
+  };
+  const KIND_NAME = { bowl: 'katori', rice: 'rice', bread: 'bread', starter: 'starter', sweet: 'sweet' };
   $$('.thali-sec').forEach((sec) => {
-    const slots = $$('.kt', sec), toks = $$('.tok', sec), count = $('.th-count b', sec), msg = $('.th-msg', sec);
-    const fill = new Array(slots.length).fill(null);
-    const render = () => {
-      slots.forEach((s, i) => {
-        const inner = $('.kt-in', s), d = fill[i];
-        if (d && !inner.querySelector('img')) inner.innerHTML = `<img src="img/cut/${d.cut}.webp" alt="">`;
-        if (!d) inner.innerHTML = '';
-        s.classList.toggle('full', !!d);
-        s.setAttribute('aria-label', d ? `Bowl ${i + 1}: ${d.name}. Tap to remove.` : `Bowl ${i + 1}, empty`);
+    const plate = $('.thali', sec), layer = $('.th-food', sec), toks = $$('.tok', sec), msg = $('.th-msg', sec), count = $('.th-count b', sec);
+    const served = {}; Object.keys(PLACES).forEach((k) => { served[k] = PLACES[k].map(() => null); });
+    const total = Object.values(PLACES).reduce((n, a) => n + a.length, 0);
+    $('.th-count', sec).lastChild.textContent = ` of ${total} places served`;
+    const all = () => Object.values(served).flat().filter(Boolean);
+    const sync = () => {
+      const on = new Set(all().map((d) => d.cut));
+      toks.forEach((t) => t.classList.toggle('on', on.has(t.dataset.cut)));
+      count.textContent = all().length;
+      store.set('thali2', served);
+    };
+    const place = (kind, i, d, animateFrom) => {
+      const [x, y, w] = PLACES[kind][i];
+      const el = document.createElement('button');
+      el.type = 'button'; el.className = 'food ' + (kind === 'bowl' ? 'bowl' : 'plated'); el.dataset.kind = kind; el.dataset.i = i;
+      el.style.left = x * 100 + '%'; el.style.top = y * 100 + '%'; el.style.width = w * 100 + '%';
+      el.setAttribute('aria-label', d.name + ', tap to take it off');
+      el.innerHTML = `<img src="img/cut/${d.cut}.webp" alt="">`;
+      const old = $(`.food[data-kind="${kind}"][data-i="${i}"]`, layer); if (old) old.remove();
+      el.addEventListener('click', () => {
+        served[kind][i] = null; el.classList.add('leave'); setTimeout(() => el.remove(), 350);
+        msg.textContent = `${d.name} taken off.`; sync();
       });
-      count.textContent = fill.filter(Boolean).length;
-      store.set('thali', fill);
+      if (!animateFrom || reduce) { layer.appendChild(el); return; }
+      // fly from the counter to its place on the thali, as if served by hand
+      el.style.visibility = 'hidden'; layer.appendChild(el);
+      const to = el.getBoundingClientRect(), from = animateFrom.getBoundingClientRect();
+      const fly = document.createElement('div'); fly.className = 'flyer'; fly.innerHTML = `<img src="img/cut/${d.cut}.webp" alt=""${kind === 'bowl' ? ' style="border-radius:50%"' : ''}>`;
+      fly.style.left = to.left + 'px'; fly.style.top = to.top + 'px'; fly.style.width = to.width + 'px';
+      document.body.appendChild(fly);
+      const s0 = from.width / to.width, dx = from.left + from.width / 2 - (to.left + to.width / 2), dy = from.top + from.height / 2 - (to.top + to.height / 2);
+      const a = fly.animate([
+        { transform: `translate(${dx}px,${dy}px) scale(${s0})`, opacity: .9 },
+        { transform: `translate(${dx * .45}px,${dy * .45 - 90}px) scale(${(s0 + 1.15) / 2})`, opacity: 1, offset: .55 },
+        { transform: 'translate(0,0) scale(1)', opacity: 1 },
+      ], { duration: 720, easing: 'cubic-bezier(.45,.05,.3,1)' });
+      a.onfinish = () => { fly.remove(); el.style.visibility = ''; el.classList.add('settle'); };
     };
-    const put = (tok, i) => {
-      const d = { cut: tok.dataset.cut, name: tok.dataset.name };
-      if (fill.some((x) => x && x.cut === d.cut)) { msg.textContent = `${d.name} is already on your thali.`; return; }
-      const at = i ?? fill.findIndex((x) => !x);
-      if (at < 0) { msg.textContent = 'Your thali is full. Tap a bowl to make room.'; return; }
-      if (fill[at]) $('.kt-in', slots[at]).innerHTML = '';
-      fill[at] = d; msg.textContent = `${d.name} added.`; render();
+    const serve = (tok, fromEl) => {
+      const d = { cut: tok.dataset.cut, name: tok.dataset.name }, kind = tok.dataset.kind, slots = served[kind];
+      const here = slots.findIndex((x) => x && x.cut === d.cut);
+      if (here >= 0) { msg.textContent = `${d.name} is already on your thali.`; return; }
+      let i = slots.findIndex((x) => !x);
+      if (i < 0) {
+        if (kind === 'bowl') { msg.textContent = 'All six katoris are full. Tap one on the thali to empty it.'; return; }
+        i = slots.length - 1; msg.textContent = `${slots[i].name} swapped for ${d.name}.`;
+      } else msg.textContent = `${d.name} served.`;
+      slots[i] = d; place(kind, i, d, fromEl || $('img', tok)); sync();
     };
-    slots.forEach((s, i) => s.addEventListener('click', () => { if (fill[i]) { msg.textContent = `${fill[i].name} removed.`; fill[i] = null; render(); } }));
-    // drag with the pointer; a short press without movement counts as a tap
+    // tap to serve, or drag onto the thali
     toks.forEach((tok) => {
       tok.addEventListener('pointerdown', (e) => {
         if (e.button !== 0) return;
-        const sx = e.clientX, sy = e.clientY; let ghost = null, over = null;
+        const sx = e.clientX, sy = e.clientY; let ghost = null, over = false;
         const move = (ev) => {
           if (!ghost && Math.hypot(ev.clientX - sx, ev.clientY - sy) < 8) return;
           if (!ghost) { ghost = tok.cloneNode(true); ghost.classList.add('ghost'); ghost.style.width = tok.offsetWidth + 'px'; document.body.appendChild(ghost); }
-          ghost.style.left = ev.clientX - tok.offsetWidth / 2 + 'px'; ghost.style.top = ev.clientY - 40 + 'px';
-          const hit = document.elementFromPoint(ev.clientX, ev.clientY), slot = hit && hit.closest('.kt');
-          if (over && over !== slot) over.classList.remove('over');
-          over = slot && sec.contains(slot) ? slot : null; if (over) over.classList.add('over');
+          ghost.style.left = ev.clientX - tok.offsetWidth / 2 + 'px'; ghost.style.top = ev.clientY - 44 + 'px';
+          const r = plate.getBoundingClientRect(); over = ev.clientX > r.left && ev.clientX < r.right && ev.clientY > r.top && ev.clientY < r.bottom;
+          plate.classList.toggle('over', over);
         };
         const up = () => {
           removeEventListener('pointermove', move); removeEventListener('pointerup', up); removeEventListener('pointercancel', up);
-          if (ghost) { ghost.remove(); if (over) { over.classList.remove('over'); put(tok, +over.dataset.slot); } } else put(tok);
+          plate.classList.remove('over');
+          if (ghost) { const g = $('img', ghost); if (over) serve(tok, g); setTimeout(() => ghost.remove(), over ? 30 : 0); } else serve(tok);
         };
         addEventListener('pointermove', move); addEventListener('pointerup', up); addEventListener('pointercancel', up);
       });
-      tok.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); put(tok); } });
+      tok.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); serve(tok); } });
     });
     $$('.th-filter button', sec).forEach((b) => b.addEventListener('click', () => {
       $$('.th-filter button', sec).forEach((x) => x.setAttribute('aria-pressed', x === b));
       toks.forEach((t) => t.classList.toggle('out', b.dataset.f !== 'all' && !t.dataset.diet.split(' ').includes(b.dataset.f)));
+      $$('.tgroup', sec).forEach((g) => g.classList.toggle('empty', !$$('.tok:not(.out)', g).length));
     }));
-    $('.th-clear', sec).addEventListener('click', () => { fill.fill(null); msg.textContent = 'Thali cleared.'; render(); });
+    const clear = () => { Object.keys(served).forEach((k) => served[k].fill(null)); layer.innerHTML = ''; sync(); };
+    $('.th-clear', sec).addEventListener('click', () => { clear(); msg.textContent = 'Thali cleared.'; });
+    // chef's choice: a balanced thali, served one dish at a time
+    $('.th-chef', sec).addEventListener('click', () => {
+      clear();
+      const veg = $('.th-filter [aria-pressed=true]', sec).dataset.f;
+      const pick = (kind, n) => toks.filter((t) => t.dataset.kind === kind && !t.classList.contains('out')).slice(0, n);
+      const order = [...pick('bowl', 6), ...pick('rice', 1), ...pick('bread', 1), ...pick('starter', 2), ...pick('sweet', 1)];
+      order.forEach((t, k) => setTimeout(() => serve(t), reduce ? 0 : k * 260));
+      setTimeout(() => { msg.textContent = `Chef’s choice served${veg === 'all' ? '' : ' (' + veg.replace('nonveg', 'non-veg') + ')'}. Swap anything you like.`; }, order.length * 260 + 300);
+    });
     $('.th-add', sec).addEventListener('click', () => {
-      const names = fill.filter(Boolean).map((d) => d.name);
-      if (!names.length) { msg.textContent = 'Add a dish or two first.'; return; }
+      const names = all().map((d) => d.name);
+      if (!names.length) { msg.textContent = 'Serve a dish or two first.'; return; }
       const picks = store.get('picks', []); names.forEach((n) => { if (!picks.includes(n)) picks.push(n); });
       store.set('picks', picks);
       const pill = $('.picks'); if (pill) { $('b', pill).textContent = picks.length; pill.classList.add('on'); }
       msg.innerHTML = `Added ${names.length} ${names.length === 1 ? 'dish' : 'dishes'} to your enquiry. <a href="contact.html" class="link">Send it →</a>`;
     });
-    const saved = store.get('thali', null);
-    if (Array.isArray(saved) && saved.length === slots.length) saved.forEach((d, i) => { fill[i] = d; });
-    render(); msg.textContent = '';
+    const saved = store.get('thali2', null);
+    if (saved) Object.keys(PLACES).forEach((k) => (saved[k] || []).forEach((d, i) => { if (d && i < PLACES[k].length) { served[k][i] = d; place(k, i, d); } }));
+    sync();
   });
 
   /* =========================================================

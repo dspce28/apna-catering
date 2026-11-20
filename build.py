@@ -350,27 +350,37 @@ def planner():
 </section>'''
 
 
-THALI_DISHES = [  # cut-out, name, diet
-    ("butter-chicken", "Butter Chicken", "nonveg"), ("tandoori", "Tandoori Chicken", "nonveg"), ("chicken-tikka", "Malai Tikka", "nonveg"),
-    ("karahi", "Chicken Tikka Masala", "nonveg"), ("biryani", "Chicken Biryani", "nonveg"), ("lamb-biryani", "Lamb Biryani", "nonveg"),
-    ("paneer-masala", "Paneer Makhani", "veg jain"), ("palak-paneer", "Palak Paneer", "veg jain"), ("dal-makhani", "Malai Kofta", "veg"),
-    ("chaat", "Dahi Puri Chaat", "veg"), ("gol-gappe", "Gol Gappe", "veg"), ("samosa", "Samosa", "veg"),
-    ("rice", "Jeera Rice", "veg jain"), ("naan", "Butter Naan", "veg jain"), ("gulab-jamun", "Gulab Jamun", "veg jain"), ("gajar-halwa", "Gajar Halwa", "veg"),
+THALI_DISHES = [  # id = cut-out file, name, where it is served, diet
+    ("butter-chicken", "Butter Chicken", "bowl", "nonveg"), ("karahi", "Chicken Tikka Masala", "bowl", "nonveg"),
+    ("palak-paneer", "Palak Paneer", "bowl", "veg jain"), ("paneer-masala", "Paneer Makhani", "bowl", "veg jain"),
+    ("dal-makhani", "Malai Kofta", "bowl", "veg"), ("chaat", "Dahi Puri Chaat", "bowl", "veg"), ("gajar-halwa", "Gajar Halwa", "bowl", "veg"),
+    ("p-biryani-mound", "Chicken Biryani", "rice", "nonveg"), ("p-lamb-biryani", "Lamb Biryani", "rice", "nonveg"), ("p-jeera-rice", "Jeera Rice", "rice", "veg jain"),
+    ("p-naan", "Butter Naan", "bread", "veg jain"),
+    ("p-samosa", "Punjabi Samosa", "starter", "veg"), ("p-paneer-tikka", "Paneer Tikka", "starter", "veg jain"), ("p-pani-puri", "Pani Puri", "starter", "veg"),
+    ("p-chicken-tikka", "Malai Chicken Tikka", "starter", "nonveg"), ("p-tandoori", "Tandoori Chicken", "starter", "nonveg"),
+    ("p-gulab-jamun", "Gulab Jamun", "sweet", "veg jain"),
 ]
+THALI_GROUPS = [("bowl", "Curries, dal &amp; halwa", "served in the katoris"), ("rice", "Rice &amp; biryani", ""), ("bread", "Breads", ""), ("starter", "Starters", ""), ("sweet", "Sweets", "")]
 
 
 def thali():
-    slots = "".join(f'<button type="button" class="kt kt{i}" data-slot="{i}" aria-label="Bowl {i + 1}, empty"><span class="kt-in"></span></button>' for i in range(7))
-    tokens = "".join(f'<button type="button" class="tok" data-cut="{c}" data-name="{n}" data-diet="{d}" draggable="false"><img src="img/cut/{c}.webp" alt="" width="64" height="64" loading="lazy"><span>{n}</span><i class="dot {"nv" if "nonveg" in d else "v"}" aria-hidden="true"></i></button>' for c, n, d in THALI_DISHES)
+    groups = ""
+    for k, title, note in THALI_GROUPS:
+        toks = "".join(f'<button type="button" class="tok" data-cut="{c}" data-name="{n}" data-kind="{kind}" data-diet="{d}"><img src="img/cut/{c}.webp" alt="" width="64" height="64" loading="lazy"><span>{n}</span><i class="dot {"nv" if "nonveg" in d else "v"}" aria-hidden="true"></i></button>'
+                       for c, n, kind, d in THALI_DISHES if kind == k)
+        groups += f'<div class="tgroup" data-group="{k}"><h4>{title}{f" <small>{note}</small>" if note else ""}</h4><div class="toks">{toks}</div></div>'
     return f'''<section class="sec thali-sec" id="thali">
   <div class="wrap">
-    <div class="center"><p class="eyebrow" data-fade>Design your thali</p><h2 class="h2" data-fade>Fill the plate <em>your way.</em></h2><p class="lede" data-fade>Drag a dish into a bowl, or tap to add it. Tap a bowl to empty it.</p></div>
+    <div class="center"><p class="eyebrow" data-fade>Design your thali</p><h2 class="h2" data-fade>Serve your own <em>maharaja thali.</em></h2><p class="lede" data-fade>Pick from the counter and we’ll serve it straight onto the thali: curries into the katoris, everything else onto the plate. Tap anything on the thali to take it off.</p></div>
     <div class="th" data-fade>
-      <div class="th-stage"><div class="thali" aria-label="Your thali">{slots}</div><p class="th-count"><b>0</b> of 7 bowls filled</p></div>
+      <div class="th-stage">
+        <div class="thali" aria-label="Your thali"><img class="thali-img" src="img/thali-royal.webp" alt="An empty royal brass thali with six katoris" width="1200" height="1094" loading="lazy"><div class="th-food"></div></div>
+        <p class="th-count"><b>0</b> of 11 places served</p>
+      </div>
       <div class="th-tray">
         <div class="mfilter th-filter" role="group" aria-label="Filter dishes"><button aria-pressed="true" data-f="all">All</button><button aria-pressed="false" data-f="veg">Veg</button><button aria-pressed="false" data-f="jain">Jain</button><button aria-pressed="false" data-f="nonveg">Non-veg</button></div>
-        <div class="toks">{tokens}</div>
-        <div class="ctas"><button type="button" class="btn th-add">Add my thali to my enquiry <i>→</i></button><button type="button" class="btn line th-clear">Clear</button></div>
+        <div class="counter">{groups}</div>
+        <div class="ctas"><button type="button" class="btn th-add">Add my thali to my enquiry <i>→</i></button><button type="button" class="btn line th-chef">Chef’s choice</button><button type="button" class="btn line th-clear">Clear</button></div>
         <p class="th-msg" role="status"></p>
       </div>
     </div>

@@ -186,35 +186,43 @@ h1,h2,h3,h4{font-weight:400;letter-spacing:0}
 .pl-note{font-size:12.5px;color:var(--mute);margin-bottom:20px}
 @media (max-width:900px){.pl{grid-template-columns:1fr}.pl-out{position:relative;top:0}}
 
-/* ---- design your thali ---- */
-.th{display:grid;grid-template-columns:1fr 1fr;gap:clamp(30px,5vw,80px);align-items:center;margin-top:56px}
-.th-stage{text-align:center}
-.thali{position:relative;width:min(520px,86vw);aspect-ratio:1;margin:0 auto;border-radius:50%;
-  background:radial-gradient(circle at 38% 32%,rgba(255,250,225,.55),transparent 38%),repeating-radial-gradient(circle at 50% 50%,rgba(120,80,20,.06) 0 2px,transparent 2px 7px),radial-gradient(circle,#e7c47a 0 60%,#c99a4a 66%,#f3dc9e 70%,#a87a32 74%,#d9b066 78%,#8f6526 100%);
-  box-shadow:0 40px 80px -30px #000,inset 0 0 0 2px rgba(255,240,200,.5)}
-.kt{position:absolute;width:27%;aspect-ratio:1;border-radius:50%;padding:7%;background:radial-gradient(circle at 40% 30%,#fbe7b0,#c99a4a 55%,#7f5a20);box-shadow:0 10px 18px -8px rgba(0,0,0,.6),inset 0 0 0 2px rgba(255,240,200,.45);transition:transform .4s var(--ease)}
-.kt:hover{transform:scale(1.04)}
-.kt-in{display:block;width:100%;height:100%;border-radius:50%;background:radial-gradient(circle,#6b4a18,#3a2508);box-shadow:inset 0 6px 12px rgba(0,0,0,.6);position:relative;overflow:hidden}
-.kt-in::before{content:"+";position:absolute;inset:0;display:grid;place-items:center;font-size:22px;color:rgba(255,230,170,.55)}
-.kt.full .kt-in::before{content:none}
-.kt-in img{position:absolute;inset:0;width:100%;height:100%;border-radius:50%;object-fit:cover;animation:drop .6s cubic-bezier(.2,1.4,.4,1)}
-@keyframes drop{from{transform:scale(.4) translateY(-30px);opacity:0}}
-.kt.over{transform:scale(1.1);box-shadow:0 0 0 3px var(--gold-lt),0 10px 18px -8px rgba(0,0,0,.6)}
-.kt0{left:36.5%;top:36.5%;width:27%}
-.kt1{left:36.5%;top:6%}.kt2{left:63%;top:21%}.kt3{left:63%;top:52%}.kt4{left:36.5%;top:67%}.kt5{left:10%;top:52%}.kt6{left:10%;top:21%}
-.th-count{margin-top:22px;font-size:13px;color:var(--mute)}
+/* ---- design your thali: a real brass thali, food served from a counter ---- */
+.th{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(30px,5vw,70px);align-items:start;margin-top:56px}
+.th-stage{position:sticky;top:96px;text-align:center}
+.thali{position:relative;width:min(620px,92vw);aspect-ratio:1200/1094;margin:0 auto;filter:drop-shadow(0 40px 50px rgba(0,0,0,.55))}
+.thali-img{width:100%;height:100%;display:block}
+.th-food{position:absolute;inset:0}
+.food{position:absolute;transform:translate(-50%,-50%);cursor:pointer;background:none;padding:0}
+.food img{width:100%;height:auto;display:block;filter:drop-shadow(4px 8px 7px rgba(40,20,0,.45))}
+.food.bowl img{border-radius:50%;filter:none}
+.food.settle{animation:settle .55s cubic-bezier(.2,1.5,.4,1)}
+@keyframes settle{0%{transform:translate(-50%,-50%) scale(1.12)}100%{transform:translate(-50%,-50%) scale(1)}}
+.food.leave{animation:leave .35s ease-in forwards}
+@keyframes leave{to{opacity:0;transform:translate(-50%,-70%) scale(.85)}}
+.food:hover img{filter:drop-shadow(0 0 0 transparent) drop-shadow(0 0 10px rgba(233,207,148,.7))}
+.food:focus-visible{outline:2px solid var(--gold-lt);outline-offset:4px;border-radius:50%}
+.flyer{position:fixed;z-index:90;pointer-events:none;will-change:transform}
+.flyer img{width:100%;height:auto;display:block;filter:drop-shadow(8px 16px 14px rgba(0,0,0,.5))}
+.thali.over{outline:2px dashed rgba(233,207,148,.6);outline-offset:10px;border-radius:50%}
+.th-count{margin-top:18px;font-size:13px;color:var(--mute)}
 .th-count b{color:var(--gold-lt);font-family:var(--serif);font-size:22px}
 .th-filter{justify-content:flex-start;margin:0 0 18px}
-.toks{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:24px}
-.tok{position:relative;display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 6px 10px;border-radius:16px;background:var(--white);box-shadow:inset 0 0 0 1px var(--line);font-size:12px;line-height:1.25;text-align:center;color:var(--text);cursor:grab;touch-action:none;transition:box-shadow .4s,transform .4s,opacity .4s}
+.counter{display:grid;gap:18px;margin-bottom:24px}
+.tgroup h4{font-family:var(--serif);font-size:20px;color:var(--text);margin-bottom:10px}
+.tgroup h4 small{font-family:var(--sans);font-size:11px;letter-spacing:.06em;color:var(--mute);margin-left:8px}
+.tgroup.empty{display:none}
+.toks{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:10px}
+.tok{position:relative;display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 6px 10px;border-radius:16px;background:var(--white);box-shadow:inset 0 0 0 1px var(--line);font-size:12px;line-height:1.25;text-align:center;color:var(--text);cursor:grab;touch-action:none;transition:box-shadow .4s,transform .4s}
 .tok:hover{box-shadow:inset 0 0 0 1px var(--gold);transform:translateY(-2px)}
-.tok img{width:58px;height:58px;border-radius:50%;pointer-events:none}
+.tok.on{box-shadow:inset 0 0 0 1.5px var(--gold-lt);background:rgba(212,168,90,.12)}
+.tok img{width:60px;height:60px;object-fit:contain;pointer-events:none;filter:drop-shadow(0 4px 6px rgba(0,0,0,.35))}
+.tok[data-kind=bowl] img{border-radius:50%;object-fit:cover}
 .tok .dot{position:absolute;top:8px;right:8px;width:8px;height:8px;border-radius:2px;box-shadow:0 0 0 1.5px currentColor}
 .tok .dot.v{color:#3f9d55}.tok .dot.nv{color:#c0392b}
 .tok.out{display:none}
-.tok.ghost{position:fixed;z-index:80;pointer-events:none;opacity:.92;transform:scale(1.05);box-shadow:0 20px 40px -10px #000,inset 0 0 0 1px var(--gold)}
+.tok.ghost{position:fixed;z-index:80;pointer-events:none;opacity:.95;transform:scale(1.06);box-shadow:0 20px 40px -10px #000,inset 0 0 0 1px var(--gold)}
 .th-msg{min-height:22px;font-size:13.5px;color:var(--gold-lt);margin-top:12px}
-@media (max-width:900px){.th{grid-template-columns:1fr}.toks{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:900px){.th{grid-template-columns:1fr;gap:18px}.th-stage{position:sticky;top:68px;z-index:6;padding:8px 0 4px;background:linear-gradient(rgb(var(--bg-rgb)) 88%,rgba(var(--bg-rgb),0))}.thali{width:min(240px,62vw)}.th-count{margin-top:2px;font-size:12px}}
 
 /* ---- countdown ---- */
 .cd-pick{display:inline-flex;flex-direction:column;gap:8px;margin:10px 0 30px;font-size:10.5px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--gold)}
