@@ -15,6 +15,8 @@ PAGES = [("index.html", "Home"), ("about.html", "About"), ("services.html", "Wed
 FONTS = ("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400"
          + ("&family=Playfair+Display:ital,wght@0,400;0,500;1,400" if THEME == "b" else "")
          + "&family=Manrope:wght@400;500;600&display=swap")
+if THEME == "b":
+    PAGES.insert(4, ("thali.html", "Your Thali"))
 
 
 def img(name, sizes="100vw", alt="", lazy=True, extra=""):
@@ -439,6 +441,95 @@ def booklet(cats=MENU):
 B_SPINE = '<div class="spine" aria-hidden="true"><i class="spine-fill"></i><i class="spine-flame"></i></div><div class="diya" aria-hidden="true"></div>'
 
 
+# ---------------------------------------------------------------- Direction B: the thali page (thali.html)
+TX_DISHES = [  # id, name, kind, diet, image
+    ("butter-chicken", "Butter Chicken", "bowl", "nonveg", "hd/butter-chicken"),
+    ("dal-makhani", "Dal Makhani", "bowl", "veg", "hd/dal-makhani"),
+    ("paneer-makhani", "Paneer Makhani", "bowl", "veg jain", "hd/paneer-makhani"),
+    ("palak-paneer", "Palak Paneer", "bowl", "veg jain", "hd/palak-paneer"),
+    ("dal-tadka", "Dal Tadka", "bowl", "veg jain", "hd/dal-tadka"),
+    ("raita", "Raita", "bowl", "veg jain", "hd/raita"),
+    ("dahi-puri", "Dahi Puri Chaat", "bowl", "veg", "hd/dahi-puri"),
+    ("gajar-halwa", "Gajar Halwa", "bowl", "veg", "hd/gajar-halwa"),
+    ("chicken-biryani", "Chicken Biryani", "rice", "nonveg", "hd/chicken-biryani"),
+    ("lamb-biryani", "Lamb Biryani", "rice", "nonveg", "hd/lamb-biryani"),
+    ("jeera-rice", "Jeera Rice", "rice", "veg jain", "hd/jeera-rice"),
+    ("butter-naan", "Butter Naan", "bread", "veg jain", "hd/butter-naan"),
+    ("garlic-naan", "Garlic Naan", "bread", "veg", "hd/garlic-naan"),
+    ("roti-lachha", "Roti & Lachha Paratha", "bread", "veg jain", "hd/roti-lachha"),
+    ("samosa", "Punjabi Samosa", "starter", "veg", "cut/p-samosa"),
+    ("paneer-tikka", "Paneer Tikka", "starter", "veg jain", "hd/paneer-tikka"),
+    ("pani-puri", "Pani Puri", "starter", "veg", "cut/p-pani-puri"),
+    ("chicken-tikka", "Malai Chicken Tikka", "starter", "nonveg", "cut/p-chicken-tikka"),
+    ("tandoori", "Tandoori Chicken", "starter", "nonveg", "hd/tandoori"),
+    ("gulab-jamun", "Gulab Jamun", "sweet", "veg jain", "cut/p-gulab-jamun"),
+    ("imrati", "Imrati", "sweet", "veg jain", "hd/imrati"),
+]
+TX_TABS = [("all", "All"), ("bowl", "Curries &amp; dal"), ("rice", "Rice"), ("bread", "Breads"), ("starter", "Starters"), ("sweet", "Sweets")]
+TX_PRESETS = [
+    ("punjabi", "Royal Punjabi", "butter-chicken dal-makhani paneer-makhani raita palak-paneer gajar-halwa chicken-biryani butter-naan samosa tandoori gulab-jamun"),
+    ("veg", "Pure veg", "dal-makhani paneer-makhani palak-paneer raita dahi-puri gajar-halwa jeera-rice garlic-naan samosa paneer-tikka pani-puri imrati"),
+    ("jain", "Jain", "paneer-makhani dal-tadka palak-paneer raita jeera-rice roti-lachha paneer-tikka gulab-jamun imrati"),
+]
+
+
+def thali_page():
+    cards = "".join(
+        f'<button type="button" class="tx-card" data-id="{i}" data-name="{n}" data-kind="{k}" data-diet="{d}" data-img="img/{im}.webp">'
+        f'<span class="tx-pic{" round" if k == "bowl" else ""}"><img src="img/{im}.webp" alt="" loading="lazy"></span>'
+        f'<span class="tx-name">{n.replace("&", "&amp;")}</span><i class="tx-dot {"nv" if "nonveg" in d else "v"}" aria-label="{"Non-veg" if "nonveg" in d else "Veg"}"></i><b class="tx-tick" aria-hidden="true">✓</b></button>'
+        for i, n, k, d, im in TX_DISHES)
+    tabs = "".join(f'<button type="button" role="tab" data-tab="{k}" aria-selected="{"true" if k == "all" else "false"}">{n}</button>' for k, n in TX_TABS)
+    presets = "".join(f'<button type="button" class="tx-preset" data-ids="{ids}">{n}</button>' for _, n, ids in TX_PRESETS)
+    return f'''<section class="tx" aria-label="Design your thali">
+  <div class="tx-grid wrap">
+    <div class="tx-stage">
+      <div class="tx-spot" aria-hidden="true"></div>
+      <div class="tx-tilt">
+        <div class="tx-plate">
+          <img class="tx-plate-img" src="img/hd/thali.webp" alt="An empty royal brass thali with six katoris" width="1544" height="1408">
+          <div class="tx-sheen" aria-hidden="true"></div>
+          <div class="tx-food"></div>
+          <canvas class="tx-fx" aria-hidden="true"></canvas>
+        </div>
+      </div>
+      <p class="tx-meter"><b>0</b> of 16 places served <span class="tx-hint">· tap anything on the thali to take it off</span></p>
+    </div>
+    <div class="tx-side">
+    <div class="tx-head">
+      <p class="crumbs"><a href="index.html">Home</a> &nbsp;/&nbsp; Design your thali</p>
+      <h1 class="display">Serve your own <em>maharaja thali.</em></h1>
+      <p class="lede">Tap or drag dishes from the counter. Curries are poured into the katoris, everything else goes straight onto the plate.</p>
+    </div>
+    <aside class="tx-panel">
+      <div class="tx-presets"><span>Chef’s thalis</span>{presets}<button type="button" class="tx-clear">Clear</button></div>
+      <div class="tx-tabs" role="tablist" aria-label="Courses">{tabs}</div>
+      <div class="tx-filter" role="group" aria-label="Diet"><button aria-pressed="true" data-f="all">All</button><button aria-pressed="false" data-f="veg">Veg</button><button aria-pressed="false" data-f="jain">Jain</button><button aria-pressed="false" data-f="nonveg">Non-veg</button></div>
+      <div class="tx-cards">{cards}</div>
+      <div class="tx-mine"><h3>Your thali</h3><ol class="tx-list"><li class="tx-empty">Nothing served yet. Pick a chef’s thali or start with a curry.</li></ol></div>
+      <div class="tx-actions"><button type="button" class="btn tx-send">Send on WhatsApp <i>→</i></button><button type="button" class="btn line tx-save">Save picture</button><button type="button" class="btn line tx-enquire">Add to enquiry</button></div>
+      <p class="tx-msg" role="status"></p>
+    </aside>
+    </div>
+  </div>
+</section>
+<script src="thali.js" defer></script>'''
+
+
+def thali_teaser():
+    return '''<section class="sec tz" id="thali">
+  <div class="wrap tz-grid">
+    <a class="tz-img" href="thali.html" aria-label="Design your thali"><img src="img/hd/thali-served.webp" alt="A royal brass thali served with curries, biryani, naan, samosas, tandoori chicken and sweets" width="1200" height="1094" loading="lazy"></a>
+    <div>
+      <p class="eyebrow" data-fade>Design your thali</p>
+      <h2 class="h2" data-fade>Serve your own <em>maharaja thali.</em></h2>
+      <p class="lede" data-fade>Twenty-one dishes, a real brass thali and its katoris. Serve it your way, save a picture, and send it to us. We’ll build your wedding menu around it.</p>
+      <div class="ctas" data-fade><a class="btn" href="thali.html">Design your thali <i>→</i></a></div>
+    </div>
+  </div>
+</section>'''
+
+
 # ---------------------------------------------------------------- pages
 HERO_A = f'''<section class="hero">
   <div class="hero-media">{img("b-hall", "100vw", "", lazy=False)}</div>
@@ -469,7 +560,7 @@ HOME = f'''{hero_b() if THEME == "b" else HERO_A}
 
 {stage()}{"\n\n" + planner() if THEME == "b" else ""}
 
-{menu_board()}{"\n\n" + thali() if THEME == "b" else ""}
+{menu_board()}{"\n\n" + thali_teaser() if THEME == "b" else ""}
 
 {GLASS}
 
@@ -614,7 +705,7 @@ MENUS = f'''{phero("Menus", "Start with a classic, <em>make it yours.</em>", "Fo
   </div>
 </section>
 
-<div class="sand">{menu_board()}</div>{"\n\n" + thali() if THEME == "b" else ""}
+<div class="sand">{menu_board()}</div>{"\n\n" + thali_teaser() if THEME == "b" else ""}
 
 {cta("Your menu is <em>ready to taste.</em>", "Send us the dishes you picked and we’ll arrange a tasting with our chefs.")}'''
 
@@ -685,6 +776,9 @@ SITE = {
     "contact.html": ("Get a Quote — Apna Catering", "Check your date and get a per-head quote for your wedding or celebration.", CONTACT, ""),
 }
 
+if THEME == "b":
+    SITE["thali.html"] = ("Design Your Thali — Apna Catering", "Serve your own royal wedding thali: curries, biryani, breads, starters and sweets on a brass thali.", thali_page(), '<link rel="stylesheet" href="thali.css">')
+
 NIGHT = {"b-hall": "gw-buffet", "p-banquet": "gw-buffet", "p-henna": "gw-sikh", "b-mandap": "gw-mandap", "p-mandap": "gw-mandap"}
 
 
@@ -711,7 +805,7 @@ if __name__ == "__main__":
         print("wrote", os.path.join(OUT, fn))
     if THEME == "b":
         # a self-contained folder: its own copies of the code and only the images it uses
-        for f in ("site.css", "site.js", "durbar.css", "durbar.js"):
+        for f in ("site.css", "site.js", "durbar.css", "durbar.js", "thali.css", "thali.js"):
             shutil.copy(f, os.path.join(OUT, f))
         used = set()
         for fn in os.listdir(OUT):
@@ -720,6 +814,7 @@ if __name__ == "__main__":
         os.makedirs(os.path.join(OUT, "img", "cut"), exist_ok=True)
         for u in sorted(used):
             if os.path.exists(u):
+                os.makedirs(os.path.dirname(os.path.join(OUT, u)), exist_ok=True)
                 shutil.copy(u, os.path.join(OUT, u))
             else:
                 print("missing", u)

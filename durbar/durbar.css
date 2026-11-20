@@ -319,3 +319,12 @@ h1,h2,h3,h4{font-weight:400;letter-spacing:0}
 .bk-at{min-width:220px;text-align:center;font-family:var(--serif);font-size:22px;color:var(--text)}
 @media (max-width:700px){.book{--pw:45vw}.bk-wrap{padding-bottom:24px}.bk-at{min-width:150px;font-size:18px}}
 @media (prefers-reduced-motion:reduce){.book,.leaf{transition:none}.book.pre{--tilt:0deg}}
+
+/* ---- thali teaser on Home and Menus (the full experience lives on thali.html) ---- */
+.tz-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(30px,6vw,90px);align-items:center}
+.tz-img{display:block;filter:drop-shadow(0 40px 50px rgba(0,0,0,.55));animation:tz-float 7s ease-in-out infinite;transition:transform .9s var(--ease)}
+.tz-img img{width:100%;height:auto}
+.tz-img:hover{transform:scale(1.03) rotate(-1.5deg)}
+@keyframes tz-float{50%{translate:0 -10px}}
+@media (max-width:900px){.tz-grid{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){.tz-img{animation:none}}
