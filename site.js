@@ -98,7 +98,7 @@
       tc.drawImage(im, (tiny.width - im.naturalWidth * s) / 2, (tiny.height - im.naturalHeight * s) / 2, im.naturalWidth * s, im.naturalHeight * s);
       frost = document.createElement('canvas'); frost.width = W; frost.height = H;
       const fc = frost.getContext('2d'); fc.imageSmoothingQuality = 'high'; fc.drawImage(tiny, 0, 0, W, H);
-      fc.fillStyle = 'rgba(250,245,236,.62)'; fc.fillRect(0, 0, W, H);
+      fc.fillStyle = getComputedStyle(glass).getPropertyValue('--frost').trim() || 'rgba(250,245,236,.62)'; fc.fillRect(0, 0, W, H);
       ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1; ctx.clearRect(0, 0, W, H); ctx.drawImage(frost, 0, 0);
       glass.classList.remove('wiped');
     };

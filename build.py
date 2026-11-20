@@ -3,11 +3,18 @@
 Run: python3 build.py
 """
 import os
+import re
+import shutil
+import sys
+
+THEME = sys.argv[1] if len(sys.argv) > 1 else "a"
+OUT = "durbar" if THEME == "b" else "."
 
 PAGES = [("index.html", "Home"), ("about.html", "About"), ("services.html", "Weddings & Events"),
          ("menus.html", "Menus"), ("contact.html", "Contact")]
 FONTS = ("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400"
-         "&family=Manrope:wght@400;500;600&display=swap")
+         + ("&family=Playfair+Display:ital,wght@0,400;0,500;1,400" if THEME == "b" else "")
+         + "&family=Manrope:wght@400;500;600&display=swap")
 
 
 def img(name, sizes="100vw", alt="", lazy=True, extra=""):
@@ -25,6 +32,8 @@ def arch(name, alt="", sizes="(max-width: 900px) 90vw, 40vw", wipe=True, cls="",
 
 
 def rose(pos):
+    if THEME == "b":
+        return ""
     src = {"tr": "rose-tr", "tl": "rose-tl", "bl": "rose-bl", "br": "rose-br"}[pos]
     return f'<img class="rose {pos}" src="img/{src}.webp" alt="" aria-hidden="true">'
 
@@ -37,7 +46,7 @@ def head(title, desc, preload=""):
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{title}</title>
 <meta name="description" content="{desc}">
-<meta name="theme-color" content="#faf5ec">
+<meta name="theme-color" content="{"#1c0509" if THEME == "b" else "#faf5ec"}">
 <link rel="icon" type="image/png" href="img/favicon.png">
 <link rel="apple-touch-icon" href="img/logo-256.png">
 <meta property="og:title" content="{title}">
@@ -47,7 +56,7 @@ def head(title, desc, preload=""):
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="{FONTS}" rel="stylesheet">
 {preload}
-<link rel="stylesheet" href="site.css">
+<link rel="stylesheet" href="site.css">{'<link rel="stylesheet" href="durbar.css">' if THEME == "b" else ""}
 <script type="application/ld+json">
 {{"@context":"https://schema.org","@type":"FoodEstablishment","name":"Apna Catering","servesCuisine":["Indian","Punjabi"],"foundingDate":"1975","telephone":["+447818478036","+447828218002"],"email":"hello@apnacatering.co.uk","areaServed":"Scotland","address":{{"@type":"PostalAddress","addressLocality":"Glasgow","addressCountry":"GB"}},"url":"https://apnacatering.co.uk"}}
 </script>
@@ -493,8 +502,42 @@ SITE = {
     "contact.html": ("Get a Quote — Apna Catering", "Check your date and get a per-head quote for your wedding or celebration.", CONTACT, ""),
 }
 
+NIGHT = {"b-hall": "gw-buffet", "p-banquet": "gw-buffet", "p-henna": "gw-sikh", "b-mandap": "gw-mandap", "p-mandap": "gw-mandap"}
+
+
+def night(html):
+    def sub(m):
+        name, size = m.group(1), m.group(2) or ""
+        if name not in NIGHT:
+            return m.group(0)
+        new = NIGHT[name]
+        if size == "-3840":
+            size = "-2720"
+        return f"img/{new}{size}.webp"
+    return re.sub(r"img/([a-z0-9-]+?)(-2400|-2720|-3840)?\.webp", sub, html)
+
+
 if __name__ == "__main__":
+    os.makedirs(OUT, exist_ok=True)
     for fn, (title, desc, body, pre) in SITE.items():
-        with open(fn, "w") as f:
-            f.write(page(fn, title, desc, body, pre))
-        print("wrote", fn, round(os.path.getsize(fn) / 1024), "KB")
+        html = page(fn, title, desc, body, pre)
+        if THEME == "b":
+            html = night(html).replace("The wedding feast,<br><em>beautifully served.</em>", "A feast fit for<br><em>the maharaja.</em>")
+        with open(os.path.join(OUT, fn), "w") as f:
+            f.write(html)
+        print("wrote", os.path.join(OUT, fn))
+    if THEME == "b":
+        # a self-contained folder: its own copies of the code and only the images it uses
+        for f in ("site.css", "site.js", "durbar.css"):
+            shutil.copy(f, os.path.join(OUT, f))
+        used = set()
+        for fn in os.listdir(OUT):
+            if fn.endswith((".html", ".css")):
+                used |= set(re.findall(r"img/[A-Za-z0-9._-]+", open(os.path.join(OUT, fn)).read()))
+        os.makedirs(os.path.join(OUT, "img"), exist_ok=True)
+        for u in sorted(used):
+            if os.path.exists(u):
+                shutil.copy(u, os.path.join(OUT, u))
+            else:
+                print("missing", u)
+        print("copied", len(used), "images")

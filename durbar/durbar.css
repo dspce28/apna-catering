@@ -1,0 +1,86 @@
+/* Direction B, "Candlelit Durbar": an override on top of site.css.
+   Night wine, candle ivory and gold. Playfair Display and Manrope. One motif: the client's brocade,
+   faint, on two sections. Candlelit photography. Cinematic motion (same scroll stages). */
+:root{
+  --ivory:#1c0509; --sand:#25070d; --white:#2c0a11;
+  --maroon:#f6ead2; --maroon-2:#fff6e2; --gold:#d4a85a; --gold-lt:#e9cf94;
+  --text:#f6ead2; --mute:#cdb79c; --line:rgba(246,234,210,.14); --line-gold:rgba(212,168,90,.45);
+  --serif:"Playfair Display",Georgia,serif; --frost:rgba(28,5,9,.6);
+  --brocade-bg:linear-gradient(rgba(37,7,13,.86),rgba(37,7,13,.9)),url(img/brocade.webp) center/560px auto repeat;
+}
+body{background:var(--ivory);color:var(--text)}
+h1,h2,h3,h4{font-weight:400;letter-spacing:0}
+.display{font-size:clamp(48px,7.2vw,112px)}
+::selection{background:var(--gold);color:#1c0509}
+
+/* buttons: gold leaf, ghost in gold */
+.btn{background:linear-gradient(135deg,#f1d79c,#d4a85a 55%,#9c7330);color:#1c0509;box-shadow:0 14px 30px -14px rgba(212,168,90,.6)}
+.btn:hover{background:linear-gradient(135deg,#f6e2b4,#ddb46a 55%,#a77d38)}
+.btn.line{background:none;color:var(--gold);box-shadow:inset 0 0 0 1px var(--line-gold)}
+.btn.line:hover{background:rgba(212,168,90,.12);color:var(--gold-lt)}
+.link{color:var(--gold-lt)}
+
+/* nav */
+.nav.scrolled{background:rgba(28,5,9,.88);box-shadow:0 1px 0 var(--line-gold)}
+.brand span{color:var(--text)}
+.burger span{background:var(--gold-lt)}
+
+/* heroes: candlelit photo, dark vignette */
+.hero::before{background:radial-gradient(70% 60% at 50% 55%,rgba(28,5,9,.35),rgba(28,5,9,.8)),linear-gradient(180deg,rgba(28,5,9,.7) 0%,rgba(28,5,9,0) 25%,rgba(28,5,9,.25) 55%,rgba(28,5,9,.92) 85%,var(--ivory) 100%)}
+.hero .lede{color:var(--text)}
+.hero-foot{border-top-color:var(--line-gold)}
+.hero-foot b{color:var(--gold-lt)}
+.phero::before{background:linear-gradient(90deg,rgba(28,5,9,.92) 0%,rgba(28,5,9,.72) 40%,rgba(28,5,9,.15) 78%),linear-gradient(180deg,rgba(28,5,9,.6) 0%,transparent 25%,transparent 62%,var(--ivory) 100%)}
+.phero .lede{color:var(--text)}
+@media (max-width:700px){.phero::before{background:linear-gradient(180deg,rgba(28,5,9,.7) 0%,rgba(28,5,9,.55) 40%,rgba(28,5,9,.9) 70%,var(--ivory) 100%)}}
+
+/* arches: a hairline of gold instead of an ivory mat */
+.arch.framed{box-shadow:0 0 0 6px var(--ivory),0 0 0 7px var(--line-gold),0 30px 60px -30px #000}
+.arch{background:var(--sand)}
+
+/* events stage */
+.st-bg::after{background:linear-gradient(180deg,rgba(28,5,9,.55),rgba(28,5,9,.1) 35%,rgba(28,5,9,.45))}
+.st-head{background:rgba(28,5,9,.78);box-shadow:0 0 0 1px var(--line-gold)}
+.st-panel{background:var(--ivory);box-shadow:0 40px 90px -30px #000,0 0 0 1px var(--line-gold)}
+.st-card{background:var(--ivory)}
+.st-dots i{background:rgba(246,234,210,.3)}
+.st-dots i.on{background:var(--gold)}
+
+/* menu board */
+.cat-head{border-bottom-color:var(--gold)}
+.dish .add{color:var(--gold-lt)}
+.dish .add:hover{box-shadow:inset 0 0 0 1px var(--gold)}
+.dish .add[aria-pressed=true]{background:var(--gold);color:#1c0509}
+.picks{background:var(--gold);color:#1c0509}
+.picks b{background:#1c0509;color:var(--gold-lt)}
+
+/* glass: candle-smoke frost */
+.glass-copy .lede{color:var(--text)}
+.glass-toggle{background:rgba(28,5,9,.7)}
+.glass-toggle button[aria-selected=true]{background:var(--gold);color:#1c0509}
+.glass-hint{color:var(--gold-lt)}
+
+/* the one motif: brocade, faint, on two sections (testimonials and the closing call to action) */
+.sand{background:var(--brocade-bg)}
+.sec.sand .h2,.sec.sand blockquote{color:var(--text)}
+
+/* tabs, chips, forms */
+.tabs button{color:var(--text)}
+.tabs button[aria-selected=true]{background:var(--gold);color:#1c0509}
+.chips input:checked+span{background:var(--gold);color:#1c0509}
+.form{background:var(--white);box-shadow:0 0 0 1px var(--line-gold),0 40px 80px -40px #000}
+.field input,.field textarea{color:var(--text);color-scheme:dark}
+.field input::placeholder,.field textarea::placeholder{color:rgba(246,234,210,.35)}
+.form-err{color:#f0a59c}
+.lines a{color:var(--text)}
+.occ a:hover{background:var(--white)}
+.quote-dots button[aria-current=true]{background:var(--gold)}
+
+/* footer & mobile bar */
+.foot{border-top-color:var(--line-gold)}
+.foot-tag{color:var(--text)}
+@media (max-width:700px){
+  .mbar{background:rgba(28,5,9,.95);box-shadow:0 0 0 1px var(--line-gold),0 16px 30px -16px #000}
+  .mbar a{color:var(--gold-lt)}
+  .mbar a.go{background:var(--gold);color:#1c0509}
+}
