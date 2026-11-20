@@ -35,7 +35,7 @@ h1,h2,h3,h4{font-weight:400;letter-spacing:0}
 @media (max-width:700px){.phero::before{background:linear-gradient(180deg,rgba(28,5,9,.7) 0%,rgba(28,5,9,.55) 40%,rgba(28,5,9,.9) 70%,var(--ivory) 100%)}}
 
 /* arches: a hairline of gold instead of an ivory mat */
-.arch.framed{box-shadow:0 0 0 6px var(--ivory),0 0 0 7px var(--line-gold),0 30px 60px -30px #000}
+.arch.framed{box-shadow:0 30px 60px -30px #000}
 .arch{background:var(--sand)}
 
 /* events stage */
