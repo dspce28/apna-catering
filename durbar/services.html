@@ -90,6 +90,29 @@
   </div>
 </section>
 
+<section class="sec planner" id="planner">
+  <div class="wrap">
+    <div class="center"><p class="eyebrow" data-fade>Feast planner</p><h2 class="h2" data-fade>Plan your feast <em>in a minute.</em></h2><p class="lede" data-fade>Choose your ceremonies, guests and food. Your plan builds itself as you go.</p></div>
+    <form class="pl" onsubmit="return false" data-fade>
+      <div class="pl-controls">
+        <fieldset><legend>Your ceremonies</legend><div class="chips"><label><input type="checkbox" name="cer" value="roka"><span>Roka &amp; Chunni</span></label><label><input type="checkbox" name="cer" value="mehndi" checked><span>Mehndi &amp; Sangeet</span></label><label><input type="checkbox" name="cer" value="haldi"><span>Haldi / Jaggo</span></label><label><input type="checkbox" name="cer" value="wedding" checked><span>Anand Karaj / Pheras</span></label><label><input type="checkbox" name="cer" value="reception" checked><span>Reception</span></label></div></fieldset>
+        <fieldset><legend>Guests <output class="pl-guests">300</output></legend><input class="pl-range" type="range" name="guests" min="50" max="1000" step="25" value="300" aria-label="Number of guests"><div class="pl-scale"><span>50</span><span>500</span><span>1,000</span></div></fieldset>
+        <fieldset><legend>The food</legend><div class="chips"><label><input type="radio" name="diet" value="veg"><span>Vegetarian</span></label><label><input type="radio" name="diet" value="jain"><span>Jain</span></label><label><input type="radio" name="diet" value="nonveg" checked><span>Veg &amp; non-veg</span></label></div></fieldset>
+        <fieldset><legend>Service</legend><div class="chips"><label><input type="radio" name="style" value="buffet" checked><span>Buffet</span></label><label><input type="radio" name="style" value="plated"><span>Plated</span></label></div></fieldset>
+        <fieldset><legend>Live stations &amp; extras</legend><div class="chips"><label><input type="checkbox" name="ext" value="chaat" checked><span>Live chaat counter</span></label><label><input type="checkbox" name="ext" value="tandoor"><span>Live tandoor &amp; grill</span></label><label><input type="checkbox" name="ext" value="dessert"><span>Dessert &amp; mithai bar</span></label><label><input type="checkbox" name="ext" value="bar"><span>Mocktail bar</span></label></div></fieldset>
+      </div>
+      <div class="pl-out" aria-live="polite">
+        <p class="eyebrow">Your feast</p>
+        <ol class="pl-events"></ol>
+        <div class="pl-team"><div><b class="pl-staff">0</b><span>Waiting staff</span></div><div><b class="pl-chefs">0</b><span>Chefs</span></div><div><b class="pl-count">0</b><span>Plates served</span></div></div>
+        <div class="pl-price"><span>Indicative total</span><b class="pl-total">£0</b><small class="pl-per"></small></div>
+        <p class="pl-note">Indicative only. Your exact per-head quote follows a free tasting.</p>
+        <div class="ctas"><button type="button" class="btn pl-send">Send this plan <i>→</i></button><a href="contact.html" class="btn line">Full enquiry</a></div>
+      </div>
+    </form>
+  </div>
+</section>
+
 <section class="glass" aria-label="Indoor and outdoor catering">
   <img class="glass-img on" data-kind="indoor" src="img/gw-buffet-2400.webp" alt="A banquet hall dressed with linen, crystal and flowers">
   <img class="glass-img" data-kind="outdoor" src="img/gw-mandap-2400.webp" alt="An outdoor wedding mandap with flowers" loading="lazy">
@@ -142,6 +165,6 @@ var q=new URLSearchParams(location.search).get('pal'),s=null;try{s=localStorage.
 set(q||s||'emerald',!!q);
 document.querySelectorAll('.palpick button').forEach(function(b){b.addEventListener('click',function(){set(b.dataset.pal,true)})});})();
 </script>
-<script src="site.js" defer></script>
+<div class="spine" aria-hidden="true"><i class="spine-fill"></i><i class="spine-flame"></i></div><div class="diya" aria-hidden="true"></div><script src="site.js" defer></script><script src="durbar.js" defer></script>
 </body>
 </html>

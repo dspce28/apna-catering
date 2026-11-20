@@ -29,14 +29,17 @@
 </header>
 <nav class="drawer" aria-label="Mobile"><a href="index.html" aria-current="page">Home</a><a href="about.html">About</a><a href="services.html">Weddings & Events</a><a href="menus.html">Menus</a><a href="contact.html">Contact</a><a href="contact.html" class="btn">Get a quote <i>→</i></a></nav>
 <main>
-<section class="hero">
-  <div class="hero-media"><img src="img/gw-buffet.webp" srcset="img/gw-buffet.webp 1200w, img/gw-buffet-2400.webp 2400w, img/gw-buffet-2720.webp 3840w" sizes="100vw" alt="" fetchpriority="high"></div>
-  <div>
-    <p class="eyebrow c" data-fade>Wedding caterers · Glasgow since 1975</p>
-    <h1 class="display" data-fade style="--d:.1s">A feast fit for<br><em>the maharaja.</em></h1>
-    <p class="lede" data-fade style="--d:.25s">Sikh and Hindu wedding catering from one family kitchen, for a hundred guests or a thousand. Nikah and Walima menus too.</p>
-    <div class="ctas" data-fade style="--d:.4s"><a href="contact.html" class="btn">Check your date <i>→</i></a><a href="#menu" class="btn line">See the menu</a></div>
-    <div class="hero-foot" data-fade style="--d:.55s"><span><b>1975</b>Family kitchen</span><span><b>1,000+</b>Guests at one wedding</span><span><b>5</b>Ceremonies, five menus</span></div>
+<section class="hx" aria-label="Welcome">
+  <div class="hx-pin">
+    <div class="hx-media"><img src="img/gw-buffet.webp" srcset="img/gw-buffet.webp 1200w, img/gw-buffet-2400.webp 2400w, img/gw-buffet-2720.webp 3840w" sizes="100vw" alt="" fetchpriority="high"></div>
+    <div class="hx-copy">
+      <p class="eyebrow c">Wedding caterers · Glasgow since 1975</p>
+      <h1 class="display">A feast fit for<br><em>the maharaja.</em></h1>
+      <p class="lede">Sikh and Hindu wedding catering from one family kitchen, for a hundred guests or a thousand. Nikah and Walima menus too.</p>
+      <div class="ctas"><a href="contact.html" class="btn">Check your date <i>→</i></a><a href="#planner" class="btn line">Plan your feast</a></div>
+    </div>
+    <p class="hx-side hx-l" aria-hidden="true">Step into</p><p class="hx-side hx-r" aria-hidden="true"><em>the feast</em></p>
+    <p class="hx-cue" aria-hidden="true">Scroll</p>
   </div>
 </section>
 
@@ -45,7 +48,7 @@
   <div class="wrap intro-grid">
     <div>
       <p class="eyebrow" data-fade>Our promise</p>
-      <h2 class="h2" data-fade>Every plate leaves our kitchen as if it were going to <em>our own table.</em></h2>
+      <h2 class="h2" data-candle>Every plate leaves our kitchen as if it were going to <em>our own table.</em></h2>
       <p class="lede" data-fade>Three generations of one Glasgow family have cooked for Scotland’s biggest days, from an intimate roka to a thousand-guest reception. We use fresh ingredients from trusted suppliers and serve them with the care your guests will notice.</p>
       <div class="stats" data-fade><div><b>50</b><span>Years of weddings</span></div><div><b>3</b><span>Faith traditions, deeply understood</span></div><div><b>1</b><span>Team from first call to last plate</span></div></div>
       <p style="margin-top:34px" data-fade><a href="about.html" class="link">Read our story <span>→</span></a></p>
@@ -99,6 +102,29 @@
   </div>
 </section>
 
+<section class="sec planner" id="planner">
+  <div class="wrap">
+    <div class="center"><p class="eyebrow" data-fade>Feast planner</p><h2 class="h2" data-fade>Plan your feast <em>in a minute.</em></h2><p class="lede" data-fade>Choose your ceremonies, guests and food. Your plan builds itself as you go.</p></div>
+    <form class="pl" onsubmit="return false" data-fade>
+      <div class="pl-controls">
+        <fieldset><legend>Your ceremonies</legend><div class="chips"><label><input type="checkbox" name="cer" value="roka"><span>Roka &amp; Chunni</span></label><label><input type="checkbox" name="cer" value="mehndi" checked><span>Mehndi &amp; Sangeet</span></label><label><input type="checkbox" name="cer" value="haldi"><span>Haldi / Jaggo</span></label><label><input type="checkbox" name="cer" value="wedding" checked><span>Anand Karaj / Pheras</span></label><label><input type="checkbox" name="cer" value="reception" checked><span>Reception</span></label></div></fieldset>
+        <fieldset><legend>Guests <output class="pl-guests">300</output></legend><input class="pl-range" type="range" name="guests" min="50" max="1000" step="25" value="300" aria-label="Number of guests"><div class="pl-scale"><span>50</span><span>500</span><span>1,000</span></div></fieldset>
+        <fieldset><legend>The food</legend><div class="chips"><label><input type="radio" name="diet" value="veg"><span>Vegetarian</span></label><label><input type="radio" name="diet" value="jain"><span>Jain</span></label><label><input type="radio" name="diet" value="nonveg" checked><span>Veg &amp; non-veg</span></label></div></fieldset>
+        <fieldset><legend>Service</legend><div class="chips"><label><input type="radio" name="style" value="buffet" checked><span>Buffet</span></label><label><input type="radio" name="style" value="plated"><span>Plated</span></label></div></fieldset>
+        <fieldset><legend>Live stations &amp; extras</legend><div class="chips"><label><input type="checkbox" name="ext" value="chaat" checked><span>Live chaat counter</span></label><label><input type="checkbox" name="ext" value="tandoor"><span>Live tandoor &amp; grill</span></label><label><input type="checkbox" name="ext" value="dessert"><span>Dessert &amp; mithai bar</span></label><label><input type="checkbox" name="ext" value="bar"><span>Mocktail bar</span></label></div></fieldset>
+      </div>
+      <div class="pl-out" aria-live="polite">
+        <p class="eyebrow">Your feast</p>
+        <ol class="pl-events"></ol>
+        <div class="pl-team"><div><b class="pl-staff">0</b><span>Waiting staff</span></div><div><b class="pl-chefs">0</b><span>Chefs</span></div><div><b class="pl-count">0</b><span>Plates served</span></div></div>
+        <div class="pl-price"><span>Indicative total</span><b class="pl-total">£0</b><small class="pl-per"></small></div>
+        <p class="pl-note">Indicative only. Your exact per-head quote follows a free tasting.</p>
+        <div class="ctas"><button type="button" class="btn pl-send">Send this plan <i>→</i></button><a href="contact.html" class="btn line">Full enquiry</a></div>
+      </div>
+    </form>
+  </div>
+</section>
+
 <section class="sec" id="menu">
   <div class="wrap">
     <div class="center" style="margin-bottom:70px">
@@ -106,45 +132,63 @@
       <h2 class="h2" data-fade>Dishes families <em>ask for again.</em></h2>
       <p class="lede" data-fade>Tap “Add” on anything you love and we’ll build your quote around it.</p>
     </div>
+    <div class="mfilter" role="group" aria-label="Filter dishes">
+      <button aria-pressed="true" data-f="all">All</button><button aria-pressed="false" data-f="veg">Veg</button><button aria-pressed="false" data-f="jain">Jain</button><button aria-pressed="false" data-f="nonveg">Non-veg</button><button aria-pressed="false" data-f="live">Live</button>
+    </div>
     <div class="board">
       <div class="board-side"><div class="arch framed board-photo"><img src="img/px-chaat-2400.webp" alt="" data-for="starters" class="on"><img src="img/px-tandoori-2400.webp" alt="" data-for="tandoor" loading="lazy"><img src="img/p-karahi-2400.webp" alt="" data-for="mains" loading="lazy"><img src="img/px-buffet-gold-2400.webp" alt="" data-for="rice" loading="lazy"><img src="img/px-jamun-2400.webp" alt="" data-for="desserts" loading="lazy"></div><p class="board-cap">Chaat & starters</p></div>
       <div>
       <div class="cat" data-cat="starters" data-title="Chaat & starters">
         <div class="cat-head"><h3>Chaat &amp; starters</h3><span>Served on arrival and at the mehndi</span></div>
-        <div class="dish"><h4>Gol Gappe</h4><span class="tags">Veg · Live</span><p>Crisp puri, spiced potato, tamarind and mint water</p><button class="add" data-dish="Gol Gappe" aria-pressed="false">+ Add</button></div>
-        <div class="dish"><h4>Papdi Chaat</h4><span class="tags">Veg</span><p>Yoghurt, chutneys, pomegranate and sev</p><button class="add" data-dish="Papdi Chaat" aria-pressed="false">+ Add</button></div>
-        <div class="dish"><h4>Punjabi Samosa</h4><span class="tags">Veg</span><p>Spiced potato and pea with mint chutney</p><button class="add" data-dish="Punjabi Samosa" aria-pressed="false">+ Add</button></div>
-        <div class="dish"><h4>Amritsari Fish</h4><span class="tags">Halal</span><p>Gram-flour batter, ajwain and lemon</p><button class="add" data-dish="Amritsari Fish" aria-pressed="false">+ Add</button></div>
+        <div class="dish" data-diet="veg live"><h4>Gol Gappe</h4><span class="tags">Veg · Live</span><p>Crisp puri, spiced potato, tamarind and mint water</p><button class="add" data-dish="Gol Gappe" aria-pressed="false">+ Add</button></div>
+        <div class="dish" data-diet="veg"><h4>Papdi Chaat</h4><span class="tags">Veg</span><p>Yoghurt, chutneys, pomegranate and sev</p><button class="add" data-dish="Papdi Chaat" aria-pressed="false">+ Add</button></div>
+        <div class="dish" data-diet="veg"><h4>Punjabi Samosa</h4><span class="tags">Veg</span><p>Spiced potato and pea with mint chutney</p><button class="add" data-dish="Punjabi Samosa" aria-pressed="false">+ Add</button></div>
+        <div class="dish" data-diet="nonveg"><h4>Amritsari Fish</h4><span class="tags">Non-veg</span><p>Gram-flour batter, ajwain and lemon</p><button class="add" data-dish="Amritsari Fish" aria-pressed="false">+ Add</button></div>
       </div>
       <div class="cat" data-cat="tandoor" data-title="Live tandoor & grill">
         <div class="cat-head"><h3>Live tandoor &amp; grill</h3><span>Cooked in front of your guests</span></div>
-        <div class="dish"><h4>Chicken Tikka</h4><span class="tags">Halal · Live</span><p>Overnight yoghurt and Kashmiri chilli marinade</p><button class="add" data-dish="Chicken Tikka" aria-pressed="false">+ Add</button></div>
-        <div class="dish"><h4>Paneer Tikka</h4><span class="tags">Veg · Live</span><p>Charred peppers, onion and chaat masala</p><button class="add" data-dish="Paneer Tikka" aria-pressed="false">+ Add</button></div>
-        <div class="dish"><h4>Seekh Kebab</h4><span class="tags">Halal · Live</span><p>Minced lamb, ginger, green chilli and coriander</p><button class="add" data-dish="Seekh Kebab" aria-pressed="false">+ Add</button></div>
-        <div class="dish"><h4>Haryali Tikka</h4><span class="tags">Halal</span><p>Mint, coriander and green chilli chicken</p><button class="add" data-dish="Haryali Tikka" aria-pressed="false">+ Add</button></div>
+        <div class="dish" data-diet="nonveg live"><h4>Chicken Tikka</h4><span class="tags">Non-veg · Live</span><p>Overnight yoghurt and Kashmiri chilli marinade</p><button class="add" data-dish="Chicken Tikka" aria-pressed="false">+ Add</button></div>
+        <div class="dish" data-diet="veg jain live"><h4>Paneer Tikka</h4><span class="tags">Veg · Jain option · Live</span><p>Charred peppers, onion and chaat masala</p><button class="add" data-dish="Paneer Tikka" aria-pressed="false">+ Add</button></div>
+        <div class="dish" data-diet="nonveg live"><h4>Seekh Kebab</h4><span class="tags">Non-veg · Live</span><p>Minced lamb, ginger, green chilli and coriander</p><button class="add" data-dish="Seekh Kebab" aria-pressed="false">+ Add</button></div>
+        <div class="dish" data-diet="nonveg"><h4>Haryali Tikka</h4><span class="tags">Non-veg</span><p>Mint, coriander and green chilli chicken</p><button class="add" data-dish="Haryali Tikka" aria-pressed="false">+ Add</button></div>
       </div>
       <div class="cat" data-cat="mains" data-title="Curries & mains">
         <div class="cat-head"><h3>Curries &amp; mains</h3><span>The heart of the wedding feast</span></div>
-        <div class="dish"><h4>Butter Chicken</h4><span class="tags">Halal</span><p>Tandoori chicken in a silky tomato and butter sauce</p><button class="add" data-dish="Butter Chicken" aria-pressed="false">+ Add</button></div>
-        <div class="dish"><h4>Lamb Rogan Josh</h4><span class="tags">Halal</span><p>Slow-cooked Kashmiri lamb with fennel and cardamom</p><button class="add" data-dish="Lamb Rogan Josh" aria-pressed="false">+ Add</button></div>
-        <div class="dish"><h4>Dal Makhani</h4><span class="tags">Veg</span><p>Black lentils simmered overnight with cream</p><button class="add" data-dish="Dal Makhani" aria-pressed="false">+ Add</button></div>
-        <div class="dish"><h4>Sarson da Saag</h4><span class="tags">Veg</span><p>Mustard greens with makki di roti and white butter</p><button class="add" data-dish="Sarson da Saag" aria-pressed="false">+ Add</button></div>
+        <div class="dish" data-diet="nonveg"><h4>Butter Chicken</h4><span class="tags">Non-veg</span><p>Tandoori chicken in a silky tomato and butter sauce</p><button class="add" data-dish="Butter Chicken" aria-pressed="false">+ Add</button></div>
+        <div class="dish" data-diet="nonveg"><h4>Lamb Rogan Josh</h4><span class="tags">Non-veg</span><p>Slow-cooked Kashmiri lamb with fennel and cardamom</p><button class="add" data-dish="Lamb Rogan Josh" aria-pressed="false">+ Add</button></div>
+        <div class="dish" data-diet="veg jain"><h4>Dal Makhani</h4><span class="tags">Veg · Jain option</span><p>Black lentils simmered overnight with cream</p><button class="add" data-dish="Dal Makhani" aria-pressed="false">+ Add</button></div>
+        <div class="dish" data-diet="veg"><h4>Sarson da Saag</h4><span class="tags">Veg</span><p>Mustard greens with makki di roti and white butter</p><button class="add" data-dish="Sarson da Saag" aria-pressed="false">+ Add</button></div>
       </div>
       <div class="cat" data-cat="rice" data-title="Rice & breads">
         <div class="cat-head"><h3>Rice &amp; breads</h3><span>Made fresh on the day</span></div>
-        <div class="dish"><h4>Lamb Dum Biryani</h4><span class="tags">Halal</span><p>Saffron, fried onions and mint, sealed and slow-cooked</p><button class="add" data-dish="Lamb Dum Biryani" aria-pressed="false">+ Add</button></div>
-        <div class="dish"><h4>Vegetable Pulao</h4><span class="tags">Veg</span><p>Basmati with whole spices and garden vegetables</p><button class="add" data-dish="Vegetable Pulao" aria-pressed="false">+ Add</button></div>
-        <div class="dish"><h4>Butter Naan</h4><span class="tags">Veg</span><p>From the tandoor, brushed with butter</p><button class="add" data-dish="Butter Naan" aria-pressed="false">+ Add</button></div>
-        <div class="dish"><h4>Bhatura</h4><span class="tags">Veg</span><p>Puffed and golden, served with chole</p><button class="add" data-dish="Bhatura" aria-pressed="false">+ Add</button></div>
+        <div class="dish" data-diet="nonveg"><h4>Lamb Dum Biryani</h4><span class="tags">Non-veg</span><p>Saffron, fried onions and mint, sealed and slow-cooked</p><button class="add" data-dish="Lamb Dum Biryani" aria-pressed="false">+ Add</button></div>
+        <div class="dish" data-diet="veg jain"><h4>Vegetable Pulao</h4><span class="tags">Veg · Jain option</span><p>Basmati with whole spices and garden vegetables</p><button class="add" data-dish="Vegetable Pulao" aria-pressed="false">+ Add</button></div>
+        <div class="dish" data-diet="veg jain"><h4>Butter Naan</h4><span class="tags">Veg · Jain option</span><p>From the tandoor, brushed with butter</p><button class="add" data-dish="Butter Naan" aria-pressed="false">+ Add</button></div>
+        <div class="dish" data-diet="veg jain"><h4>Bhatura</h4><span class="tags">Veg · Jain option</span><p>Puffed and golden, served with chole</p><button class="add" data-dish="Bhatura" aria-pressed="false">+ Add</button></div>
       </div>
       <div class="cat" data-cat="desserts" data-title="Desserts & mithai">
         <div class="cat-head"><h3>Desserts &amp; mithai</h3><span>For the last dance and the doli</span></div>
-        <div class="dish"><h4>Rasmalai</h4><span class="tags">Veg</span><p>Soft paneer dumplings in saffron milk</p><button class="add" data-dish="Rasmalai" aria-pressed="false">+ Add</button></div>
-        <div class="dish"><h4>Gulab Jamun</h4><span class="tags">Veg</span><p>Warm, in rose and cardamom syrup</p><button class="add" data-dish="Gulab Jamun" aria-pressed="false">+ Add</button></div>
-        <div class="dish"><h4>Fresh Jalebi</h4><span class="tags">Veg · Live</span><p>Made live and served hot</p><button class="add" data-dish="Fresh Jalebi" aria-pressed="false">+ Add</button></div>
-        <div class="dish"><h4>Mithai Platter</h4><span class="tags">Veg</span><p>Kaju katli, barfi and ladoo with silver leaf</p><button class="add" data-dish="Mithai Platter" aria-pressed="false">+ Add</button></div>
+        <div class="dish" data-diet="veg jain"><h4>Rasmalai</h4><span class="tags">Veg · Jain option</span><p>Soft paneer dumplings in saffron milk</p><button class="add" data-dish="Rasmalai" aria-pressed="false">+ Add</button></div>
+        <div class="dish" data-diet="veg jain"><h4>Gulab Jamun</h4><span class="tags">Veg · Jain option</span><p>Warm, in rose and cardamom syrup</p><button class="add" data-dish="Gulab Jamun" aria-pressed="false">+ Add</button></div>
+        <div class="dish" data-diet="veg jain live"><h4>Fresh Jalebi</h4><span class="tags">Veg · Jain option · Live</span><p>Made live and served hot</p><button class="add" data-dish="Fresh Jalebi" aria-pressed="false">+ Add</button></div>
+        <div class="dish" data-diet="veg jain"><h4>Mithai Platter</h4><span class="tags">Veg · Jain option</span><p>Kaju katli, barfi and ladoo with silver leaf</p><button class="add" data-dish="Mithai Platter" aria-pressed="false">+ Add</button></div>
       </div>
         <p class="board-note">Every menu is built around your family. Dishes can be swapped, and all can be made vegetarian, satvik, Jain or nut-free on request.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec thali-sec" id="thali">
+  <div class="wrap">
+    <div class="center"><p class="eyebrow" data-fade>Design your thali</p><h2 class="h2" data-fade>Fill the plate <em>your way.</em></h2><p class="lede" data-fade>Drag a dish into a bowl, or tap to add it. Tap a bowl to empty it.</p></div>
+    <div class="th" data-fade>
+      <div class="th-stage"><div class="thali" aria-label="Your thali"><button type="button" class="kt kt0" data-slot="0" aria-label="Bowl 1, empty"><span class="kt-in"></span></button><button type="button" class="kt kt1" data-slot="1" aria-label="Bowl 2, empty"><span class="kt-in"></span></button><button type="button" class="kt kt2" data-slot="2" aria-label="Bowl 3, empty"><span class="kt-in"></span></button><button type="button" class="kt kt3" data-slot="3" aria-label="Bowl 4, empty"><span class="kt-in"></span></button><button type="button" class="kt kt4" data-slot="4" aria-label="Bowl 5, empty"><span class="kt-in"></span></button><button type="button" class="kt kt5" data-slot="5" aria-label="Bowl 6, empty"><span class="kt-in"></span></button><button type="button" class="kt kt6" data-slot="6" aria-label="Bowl 7, empty"><span class="kt-in"></span></button></div><p class="th-count"><b>0</b> of 7 bowls filled</p></div>
+      <div class="th-tray">
+        <div class="mfilter th-filter" role="group" aria-label="Filter dishes"><button aria-pressed="true" data-f="all">All</button><button aria-pressed="false" data-f="veg">Veg</button><button aria-pressed="false" data-f="jain">Jain</button><button aria-pressed="false" data-f="nonveg">Non-veg</button></div>
+        <div class="toks"><button type="button" class="tok" data-cut="butter-chicken" data-name="Butter Chicken" data-diet="nonveg" draggable="false"><img src="img/cut/butter-chicken.webp" alt="" width="64" height="64" loading="lazy"><span>Butter Chicken</span><i class="dot nv" aria-hidden="true"></i></button><button type="button" class="tok" data-cut="tandoori" data-name="Tandoori Chicken" data-diet="nonveg" draggable="false"><img src="img/cut/tandoori.webp" alt="" width="64" height="64" loading="lazy"><span>Tandoori Chicken</span><i class="dot nv" aria-hidden="true"></i></button><button type="button" class="tok" data-cut="chicken-tikka" data-name="Malai Tikka" data-diet="nonveg" draggable="false"><img src="img/cut/chicken-tikka.webp" alt="" width="64" height="64" loading="lazy"><span>Malai Tikka</span><i class="dot nv" aria-hidden="true"></i></button><button type="button" class="tok" data-cut="karahi" data-name="Chicken Tikka Masala" data-diet="nonveg" draggable="false"><img src="img/cut/karahi.webp" alt="" width="64" height="64" loading="lazy"><span>Chicken Tikka Masala</span><i class="dot nv" aria-hidden="true"></i></button><button type="button" class="tok" data-cut="biryani" data-name="Chicken Biryani" data-diet="nonveg" draggable="false"><img src="img/cut/biryani.webp" alt="" width="64" height="64" loading="lazy"><span>Chicken Biryani</span><i class="dot nv" aria-hidden="true"></i></button><button type="button" class="tok" data-cut="lamb-biryani" data-name="Lamb Biryani" data-diet="nonveg" draggable="false"><img src="img/cut/lamb-biryani.webp" alt="" width="64" height="64" loading="lazy"><span>Lamb Biryani</span><i class="dot nv" aria-hidden="true"></i></button><button type="button" class="tok" data-cut="paneer-masala" data-name="Paneer Makhani" data-diet="veg jain" draggable="false"><img src="img/cut/paneer-masala.webp" alt="" width="64" height="64" loading="lazy"><span>Paneer Makhani</span><i class="dot v" aria-hidden="true"></i></button><button type="button" class="tok" data-cut="palak-paneer" data-name="Palak Paneer" data-diet="veg jain" draggable="false"><img src="img/cut/palak-paneer.webp" alt="" width="64" height="64" loading="lazy"><span>Palak Paneer</span><i class="dot v" aria-hidden="true"></i></button><button type="button" class="tok" data-cut="dal-makhani" data-name="Malai Kofta" data-diet="veg" draggable="false"><img src="img/cut/dal-makhani.webp" alt="" width="64" height="64" loading="lazy"><span>Malai Kofta</span><i class="dot v" aria-hidden="true"></i></button><button type="button" class="tok" data-cut="chaat" data-name="Dahi Puri Chaat" data-diet="veg" draggable="false"><img src="img/cut/chaat.webp" alt="" width="64" height="64" loading="lazy"><span>Dahi Puri Chaat</span><i class="dot v" aria-hidden="true"></i></button><button type="button" class="tok" data-cut="gol-gappe" data-name="Gol Gappe" data-diet="veg" draggable="false"><img src="img/cut/gol-gappe.webp" alt="" width="64" height="64" loading="lazy"><span>Gol Gappe</span><i class="dot v" aria-hidden="true"></i></button><button type="button" class="tok" data-cut="samosa" data-name="Samosa" data-diet="veg" draggable="false"><img src="img/cut/samosa.webp" alt="" width="64" height="64" loading="lazy"><span>Samosa</span><i class="dot v" aria-hidden="true"></i></button><button type="button" class="tok" data-cut="rice" data-name="Jeera Rice" data-diet="veg jain" draggable="false"><img src="img/cut/rice.webp" alt="" width="64" height="64" loading="lazy"><span>Jeera Rice</span><i class="dot v" aria-hidden="true"></i></button><button type="button" class="tok" data-cut="naan" data-name="Butter Naan" data-diet="veg jain" draggable="false"><img src="img/cut/naan.webp" alt="" width="64" height="64" loading="lazy"><span>Butter Naan</span><i class="dot v" aria-hidden="true"></i></button><button type="button" class="tok" data-cut="gulab-jamun" data-name="Gulab Jamun" data-diet="veg jain" draggable="false"><img src="img/cut/gulab-jamun.webp" alt="" width="64" height="64" loading="lazy"><span>Gulab Jamun</span><i class="dot v" aria-hidden="true"></i></button><button type="button" class="tok" data-cut="gajar-halwa" data-name="Gajar Halwa" data-diet="veg" draggable="false"><img src="img/cut/gajar-halwa.webp" alt="" width="64" height="64" loading="lazy"><span>Gajar Halwa</span><i class="dot v" aria-hidden="true"></i></button></div>
+        <div class="ctas"><button type="button" class="btn th-add">Add my thali to my enquiry <i>→</i></button><button type="button" class="btn line th-clear">Clear</button></div>
+        <p class="th-msg" role="status"></p>
       </div>
     </div>
   </div>
@@ -182,13 +226,14 @@
   <div class="wrap"><div class="quote" data-fade><p class="eyebrow c">Kind words</p><div class="quote-slide on"><blockquote>“Everyone we’ve talked to has raved about the food! Compliments also to your staff. They were all very kind and helpful.”</blockquote><cite>Varinderjeet &amp; Dilvar · Wedding</cite></div><div class="quote-slide"><blockquote>“Thank you for such a marvellous catering job. Our celebration was a huge success due to your efficiency and the care you took with the presentation.”</blockquote><cite>Archana &amp; Sanjeev · Wedding celebration</cite></div><div class="quote-slide"><blockquote>“Really enjoyed our food. It was delicious and the staff were all friendly. Recommend it!”</blockquote><cite>Sandeep Shergill · Private event</cite></div><div class="quote-dots"><button aria-label="Review 1"></button><button aria-label="Review 2"></button><button aria-label="Review 3"></button></div></div></div>
 </section>
 
-<section class="sec cta sand">
-  
+<section class="sec cd sand" id="countdown">
   <div class="wrap center">
-    <p class="eyebrow" data-fade>It’s your day</p>
-    <h2 class="h2" data-fade>Let’s plan <em>your celebration.</em></h2>
-    <p class="lede" data-fade>Tell us your date, guests and traditions. We reply within one working day and invite you to a tasting.</p>
-    <div class="ctas" data-fade><a href="contact.html" class="btn">Check your date <i>→</i></a><a href="https://wa.me/447818478036" class="btn line" target="_blank" rel="noopener">WhatsApp us</a></div>
+    <p class="eyebrow" data-fade>Your countdown</p>
+    <h2 class="h2" data-fade>When is <em>the big day?</em></h2>
+    <label class="cd-pick" data-fade><span>Wedding date</span><input type="date" class="cd-date" aria-label="Wedding date"></label>
+    <div class="cd-clock" aria-live="polite" hidden><div><b class="cd-d">0</b><span>Days</span></div><div><b class="cd-h">0</b><span>Hours</span></div><div><b class="cd-m">0</b><span>Minutes</span></div><div><b class="cd-s">0</b><span>Seconds</span></div></div>
+    <ol class="cd-steps" hidden></ol>
+    <div class="ctas" data-fade style="margin-top:34px"><a href="contact.html" class="btn">Check your date <i>→</i></a><a href="https://wa.me/447818478036" class="btn line" target="_blank" rel="noopener">WhatsApp us</a></div>
   </div>
 </section>
 </main>
@@ -219,6 +264,6 @@ var q=new URLSearchParams(location.search).get('pal'),s=null;try{s=localStorage.
 set(q||s||'emerald',!!q);
 document.querySelectorAll('.palpick button').forEach(function(b){b.addEventListener('click',function(){set(b.dataset.pal,true)})});})();
 </script>
-<script src="site.js" defer></script>
+<div class="spine" aria-hidden="true"><i class="spine-fill"></i><i class="spine-flame"></i></div><div class="diya" aria-hidden="true"></div><script src="site.js" defer></script><script src="durbar.js" defer></script>
 </body>
 </html>

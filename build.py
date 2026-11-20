@@ -112,8 +112,8 @@ document.querySelectorAll('.palpick button').forEach(function(b){b.addEventListe
 
 
 def page(active, title, desc, body, preload=""):
-    return (head(title, desc, preload) + f'<body>\n{nav(active)}<main>\n{body}\n</main>\n{footer()}{PALPICK if THEME == "b" else ""}'
-            '<script src="site.js" defer></script>\n</body>\n</html>\n')
+    return (head(title, desc, preload) + f'<body>\n{nav(active)}<main>\n{body}\n</main>\n{footer()}{PALPICK + B_SPINE if THEME == "b" else ""}'
+            '<script src="site.js" defer></script>' + ('<script src="durbar.js" defer></script>' if THEME == "b" else '') + '\n</body>\n</html>\n')
 
 
 def cta(title="Let’s plan <em>your celebration.</em>", text="Tell us your date, guests and traditions. We reply within one working day and invite you to a tasting.", rose_pos="bl"):
@@ -182,7 +182,7 @@ def menu_board(cats=MENU, heading=True):
     blocks = ""
     for key, name, sub, _, dishes in cats:
         rows = "".join(f'''
-        <div class="dish"><h4>{d}</h4><span class="tags">{t}</span><p>{p}</p><button class="add" data-dish="{d}" aria-pressed="false">+ Add</button></div>''' for d, p, t in dishes)
+        <div class="dish"{f' data-diet="{DIET.get(d, "veg")}"' if THEME == "b" else ""}><h4>{d}</h4><span class="tags">{diet_tag(d) if THEME == "b" else t}</span><p>{p}</p><button class="add" data-dish="{d}" aria-pressed="false">+ Add</button></div>''' for d, p, t in dishes)
         blocks += f'''
       <div class="cat" data-cat="{key}" data-title="{name.replace('&amp;', '&')}">
         <div class="cat-head"><h3>{name}</h3><span>{sub}</span></div>{rows}
@@ -193,6 +193,8 @@ def menu_board(cats=MENU, heading=True):
       <h2 class="h2" data-fade>Dishes families <em>ask for again.</em></h2>
       <p class="lede" data-fade>Tap “Add” on anything you love and we’ll build your quote around it.</p>
     </div>''' if heading else ""
+    if THEME == "b":
+        head_html += "\n    " + FILTERS
     return f'''<section class="sec" id="menu">
   <div class="wrap">{head_html}
     <div class="board">
@@ -275,8 +277,125 @@ def quotes():
 </section>'''
 
 
+# ---------------------------------------------------------------- Direction B only: tools and scroll stages
+DIET = {  # what each menu dish is, for the filters (Jain = can be made without onion, garlic or root vegetables)
+    "Gol Gappe": "veg live", "Papdi Chaat": "veg", "Punjabi Samosa": "veg", "Amritsari Fish": "nonveg",
+    "Chicken Tikka": "nonveg live", "Paneer Tikka": "veg jain live", "Seekh Kebab": "nonveg live", "Haryali Tikka": "nonveg",
+    "Butter Chicken": "nonveg", "Lamb Rogan Josh": "nonveg", "Dal Makhani": "veg jain", "Sarson da Saag": "veg",
+    "Lamb Dum Biryani": "nonveg", "Vegetable Pulao": "veg jain", "Butter Naan": "veg jain", "Bhatura": "veg jain",
+    "Rasmalai": "veg jain", "Gulab Jamun": "veg jain", "Fresh Jalebi": "veg jain live", "Mithai Platter": "veg jain",
+}
+
+
+def diet_tag(d):
+    s = DIET.get(d, "veg").split()
+    t = "Non-veg" if "nonveg" in s else "Veg"
+    if "jain" in s:
+        t += " · Jain option"
+    if "live" in s:
+        t += " · Live"
+    return t
+
+
+FILTERS = '''<div class="mfilter" role="group" aria-label="Filter dishes">
+      <button aria-pressed="true" data-f="all">All</button><button aria-pressed="false" data-f="veg">Veg</button><button aria-pressed="false" data-f="jain">Jain</button><button aria-pressed="false" data-f="nonveg">Non-veg</button><button aria-pressed="false" data-f="live">Live</button>
+    </div>'''
+
+
+def hero_b():
+    return f'''<section class="hx" aria-label="Welcome">
+  <div class="hx-pin">
+    <div class="hx-media">{img("b-hall", "100vw", "", lazy=False)}</div>
+    <div class="hx-copy">
+      <p class="eyebrow c">Wedding caterers · Glasgow since 1975</p>
+      <h1 class="display">The wedding feast,<br><em>beautifully served.</em></h1>
+      <p class="lede">Sikh and Hindu wedding catering from one family kitchen, for a hundred guests or a thousand. Nikah and Walima menus too.</p>
+      <div class="ctas"><a href="contact.html" class="btn">Check your date <i>→</i></a><a href="#planner" class="btn line">Plan your feast</a></div>
+    </div>
+    <p class="hx-side hx-l" aria-hidden="true">Step into</p><p class="hx-side hx-r" aria-hidden="true"><em>the feast</em></p>
+    <p class="hx-cue" aria-hidden="true">Scroll</p>
+  </div>
+</section>'''
+
+
+CEREMONIES = [("roka", "Roka &amp; Chunni"), ("mehndi", "Mehndi &amp; Sangeet"), ("haldi", "Haldi / Jaggo"),
+              ("wedding", "Anand Karaj / Pheras"), ("reception", "Reception")]
+EXTRAS = [("chaat", "Live chaat counter"), ("tandoor", "Live tandoor &amp; grill"), ("dessert", "Dessert &amp; mithai bar"), ("bar", "Mocktail bar")]
+
+
+def planner():
+    cer = "".join(f'<label><input type="checkbox" name="cer" value="{k}"{" checked" if k in ("mehndi", "wedding", "reception") else ""}><span>{n}</span></label>' for k, n in CEREMONIES)
+    ext = "".join(f'<label><input type="checkbox" name="ext" value="{k}"{" checked" if k == "chaat" else ""}><span>{n}</span></label>' for k, n in EXTRAS)
+    return f'''<section class="sec planner" id="planner">
+  <div class="wrap">
+    <div class="center"><p class="eyebrow" data-fade>Feast planner</p><h2 class="h2" data-fade>Plan your feast <em>in a minute.</em></h2><p class="lede" data-fade>Choose your ceremonies, guests and food. Your plan builds itself as you go.</p></div>
+    <form class="pl" onsubmit="return false" data-fade>
+      <div class="pl-controls">
+        <fieldset><legend>Your ceremonies</legend><div class="chips">{cer}</div></fieldset>
+        <fieldset><legend>Guests <output class="pl-guests">300</output></legend><input class="pl-range" type="range" name="guests" min="50" max="1000" step="25" value="300" aria-label="Number of guests"><div class="pl-scale"><span>50</span><span>500</span><span>1,000</span></div></fieldset>
+        <fieldset><legend>The food</legend><div class="chips"><label><input type="radio" name="diet" value="veg"><span>Vegetarian</span></label><label><input type="radio" name="diet" value="jain"><span>Jain</span></label><label><input type="radio" name="diet" value="nonveg" checked><span>Veg &amp; non-veg</span></label></div></fieldset>
+        <fieldset><legend>Service</legend><div class="chips"><label><input type="radio" name="style" value="buffet" checked><span>Buffet</span></label><label><input type="radio" name="style" value="plated"><span>Plated</span></label></div></fieldset>
+        <fieldset><legend>Live stations &amp; extras</legend><div class="chips">{ext}</div></fieldset>
+      </div>
+      <div class="pl-out" aria-live="polite">
+        <p class="eyebrow">Your feast</p>
+        <ol class="pl-events"></ol>
+        <div class="pl-team"><div><b class="pl-staff">0</b><span>Waiting staff</span></div><div><b class="pl-chefs">0</b><span>Chefs</span></div><div><b class="pl-count">0</b><span>Plates served</span></div></div>
+        <div class="pl-price"><span>Indicative total</span><b class="pl-total">£0</b><small class="pl-per"></small></div>
+        <p class="pl-note">Indicative only. Your exact per-head quote follows a free tasting.</p>
+        <div class="ctas"><button type="button" class="btn pl-send">Send this plan <i>→</i></button><a href="contact.html" class="btn line">Full enquiry</a></div>
+      </div>
+    </form>
+  </div>
+</section>'''
+
+
+THALI_DISHES = [  # cut-out, name, diet
+    ("butter-chicken", "Butter Chicken", "nonveg"), ("tandoori", "Tandoori Chicken", "nonveg"), ("chicken-tikka", "Malai Tikka", "nonveg"),
+    ("karahi", "Chicken Tikka Masala", "nonveg"), ("biryani", "Chicken Biryani", "nonveg"), ("lamb-biryani", "Lamb Biryani", "nonveg"),
+    ("paneer-masala", "Paneer Makhani", "veg jain"), ("palak-paneer", "Palak Paneer", "veg jain"), ("dal-makhani", "Malai Kofta", "veg"),
+    ("chaat", "Dahi Puri Chaat", "veg"), ("gol-gappe", "Gol Gappe", "veg"), ("samosa", "Samosa", "veg"),
+    ("rice", "Jeera Rice", "veg jain"), ("naan", "Butter Naan", "veg jain"), ("gulab-jamun", "Gulab Jamun", "veg jain"), ("gajar-halwa", "Gajar Halwa", "veg"),
+]
+
+
+def thali():
+    slots = "".join(f'<button type="button" class="kt kt{i}" data-slot="{i}" aria-label="Bowl {i + 1}, empty"><span class="kt-in"></span></button>' for i in range(7))
+    tokens = "".join(f'<button type="button" class="tok" data-cut="{c}" data-name="{n}" data-diet="{d}" draggable="false"><img src="img/cut/{c}.webp" alt="" width="64" height="64" loading="lazy"><span>{n}</span><i class="dot {"nv" if "nonveg" in d else "v"}" aria-hidden="true"></i></button>' for c, n, d in THALI_DISHES)
+    return f'''<section class="sec thali-sec" id="thali">
+  <div class="wrap">
+    <div class="center"><p class="eyebrow" data-fade>Design your thali</p><h2 class="h2" data-fade>Fill the plate <em>your way.</em></h2><p class="lede" data-fade>Drag a dish into a bowl, or tap to add it. Tap a bowl to empty it.</p></div>
+    <div class="th" data-fade>
+      <div class="th-stage"><div class="thali" aria-label="Your thali">{slots}</div><p class="th-count"><b>0</b> of 7 bowls filled</p></div>
+      <div class="th-tray">
+        <div class="mfilter th-filter" role="group" aria-label="Filter dishes"><button aria-pressed="true" data-f="all">All</button><button aria-pressed="false" data-f="veg">Veg</button><button aria-pressed="false" data-f="jain">Jain</button><button aria-pressed="false" data-f="nonveg">Non-veg</button></div>
+        <div class="toks">{tokens}</div>
+        <div class="ctas"><button type="button" class="btn th-add">Add my thali to my enquiry <i>→</i></button><button type="button" class="btn line th-clear">Clear</button></div>
+        <p class="th-msg" role="status"></p>
+      </div>
+    </div>
+  </div>
+</section>'''
+
+
+def countdown():
+    return '''<section class="sec cd sand" id="countdown">
+  <div class="wrap center">
+    <p class="eyebrow" data-fade>Your countdown</p>
+    <h2 class="h2" data-fade>When is <em>the big day?</em></h2>
+    <label class="cd-pick" data-fade><span>Wedding date</span><input type="date" class="cd-date" aria-label="Wedding date"></label>
+    <div class="cd-clock" aria-live="polite" hidden><div><b class="cd-d">0</b><span>Days</span></div><div><b class="cd-h">0</b><span>Hours</span></div><div><b class="cd-m">0</b><span>Minutes</span></div><div><b class="cd-s">0</b><span>Seconds</span></div></div>
+    <ol class="cd-steps" hidden></ol>
+    <div class="ctas" data-fade style="margin-top:34px"><a href="contact.html" class="btn">Check your date <i>→</i></a><a href="https://wa.me/447818478036" class="btn line" target="_blank" rel="noopener">WhatsApp us</a></div>
+  </div>
+</section>'''
+
+
+B_SPINE = '<div class="spine" aria-hidden="true"><i class="spine-fill"></i><i class="spine-flame"></i></div><div class="diya" aria-hidden="true"></div>'
+
+
 # ---------------------------------------------------------------- pages
-HOME = f'''<section class="hero">
+HERO_A = f'''<section class="hero">
   <div class="hero-media">{img("b-hall", "100vw", "", lazy=False)}</div>
   <div>
     <p class="eyebrow c" data-fade>Wedding caterers · Glasgow since 1975</p>
@@ -285,14 +404,16 @@ HOME = f'''<section class="hero">
     <div class="ctas" data-fade style="--d:.4s"><a href="contact.html" class="btn">Check your date <i>→</i></a><a href="#menu" class="btn line">See the menu</a></div>
     <div class="hero-foot" data-fade style="--d:.55s"><span><b>1975</b>Family kitchen</span><span><b>1,000+</b>Guests at one wedding</span><span><b>5</b>Ceremonies, five menus</span></div>
   </div>
-</section>
+</section>'''
+
+HOME = f'''{hero_b() if THEME == "b" else HERO_A}
 
 <section class="sec">
   {rose("tr")}
   <div class="wrap intro-grid">
     <div>
       <p class="eyebrow" data-fade>Our promise</p>
-      <h2 class="h2" data-fade>Every plate leaves our kitchen as if it were going to <em>our own table.</em></h2>
+      <h2 class="h2"{" data-candle" if THEME == "b" else " data-fade"}>Every plate leaves our kitchen as if it were going to <em>our own table.</em></h2>
       <p class="lede" data-fade>Three generations of one Glasgow family have cooked for Scotland’s biggest days, from an intimate roka to a thousand-guest reception. We use fresh ingredients from trusted suppliers and serve them with the care your guests will notice.</p>
       <div class="stats" data-fade><div><b>50</b><span>Years of weddings</span></div><div><b>3</b><span>Faith traditions, deeply understood</span></div><div><b>1</b><span>Team from first call to last plate</span></div></div>
       <p style="margin-top:34px" data-fade><a href="about.html" class="link">Read our story <span>→</span></a></p>
@@ -301,9 +422,9 @@ HOME = f'''<section class="hero">
   </div>
 </section>
 
-{stage()}
+{stage()}{"\n\n" + planner() if THEME == "b" else ""}
 
-{menu_board()}
+{menu_board()}{"\n\n" + thali() if THEME == "b" else ""}
 
 {GLASS}
 
@@ -311,7 +432,7 @@ HOME = f'''<section class="hero">
 
 {quotes()}
 
-{cta()}'''
+{countdown() if THEME == "b" else cta()}'''
 
 ABOUT = f'''{phero("Our story", "Love for food, <em>since 1975.</em>", "A Glasgow family kitchen that has grown up with the city’s Asian community, one celebration at a time.", "p-tablesetting", "")}
 
@@ -423,7 +544,7 @@ SERVICES = f'''{phero("Weddings &amp; events", "Every tradition, <em>beautifully
       <li data-fade><a href="contact.html" data-occasion="Corporate event"><b>v.</b><h3>Corporate events</h3><span>Client dinners and Diwali, Eid and Vaisakhi parties.</span></a></li>
     </ul>
   </div>
-</section>
+</section>{"\n\n" + planner() if THEME == "b" else ""}
 
 {GLASS}
 
@@ -448,7 +569,7 @@ MENUS = f'''{phero("Menus", "Start with a classic, <em>make it yours.</em>", "Fo
   </div>
 </section>
 
-<div class="sand">{menu_board()}</div>
+<div class="sand">{menu_board()}</div>{"\n\n" + thali() if THEME == "b" else ""}
 
 {cta("Your menu is <em>ready to taste.</em>", "Send us the dishes you picked and we’ll arrange a tasting with our chefs.")}'''
 
@@ -545,13 +666,13 @@ if __name__ == "__main__":
         print("wrote", os.path.join(OUT, fn))
     if THEME == "b":
         # a self-contained folder: its own copies of the code and only the images it uses
-        for f in ("site.css", "site.js", "durbar.css"):
+        for f in ("site.css", "site.js", "durbar.css", "durbar.js"):
             shutil.copy(f, os.path.join(OUT, f))
         used = set()
         for fn in os.listdir(OUT):
             if fn.endswith((".html", ".css")):
-                used |= set(re.findall(r"img/[A-Za-z0-9._-]+", open(os.path.join(OUT, fn)).read()))
-        os.makedirs(os.path.join(OUT, "img"), exist_ok=True)
+                used |= set(re.findall(r"img/[A-Za-z0-9._/-]+?\.(?:webp|png|jpg)", open(os.path.join(OUT, fn)).read()))
+        os.makedirs(os.path.join(OUT, "img", "cut"), exist_ok=True)
         for u in sorted(used):
             if os.path.exists(u):
                 shutil.copy(u, os.path.join(OUT, u))
