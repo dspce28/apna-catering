@@ -178,6 +178,8 @@ MENU = [
 
 
 def menu_board(cats=MENU, heading=True):
+    if THEME == "b":
+        return booklet(cats)
     photos = "".join(f'<img src="img/{c[3]}-2400.webp" alt="" data-for="{c[0]}"{" class=\"on\"" if i == 0 else " loading=\"lazy\""}>' for i, c in enumerate(cats))
     blocks = ""
     for key, name, sub, _, dishes in cats:
@@ -396,7 +398,40 @@ def countdown():
     <label class="cd-pick" data-fade><span>Wedding date</span><input type="date" class="cd-date" aria-label="Wedding date"></label>
     <div class="cd-clock" aria-live="polite" hidden><div><b class="cd-d">0</b><span>Days</span></div><div><b class="cd-h">0</b><span>Hours</span></div><div><b class="cd-m">0</b><span>Minutes</span></div><div><b class="cd-s">0</b><span>Seconds</span></div></div>
     <ol class="cd-steps" hidden></ol>
+    <p class="cd-note" hidden></p>
     <div class="ctas" data-fade style="margin-top:34px"><a href="contact.html" class="btn">Check your date <i>→</i></a><a href="https://wa.me/447818478036" class="btn line" target="_blank" rel="noopener">WhatsApp us</a></div>
+  </div>
+</section>'''
+
+
+def booklet(cats=MENU):
+    """A 3D menu booklet: a cover, one spread per course (photo left, dishes right), a back cover."""
+    import json
+    roman = ["i.", "ii.", "iii.", "iv.", "v.", "vi."]
+    pages = ['<div class="pg cover"><div class="cv-frame"><img class="cv-logo" src="img/logo-256.png" alt="" width="120" height="120">'
+             '<p class="cv-kicker">Apna Catering · Est. 1975</p><h3>The Wedding<br><em>Menu</em></h3>'
+             '<p class="cv-sub">Glasgow · Sikh &amp; Hindu weddings</p><span class="cv-hint">Tap to open</span></div></div>']
+    for i, (key, name, sub, photo, dishes) in enumerate(cats):
+        pages.append(f'<div class="pg photo"><div class="pg-arch"><img src="img/{photo}.webp" alt="" loading="lazy"></div>'
+                     f'<p class="pg-no">{roman[i]}</p><h3>{name}</h3><p class="pg-sub">{sub}</p><span class="pg-num">{2 * i + 1}</span></div>')
+        rows = "".join(f'<li class="bdish" data-diet="{DIET.get(d, "veg")}"><div><h4>{d}</h4><p>{p}</p></div>'
+                       f'<span class="tags">{diet_tag(d)}</span><button type="button" class="add" data-dish="{d}" aria-pressed="false">+ Add</button></li>'
+                       for d, p, t in dishes)
+        pages.append(f'<div class="pg list"><p class="pg-kicker">{name}</p><ul>{rows}</ul><span class="pg-num">{2 * i + 2}</span></div>')
+    pages.append('<div class="pg cover backc"><div class="cv-frame"><p class="cv-kicker">Reserve your date</p><h3>Taste it <em>first.</em></h3>'
+                 '<p class="cv-sub">Every menu can be changed dish by dish, and made vegetarian, satvik, Jain or nut-free.</p>'
+                 '<a href="contact.html" class="bk-btn">Book a tasting →</a><p class="cv-sub">07818 478036</p></div></div>')
+    n = len(pages) // 2
+    leaves = "".join(f'<div class="leaf" style="z-index:{n - k}"><div class="page front">{pages[2 * k]}</div>'
+                     f'<div class="page back">{pages[2 * k + 1]}</div></div>' for k in range(n))
+    labels = json.dumps(["Cover"] + [c[1].replace("&amp;", "&") for c in cats] + ["Back cover"]).replace('"', "&quot;")
+    filters = FILTERS.replace('class="mfilter"', 'class="mfilter bk-filter"')
+    return f'''<section class="sec bk-sec" id="menu">
+  <div class="wrap">
+    <div class="center"><p class="eyebrow" data-fade>Our menu</p><h2 class="h2" data-fade>Turn the pages of <em>our wedding menu.</em></h2><p class="lede" data-fade>Tap a page or swipe to turn it. Tap “Add” on anything you love and we’ll build your quote around it.</p></div>
+    {filters}
+    <div class="bk-wrap"><div class="book" tabindex="0" role="group" aria-label="Wedding menu booklet. Use the arrow keys to turn the pages." data-state="closed" data-labels="{labels}">{leaves}</div></div>
+    <div class="bk-nav"><button type="button" class="bk-prev" aria-label="Previous page" disabled>←</button><span class="bk-at" aria-live="polite">Cover</span><button type="button" class="bk-next" aria-label="Next page">→</button></div>
   </div>
 </section>'''
 

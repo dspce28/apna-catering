@@ -70,12 +70,12 @@
   let picks = store.get('picks', []);
   const pill = $('.picks');
   const syncPicks = () => {
-    $$('.dish .add').forEach((b) => b.setAttribute('aria-pressed', picks.includes(b.dataset.dish)));
+    $$('.dish .add, .bdish .add').forEach((b) => b.setAttribute('aria-pressed', picks.includes(b.dataset.dish)));
     if (pill) { $('b', pill).textContent = picks.length; pill.classList.toggle('on', picks.length > 0); }
     const fp = $('.form-picks');
     if (fp) fp.innerHTML = picks.length ? 'Dishes you picked: <b>' + picks.map((p) => p.replace(/</g, '')).join(', ') + '</b>' : '';
   };
-  $$('.dish .add').forEach((b) => b.addEventListener('click', () => {
+  $$('.dish .add, .bdish .add').forEach((b) => b.addEventListener('click', () => {
     const d = b.dataset.dish; picks = picks.includes(d) ? picks.filter((x) => x !== d) : [...picks, d];
     store.set('picks', picks); syncPicks();
   }));

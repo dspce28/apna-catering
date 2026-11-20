@@ -246,14 +246,27 @@
         $('.cd-s', sec).textContent = String(Math.floor(ms / 1e3) % 60).padStart(2, '0');
       };
       tick(); timer = setInterval(tick, 1000); clock.hidden = false;
-      const ms = [['Book your tasting', 150], ['Confirm the menu', 75], ['Final guest numbers', 14], ['The big day', 0]];
-      let nextSet = false;
-      steps.innerHTML = ms.map(([t, d], i) => {
-        const when = new Date(day - d * 864e5), done = when < today && d > 0;
-        let cls = done ? 'done' : ''; if (!done && !nextSet) { cls = 'next'; nextSet = true; }
-        return `<li class="${cls}" style="--i:${i}"><b>${t}</b>${done ? 'Overdue: let’s talk soon' : 'by'} <time>${fmtDate(when)}</time></li>`;
-      }).join('');
+      // milestones are planned forward from today: the ideal lead time when there is room,
+      // otherwise compressed into the time left (never in the past)
+      const DAY = 864e5, lead = Math.max(1, Math.floor((day - today) / DAY));
+      const plan = [['Book your tasting', 150, .2], ['Confirm the menu', 75, .5], ['Final guest numbers', 14, .8]];
+      let prev = today.getTime(), rushedAny = false;
+      const items = plan.map(([t, ideal, frac]) => {
+        let when = day.getTime() - ideal * DAY, rushed = false;
+        const soonest = today.getTime() + Math.max(1, Math.round(lead * frac)) * DAY;
+        if (when < soonest) { when = soonest; rushed = true; rushedAny = true; }
+        when = Math.min(Math.max(when, prev + DAY), day.getTime() - DAY);
+        prev = when;
+        return [t, new Date(when), rushed];
+      });
+      items.push(['The big day', day, false]);
+      steps.innerHTML = items.map(([t, w, r], i) => `<li class="${i === 0 ? 'next' : ''}" style="--i:${i}"><b>${t}</b>${i === 3 ? 'on' : 'by'} <time>${fmtDate(w)}</time>${r ? '<em>Fast-tracked</em>' : ''}</li>`).join('');
       steps.hidden = false;
+      const note = $('.cd-note', sec);
+      if (note) {
+        note.hidden = !rushedAny;
+        note.textContent = rushedAny ? `Only ${lead} ${lead === 1 ? 'day' : 'days'} to go? That’s fine. We fast-track the tasting and menu for short-notice weddings, so call us today.` : '';
+      }
     };
     input.addEventListener('change', show);
     const saved = store.get('date', null); if (saved) { input.value = saved; show(); }
@@ -337,4 +350,58 @@
       requestAnimationFrame(steam);
     })();
   }
+})();
+
+/* =========================================================
+   3D MENU BOOKLET: tap, swipe or arrow keys to turn pages
+   ========================================================= */
+(() => {
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  $$('.bk-sec').forEach((sec) => {
+    const book = $('.book', sec), leaves = $$('.leaf', book), n = leaves.length;
+    const labels = JSON.parse(book.dataset.labels), at = $('.bk-at', sec), prevB = $('.bk-prev', sec), nextB = $('.bk-next', sec);
+    let cur = 0;
+    const z = (i) => (i < cur ? i + 1 : n - i);
+    const set = (k) => {
+      k = Math.max(0, Math.min(n, k)); if (k === cur) return;
+      const prev = cur; cur = k;
+      leaves.forEach((l, i) => {
+        const f = i < k; l.classList.toggle('flipped', f);
+        if ((i < prev) !== f && !reduce) { l.style.zIndex = n + 5; setTimeout(() => { l.style.zIndex = z(i); }, 1150); } else l.style.zIndex = z(i);
+      });
+      book.dataset.state = k === 0 ? 'closed' : k === n ? 'end' : 'open';
+      at.textContent = labels[k]; prevB.disabled = k === 0; nextB.disabled = k === n;
+    };
+    prevB.addEventListener('click', () => set(cur - 1));
+    nextB.addEventListener('click', () => set(cur + 1));
+    let sx = null, swiped = false;
+    book.addEventListener('pointerdown', (e) => { sx = e.clientX; swiped = false; });
+    book.addEventListener('pointerup', (e) => {
+      if (sx === null) return; const dx = e.clientX - sx; sx = null;
+      if (Math.abs(dx) > 45) { swiped = true; set(cur + (dx < 0 ? 1 : -1)); }
+    });
+    book.addEventListener('click', (e) => {
+      if (swiped || e.target.closest('a,button')) return;
+      const leaf = e.target.closest('.leaf'); if (!leaf) return;
+      set(leaf.classList.contains('flipped') ? cur - 1 : cur + 1);
+    });
+    book.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') { e.preventDefault(); set(cur + 1); }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); set(cur - 1); }
+    });
+    // the book lies tilted, settles flat as it comes into view, then the cover opens
+    if (!reduce) {
+      book.classList.add('pre');
+      new IntersectionObserver((es, o) => es.forEach((e) => {
+        if (!e.isIntersecting) return; o.disconnect();
+        book.classList.remove('pre'); setTimeout(() => { if (cur === 0) set(1); }, 1000);
+      }), { threshold: .5 }).observe(book);
+    }
+    $$('.bk-filter button', sec).forEach((b) => b.addEventListener('click', () => {
+      $$('.bk-filter button', sec).forEach((x) => x.setAttribute('aria-pressed', x === b));
+      $$('.bdish', sec).forEach((d) => d.classList.toggle('dim', b.dataset.f !== 'all' && !d.dataset.diet.split(' ').includes(b.dataset.f)));
+    }));
+  });
 })();
