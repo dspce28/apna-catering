@@ -111,8 +111,6 @@ h1,h2,h3,h4{font-weight:400;letter-spacing:0}
 .hx-l{right:calc(100% - var(--ix) + 28px);transform:translateX(calc((1 - var(--p,0)) * -40px))}
 .hx-r{left:calc(100% - var(--ix) + 28px);transform:translateX(calc((1 - var(--p,0)) * 40px))}
 .hx-r em{font-style:italic;color:var(--gold)}
-.hx-cue{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);font-size:10.5px;font-weight:600;letter-spacing:.3em;text-transform:uppercase;color:var(--gold-lt);opacity:calc(1 - var(--p,0) * 4)}
-.hx-cue::after{content:"";display:block;width:1px;height:34px;margin:10px auto 0;background:linear-gradient(var(--gold),transparent);animation:cue 2.2s ease-in-out infinite}
 @keyframes cue{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
 @media (max-width:900px){
   .hx-pin{--ix:calc(var(--p,0) * 12vw)}
@@ -250,8 +248,9 @@ h1,h2,h3,h4{font-weight:400;letter-spacing:0}
 
 /* ---- 3D menu booklet ---- */
 .bk-filter{margin:-6px 0 30px}
-.bk-wrap{perspective:2600px;display:flex;justify-content:center;padding:14px 0 30px}
-.book{--pw:min(600px,46vw,calc((100svh - 200px) / 1.4));--tilt:0deg;position:relative;width:calc(var(--pw) * 2);height:calc(var(--pw) * 1.4);transform-style:preserve-3d;outline:none;
+.bk-wrap{perspective:2600px;display:flex;justify-content:center;padding:10px 0 34px}
+.bk-sec{--pw:min(700px,calc(50vw - 92px),calc((100svh - 140px) / 1.4))}
+.book{--tilt:0deg;position:relative;width:calc(var(--pw) * 2);height:calc(var(--pw) * 1.4);transform-style:preserve-3d;outline:none;
   transform:translateX(calc(var(--pw) * -.5)) rotateX(var(--tilt));transition:transform 1.1s var(--ease)}
 .book.pre{--tilt:28deg}
 .book[data-state=open]{transform:translateX(0) rotateX(var(--tilt))}
@@ -307,8 +306,10 @@ h1,h2,h3,h4{font-weight:400;letter-spacing:0}
 .bk-nav button{display:grid;place-items:center;width:50px;height:50px;border-radius:50%;font-size:18px;color:var(--gold-lt);box-shadow:inset 0 0 0 1px var(--line-gold);transition:background .4s,opacity .4s}
 .bk-nav button:hover:not(:disabled){background:rgba(212,168,90,.15)}
 .bk-nav button:disabled{opacity:.3;cursor:default}
-.bk-at{min-width:220px;text-align:center;font-family:var(--serif);font-size:22px;color:var(--text)}
-@media (max-width:700px){.book{--pw:47vw}.bk-wrap{padding-bottom:24px}.bk-at{min-width:150px;font-size:18px}}
+.bk-at.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+/* wide screens: the arrows sit either side of the book, so the book can use the full height */
+@media (min-width:901px){.bk-sec .wrap{position:relative}.bk-nav{position:absolute;left:0;right:0;bottom:calc(34px + var(--pw) * .7 - 25px);height:50px;margin:0}.bk-nav button{position:absolute;top:0}.bk-prev{left:calc(50% - var(--pw) - 76px)}.bk-next{right:calc(50% - var(--pw) - 76px)}}
+@media (max-width:900px){.bk-sec{--pw:min(47vw,calc((100svh - 200px) / 1.4))}.bk-wrap{padding-bottom:24px}.bk-nav{gap:40px}}
 @media (prefers-reduced-motion:reduce){.book,.leaf{transition:none}.book.pre{--tilt:0deg}}
 
 /* ---- thali teaser on Home and Menus (the full experience lives on thali.html) ---- */

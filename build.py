@@ -60,7 +60,7 @@ def head(title, desc, preload=""):
 {preload}
 <link rel="stylesheet" href="site.css">{'<link rel="stylesheet" href="durbar.css">' if THEME == "b" else ""}
 <script type="application/ld+json">
-{{"@context":"https://schema.org","@type":"FoodEstablishment","name":"Apna Catering","servesCuisine":["Indian","Punjabi"],"foundingDate":"1995","telephone":["+447818478036","+447828218002"],"email":"hello@apnacatering.co.uk","areaServed":"Scotland","address":{{"@type":"PostalAddress","addressLocality":"Glasgow","addressCountry":"GB"}},"url":"https://apnacatering.co.uk"}}
+{{"@context":"https://schema.org","@type":"FoodEstablishment","name":"Apna Catering","servesCuisine":["Indian","Punjabi"],"foundingDate":"1995","telephone":["+447818478036","+447828218002"],"email":"hello@apnacatering.co.uk","areaServed":"Scotland","address":{{"@type":"PostalAddress","streetAddress":"4 Glebe Street","addressLocality":"East Kilbride, Glasgow","addressRegion":"Scotland","postalCode":"G74 4LY","addressCountry":"GB"}},"url":"https://apnacatering.co.uk"}}
 </script>
 </head>
 '''
@@ -87,7 +87,7 @@ def footer():
       <p class="foot-tag">It’s your day.<br><em>Make it memorable with us.</em></p>
     </div>
     <div><h5>Explore</h5><a href="about.html">Our story</a><a href="services.html">Weddings &amp; events</a><a href="menus.html">Menus</a><a href="contact.html">Get a quote</a></div>
-    <div><h5>Talk to us</h5><a href="tel:+447818478036">07818 478036</a><a href="tel:+447828218002">07828 218002</a><a href="mailto:hello@apnacatering.co.uk">hello@apnacatering.co.uk</a><a href="https://wa.me/447818478036" target="_blank" rel="noopener">WhatsApp</a><a href="https://www.instagram.com/desiglasgowcaterer/" target="_blank" rel="noopener">Instagram</a></div>
+    <div><h5>Talk to us</h5><a href="tel:+447818478036">07818 478036</a><a href="tel:+447828218002">07828 218002</a><a href="mailto:hello@apnacatering.co.uk">hello@apnacatering.co.uk</a><a href="https://maps.google.com/?q=4+Glebe+Street,+East+Kilbride,+G74+4LY" target="_blank" rel="noopener">4 Glebe Street, East Kilbride,<br>Glasgow G74 4LY</a><a href="https://wa.me/447818478036" target="_blank" rel="noopener">WhatsApp</a><a href="https://www.instagram.com/desiglasgowcaterer/" target="_blank" rel="noopener">Instagram</a></div>
   </div>
   <div class="wrap foot-base"><span>© <span id="yr">2026</span> Apna Catering, Glasgow</span><span>Indian wedding &amp; event caterers since 1995</span></div>
 </footer>
@@ -298,11 +298,10 @@ def hero_b():
     <div class="hx-copy">
       <p class="eyebrow c">Wedding caterers · Glasgow since 1995</p>
       <h1 class="display">The wedding feast,<br><em>beautifully served.</em></h1>
-      <p class="lede">Sikh and Hindu wedding catering from one family kitchen, for a hundred guests or a thousand. Nikah and Walima menus too.</p>
+      <p class="lede">Since 1995, Glasgow families have trusted one kitchen with their biggest day. Anand Karaj and Hindu weddings, Nikah and Walima, cooked fresh for a hundred guests or a thousand.</p>
       <div class="ctas"><a href="contact.html" class="btn">Check your date <i>→</i></a><a href="#planner" class="btn line">Plan your feast</a></div>
     </div>
     <p class="hx-side hx-l" aria-hidden="true">Step into</p><p class="hx-side hx-r" aria-hidden="true"><em>the feast</em></p>
-    <p class="hx-cue" aria-hidden="true">Scroll</p>
   </div>
 </section>'''
 
@@ -390,7 +389,7 @@ def booklet(cats=MENU):
   <div class="wrap">
     <div class="center"><p class="eyebrow" data-fade>Our menu</p><h2 class="h2" data-fade>Turn the pages of <em>our wedding menu.</em></h2></div>
     <div class="bk-wrap"><div class="book" tabindex="0" role="group" aria-label="Wedding menu booklet. Use the arrow keys to turn the pages." data-state="closed" data-labels="{labels}">{leaves}</div></div>
-    <div class="bk-nav"><button type="button" class="bk-prev" aria-label="Previous page" disabled>←</button><span class="bk-at" aria-live="polite">Cover</span><button type="button" class="bk-next" aria-label="Next page">→</button></div>
+    <div class="bk-nav"><button type="button" class="bk-prev" aria-label="Previous page" disabled>←</button><span class="bk-at sr" aria-live="polite">Cover</span><button type="button" class="bk-next" aria-label="Next page">→</button></div>
   </div>
 </section>'''
 
@@ -489,7 +488,7 @@ HERO_A = f'''<section class="hero">
   <div>
     <p class="eyebrow c" data-fade>Wedding caterers · Glasgow since 1995</p>
     <h1 class="display" data-fade style="--d:.1s">The wedding feast,<br><em>beautifully served.</em></h1>
-    <p class="lede" data-fade style="--d:.25s">Sikh and Hindu wedding catering from one family kitchen, for a hundred guests or a thousand. Nikah and Walima menus too.</p>
+    <p class="lede" data-fade style="--d:.25s">Since 1995, Glasgow families have trusted one kitchen with their biggest day. Anand Karaj and Hindu weddings, Nikah and Walima, cooked fresh for a hundred guests or a thousand.</p>
     <div class="ctas" data-fade style="--d:.4s"><a href="contact.html" class="btn">Check your date <i>→</i></a><a href="#menu" class="btn line">See the menu</a></div>
     <div class="hero-foot" data-fade style="--d:.55s"><span><b>1995</b>Family kitchen</span><span><b>1,000+</b>Guests at one wedding</span><span><b>5</b>Ceremonies, five menus</span></div>
   </div>
@@ -684,6 +683,7 @@ CONTACT = f'''{phero("Contact", "Is your date <em>still available?</em>", "Weddi
         <a href="tel:+447828218002"><small>Or call</small>07828 218002</a>
         <a href="mailto:hello@apnacatering.co.uk"><small>Email</small>hello@apnacatering.co.uk</a>
         <a href="https://wa.me/447818478036" target="_blank" rel="noopener"><small>WhatsApp</small>Message us</a>
+        <a href="https://maps.google.com/?q=4+Glebe+Street,+East+Kilbride,+G74+4LY" target="_blank" rel="noopener"><small>Visit us</small>4 Glebe Street, East Kilbride, Glasgow, Scotland G74 4LY</a>
       </div>
     </div>
     <div class="form" data-fade style="--d:.15s">
