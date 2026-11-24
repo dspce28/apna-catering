@@ -9,20 +9,9 @@
   --brocade-bg:linear-gradient(rgba(var(--bg2-rgb),.84),rgba(var(--bg2-rgb),.88)),linear-gradient(var(--tint),var(--tint)),url(img/brocade.webp) center/560px auto repeat;
 }
 
-/* ---------- the dark base, swappable (the gold and candle ivory stay) ---------- */
-:root,[data-pal=emerald]{--bg-rgb:12,58,44;--bg2-rgb:18,76,58;--panel:#155440;--tint:#1f7a5c;--on-gold:#0a2a20}
-[data-pal=wine]{--bg-rgb:78,12,26;--bg2-rgb:98,18,34;--panel:#661426;--tint:#9a1c32;--on-gold:#2a050c}
-[data-pal=sapphire]{--bg-rgb:20,38,92;--bg2-rgb:28,50,114;--panel:#1f3a80;--tint:#2f55b0;--on-gold:#0a1430}
-[data-pal=aubergine]{--bg-rgb:56,20,68;--bg2-rgb:72,28,86;--panel:#4c1f5c;--tint:#7a3290;--on-gold:#1c0a22}
-[data-pal=peacock]{--bg-rgb:6,70,80;--bg2-rgb:10,90,100;--panel:#0b5f6a;--tint:#14808c;--on-gold:#03252a}
-[data-pal=onyx]{--bg-rgb:14,14,16;--bg2-rgb:30,30,34;--panel:#232327;--tint:#3c3c42;--on-gold:#0c0c0e}
+/* ---------- approved palette: wine (maroon), gold and candle ivory ---------- */
+:root{--bg-rgb:78,12,26;--bg2-rgb:98,18,34;--panel:#661426;--tint:#9a1c32;--on-gold:#2a050c}
 
-/* palette picker (for choosing with the client; remove once a palette is chosen) */
-.palpick{position:fixed;left:16px;bottom:16px;z-index:60;display:flex;align-items:center;gap:8px;padding:8px 10px 8px 14px;border-radius:99px;background:rgba(var(--bg-rgb),.92);box-shadow:0 0 0 1px var(--line-gold),0 16px 30px -16px #000;font-size:10.5px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--gold-lt)}
-.palpick button{width:26px;height:26px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(212,168,90,.5);transition:transform .3s}
-.palpick button[aria-pressed=true]{box-shadow:0 0 0 2px var(--gold),inset 0 0 0 1px rgba(212,168,90,.5);transform:scale(1.12)}
-.palpick output{min-width:84px;color:var(--text)}
-@media (max-width:700px){.palpick{bottom:84px;left:12px}.palpick output{display:none}}
 
 body{background:var(--ivory);color:var(--text)}
 h1,h2,h3,h4{font-weight:400;letter-spacing:0}
