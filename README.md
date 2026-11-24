@@ -1,27 +1,24 @@
-# Apna Catering — website concept
+# Apna Catering — website
 
-Static site (HTML/CSS/vanilla JS, no build step). Open `index.html` or deploy the folder to Vercel as-is.
+Static site (HTML/CSS/vanilla JS). The approved design is **Version 2, "Candlelit Durbar"** (wine and gold).
+Live preview: https://apna-catering-durbar.vercel.app (Vercel project `apna-catering-durbar`, root directory `durbar`).
 
-- `index.html` — page structure and copy
-- `styles.css` — design tokens (ink / ivory / gold), layout, animations
-- `main.js` — scroll reveals, parallax, tradition tabs, menu builder, testimonials, lightbox, enquiry wizard
-- `img/` — placeholder photography from Unsplash (Unsplash License). Replace with a commissioned shoot before launch.
+## Build
+`python3 build.py` regenerates every page into `durbar/` and copies in the code and only the images the pages use.
+Edit `build.py` (content and page structure), `site.css` + `durbar.css` (styles) or the scripts, then rebuild and commit `durbar/`.
 
-The enquiry form sends via WhatsApp or email (no backend). Connect a form service before launch to capture leads reliably.
+- `site.css`, `site.js` — base layout, nav, footer, shared behaviour
+- `durbar.css`, `durbar.js` — the Version 2 look and its tools (planner, countdown, 3D menu book, scroll effects)
+- `thali-new.css`, `thali-new.js` — "Prepare your thali": two brass thalis served step by step (`/thali-new`; `/thali` forwards there)
+- `img/` — source images; `img/hd/` and `img/cut/` are the dish cut-outs used on the thali page
 
-Images are served at 1200 px with 2400 px versions via `srcset` for high-density screens.
-The React/three.js iterations remain in git history (commits 24f37a3 to 2a681df) if any part is wanted later.
+## Content rules from the client
+- Established 1995 ("30 years").
+- No prices anywhere on the site; menus and the thali page lead to a personal quote.
+- Diet labels: Veg, Jain, Non-veg.
 
-## Brand
-- Palette: Royal Aubergine & Gold — aubergine `#2A0F2E`, plum `#3B1840`, antique gold `#D6B06A`, champagne `#F1DFBA`, ivory `#F8F1E8`, mauve `#BFA6C2`; light-section accent plum `#5A2160`. All text colours pass WCAG AA.
-- Logo: `img/logo-256.png`, cut from the client's flyer. The flyer only contains a 153 px version, so it is used small (nav 56 px, footer 112 px). Replace with the original logo file (SVG/AI/EPS or PNG ≥ 1000 px) when available.
-- Photos: every image is served at 1200 / 2400 / 3840 px via `srcset`; the gallery lightbox opens the 3840 px version.
+## Still needed from the client
+Original logo file, real dish and event photos (several thali dishes use stand-in photos), and the domain/DNS for apnacatering.co.uk.
 
-## Pages and build
-The site has five pages: `index.html`, `about.html`, `services.html`, `menus.html`, `contact.html`.
-They are generated from the partials in `src/sections/` by `python3 build.py`. Edit the partials
-(or `build.py` for the shared nav, loader, page banners and CTA band), then rebuild.
-
-Cross-page behaviour (menu builder picks, chosen occasion) is kept in `sessionStorage`.
-
-AI demo image prompts for Gemini: `docs/ai-image-prompts.md`.
+Version 1 ("Ivory Palace") was retired; it remains in git history.
+AI image prompts: `docs/ai-image-prompts.md`.
