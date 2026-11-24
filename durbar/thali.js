@@ -228,7 +228,7 @@
     const text = ['Hello Apna Catering, this is the thali I designed on your website:', '', ...n.map((x) => '• ' + x), '', 'Please let me know if my date is available.'].join('\n');
     window.open('https://wa.me/447818478036?text=' + encodeURIComponent(text), '_blank');
   });
-  $('.tx-enquire').addEventListener('click', () => {
+  if ($('.tx-enquire')) $('.tx-enquire').addEventListener('click', () => {
     const n = names(); if (!n.length) { msg.textContent = 'Serve a few dishes first.'; return; }
     const picks = store.get('picks', []); n.forEach((x) => { if (!picks.includes(x)) picks.push(x); }); store.set('picks', picks);
     const pill = $('.picks'); if (pill) { $('b', pill).textContent = picks.length; pill.classList.add('on'); }

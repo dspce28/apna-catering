@@ -80,7 +80,7 @@ def nav(active):
 
 
 def footer():
-    return '''<footer class="foot">
+    return f'''<footer class="foot">
   <div class="wrap foot-grid">
     <div>
       <img src="img/logo-256.png" alt="Apna Catering" width="96" height="96">
@@ -92,7 +92,7 @@ def footer():
   <div class="wrap foot-base"><span>© <span id="yr">2026</span> Apna Catering, Glasgow</span><span>Indian wedding &amp; event caterers since 1995</span></div>
 </footer>
 <nav class="mbar" aria-label="Quick contact"><a href="tel:+447818478036">Call</a><a href="https://wa.me/447818478036" target="_blank" rel="noopener">WhatsApp</a><a href="contact.html" class="go">Quote</a></nav>
-<a class="picks" href="contact.html"><b>0</b>Dishes picked · enquire</a>
+{"" if THEME == "b" else '<a class="picks" href="contact.html"><b>0</b>Dishes picked · enquire</a>'}
 '''
 
 
@@ -401,7 +401,7 @@ def booklet(cats=MENU):
         pages.append(f'<div class="pg photo"><div class="pg-arch"><img src="img/{photo}.webp" alt="" loading="lazy"></div>'
                      f'<p class="pg-no">{roman[i]}</p><h3>{name}</h3><p class="pg-sub">{sub}</p><span class="pg-num">{2 * i + 1}</span></div>')
         rows = "".join(f'<li class="bdish" data-diet="{DIET.get(d, "veg")}"><div><h4>{d}</h4><p>{p}</p></div>'
-                       f'<span class="tags">{diet_tag(d)}</span><button type="button" class="add" data-dish="{d}" aria-pressed="false">+ Add</button></li>'
+                       f'<span class="tags">{diet_tag(d)}</span></li>'
                        for d, p, t in dishes)
         pages.append(f'<div class="pg list"><p class="pg-kicker">{name}</p><ul>{rows}</ul><span class="pg-num">{2 * i + 2}</span></div>')
     pages.append('<div class="pg cover backc"><div class="cv-frame"><p class="cv-kicker">Reserve your date</p><h3>Taste it <em>first.</em></h3>'
@@ -411,11 +411,9 @@ def booklet(cats=MENU):
     leaves = "".join(f'<div class="leaf" style="z-index:{n - k}"><div class="page front">{pages[2 * k]}</div>'
                      f'<div class="page back">{pages[2 * k + 1]}</div></div>' for k in range(n))
     labels = json.dumps(["Cover"] + [c[1].replace("&amp;", "&") for c in cats] + ["Back cover"]).replace('"', "&quot;")
-    filters = FILTERS.replace('class="mfilter"', 'class="mfilter bk-filter"')
     return f'''<section class="sec bk-sec" id="menu">
   <div class="wrap">
-    <div class="center"><p class="eyebrow" data-fade>Our menu</p><h2 class="h2" data-fade>Turn the pages of <em>our wedding menu.</em></h2><p class="lede" data-fade>Tap a page or swipe to turn it. Tap “Add” on anything you love and we’ll build your quote around it.</p></div>
-    {filters}
+    <div class="center"><p class="eyebrow" data-fade>Our menu</p><h2 class="h2" data-fade>Turn the pages of <em>our wedding menu.</em></h2></div>
     <div class="bk-wrap"><div class="book" tabindex="0" role="group" aria-label="Wedding menu booklet. Use the arrow keys to turn the pages." data-state="closed" data-labels="{labels}">{leaves}</div></div>
     <div class="bk-nav"><button type="button" class="bk-prev" aria-label="Previous page" disabled>←</button><span class="bk-at" aria-live="polite">Cover</span><button type="button" class="bk-next" aria-label="Next page">→</button></div>
   </div>
@@ -491,7 +489,7 @@ def thali_page():
       <div class="tx-filter" role="group" aria-label="Diet"><button aria-pressed="true" data-f="all">All</button><button aria-pressed="false" data-f="veg">Veg</button><button aria-pressed="false" data-f="jain">Jain</button><button aria-pressed="false" data-f="nonveg">Non-veg</button></div>
       <div class="tx-cards">{cards}</div>
       <div class="tx-mine"><h3>Your thali</h3><ol class="tx-list"><li class="tx-empty">Nothing served yet. Pick a chef’s thali or start with a curry.</li></ol></div>
-      <div class="tx-actions"><button type="button" class="btn tx-send">Send on WhatsApp <i>→</i></button><button type="button" class="btn line tx-save">Save picture</button><button type="button" class="btn line tx-enquire">Add to enquiry</button></div>
+      <div class="tx-actions"><button type="button" class="btn tx-send">Send on WhatsApp <i>→</i></button><button type="button" class="btn line tx-save">Save picture</button></div>
       <p class="tx-msg" role="status"></p>
     </aside>
     </div>
@@ -512,6 +510,78 @@ def thali_teaser():
     </div>
   </div>
 </section>'''
+
+
+# ---------------------------------------------------------------- Direction B: the two-thali page (thali-new.html), for approval
+TN_STEPS = [  # step key, title, which thali, where on it
+    ("starters", "Live counters &amp; starters", "a", "centre"),
+    ("main", "Main course", "b", "both"),
+    ("sweets", "Desserts &amp; sweets", "a", "ring"),
+]
+TN_DISHES = [  # id, name, step, served as (bowl = katori, plated = straight on the thali), diet, image
+    ("pani-puri", "Pani Puri", "starters", "plated", "veg", "cut/p-pani-puri"),
+    ("dahi-puri", "Dahi Puri Chaat", "starters", "bowl", "veg", "hd/dahi-puri"),
+    ("papdi-chaat", "Papdi Chaat", "starters", "bowl", "veg", "cut/chaat"),
+    ("samosa", "Punjabi Samosa", "starters", "plated", "veg", "cut/p-samosa"),
+    ("paneer-tikka", "Paneer Tikka", "starters", "plated", "veg jain", "hd/paneer-tikka"),
+    ("chicken-tikka", "Malai Chicken Tikka", "starters", "plated", "nonveg", "cut/p-chicken-tikka"),
+    ("tandoori", "Tandoori Chicken", "starters", "plated", "nonveg", "hd/tandoori"),
+    ("butter-chicken", "Butter Chicken", "main", "bowl", "nonveg", "hd/butter-chicken"),
+    ("chicken-tikka-masala", "Chicken Tikka Masala", "main", "bowl", "nonveg", "cut/karahi"),
+    ("dal-makhani", "Dal Makhani", "main", "bowl", "veg", "hd/dal-makhani"),
+    ("paneer-makhani", "Paneer Makhani", "main", "bowl", "veg jain", "hd/paneer-makhani"),
+    ("palak-paneer", "Palak Paneer", "main", "bowl", "veg jain", "hd/palak-paneer"),
+    ("malai-kofta", "Malai Kofta", "main", "bowl", "veg", "cut/dal-makhani"),
+    ("dal-tadka", "Dal Tadka", "main", "bowl", "veg jain", "hd/dal-tadka"),
+    ("raita", "Raita", "main", "bowl", "veg jain", "hd/raita"),
+    ("chicken-biryani", "Chicken Biryani", "main", "plated", "nonveg", "hd/chicken-biryani"),
+    ("lamb-biryani", "Lamb Biryani", "main", "plated", "nonveg", "hd/lamb-biryani"),
+    ("jeera-rice", "Jeera Rice", "main", "plated", "veg jain", "hd/jeera-rice"),
+    ("butter-naan", "Butter Naan", "main", "plated", "veg jain", "hd/butter-naan"),
+    ("garlic-naan", "Garlic Naan", "main", "plated", "veg", "hd/garlic-naan"),
+    ("roti-lachha", "Roti &amp; Lachha Paratha", "main", "plated", "veg jain", "hd/roti-lachha"),
+    ("gulab-jamun", "Gulab Jamun", "sweets", "plated", "veg jain", "cut/p-gulab-jamun"),
+    ("imrati", "Imrati", "sweets", "plated", "veg jain", "hd/imrati"),
+    ("gajar-halwa", "Gajar Halwa", "sweets", "bowl", "veg", "hd/gajar-halwa"),
+]
+
+
+def thali_new_page():
+    steps = "".join(f'<button type="button" class="tn-step" data-step="{i}"><b>{i + 1}</b><span>{t}</span></button>' for i, (k, t, _, _) in enumerate(TN_STEPS))
+    steps += f'<button type="button" class="tn-step" data-step="{len(TN_STEPS)}"><b>{len(TN_STEPS) + 1}</b><span>Your feast</span></button>'
+    groups = ""
+    for i, (k, t, _, _) in enumerate(TN_STEPS):
+        cards = "".join(
+            f'<button type="button" class="tn-card" data-id="{d}" data-name="{n}" data-step="{k}" data-as="{a}" data-diet="{di}" data-img="img/{im}.webp" style="--n:{j}">'
+            f'<span class="tn-pic{" round" if a == "bowl" else ""}"><img src="img/{im}.webp" alt="" loading="lazy"></span><span class="tn-name">{n}</span>'
+            f'<i class="tn-dot {"nv" if "nonveg" in di else "v"}"></i><b class="tn-tick" aria-hidden="true">✓</b></button>'
+            for j, (d, n, s, a, di, im) in enumerate([x for x in TN_DISHES if x[2] == k]))
+        groups += f'<div class="tn-group" data-group="{i}"{"" if i == 0 else " hidden"}><p class="tn-hint">Pick as many as you like.</p><div class="tn-cards">{cards}</div></div>'
+    plate = lambda key, label: (f'<figure class="tn-plate" data-plate="{key}"><div class="tn-disc"><img class="tn-plate-img" src="img/hd/thali-plain.webp" alt="" width="1544" height="1408">'
+                                f'<div class="tn-sheen" aria-hidden="true"></div><div class="tn-food"></div></div><figcaption>{label}</figcaption></figure>')
+    return f'''<section class="tn" aria-label="Prepare your own thali">
+  <div class="wrap tn-top">
+    <p class="crumbs"><a href="index.html">Home</a> &nbsp;/&nbsp; Prepare your thali</p>
+    <h1 class="display">Prepare your <em>wedding thalis.</em></h1>
+    <nav class="tn-steps" aria-label="Steps">{steps}</nav>
+  </div>
+  <div class="wrap tn-grid">
+    <div class="tn-stage" data-view="a">
+      <div class="tn-glow" aria-hidden="true"></div>
+      <div class="tn-track">{plate("a", "Starters &amp; sweets thali")}{plate("b", "Main course thali")}</div>
+    </div>
+    <aside class="tn-panel">
+      <h2 class="tn-title">Live counters &amp; starters</h2>
+      <div class="tn-filter" role="group" aria-label="Diet"><button aria-pressed="true" data-f="all">All</button><button aria-pressed="false" data-f="veg">Veg</button><button aria-pressed="false" data-f="jain">Jain</button><button aria-pressed="false" data-f="nonveg">Non-veg</button></div>
+      {groups}
+      <div class="tn-summary" hidden><ol class="tn-list"></ol></div>
+      <div class="tn-nav"><button type="button" class="btn line tn-back">← Back</button><button type="button" class="btn tn-next">Next: main course <i>→</i></button></div>
+      <div class="tn-actions" hidden><button type="button" class="btn tn-send">Send on WhatsApp <i>→</i></button><button type="button" class="btn line tn-save">Save picture</button><button type="button" class="btn line tn-clear">Start again</button></div>
+      <p class="tn-msg" role="status"></p>
+    </aside>
+  </div>
+</section>
+<script src="thali-new.js" defer></script>'''
 
 
 # ---------------------------------------------------------------- pages
@@ -761,6 +831,7 @@ SITE = {
 }
 
 if THEME == "b":
+    SITE["thali-new.html"] = ("Prepare Your Thali — Apna Catering", "Prepare your own wedding thalis: starters and live counters, main course, desserts.", thali_new_page(), '<link rel="stylesheet" href="thali-new.css">')
     SITE["thali.html"] = ("Design Your Thali — Apna Catering", "Serve your own royal wedding thali: curries, biryani, breads, starters and sweets on a brass thali.", thali_page(), '<link rel="stylesheet" href="thali.css">')
 
 NIGHT = {"b-hall": "gw-buffet", "p-banquet": "gw-buffet", "p-henna": "gw-sikh", "b-mandap": "gw-mandap", "p-mandap": "gw-mandap"}
@@ -789,7 +860,7 @@ if __name__ == "__main__":
         print("wrote", os.path.join(OUT, fn))
     if THEME == "b":
         # a self-contained folder: its own copies of the code and only the images it uses
-        for f in ("site.css", "site.js", "durbar.css", "durbar.js", "thali.css", "thali.js"):
+        for f in ("site.css", "site.js", "durbar.css", "durbar.js", "thali.css", "thali.js", "thali-new.css", "thali-new.js"):
             shutil.copy(f, os.path.join(OUT, f))
         used = set()
         for fn in os.listdir(OUT):
