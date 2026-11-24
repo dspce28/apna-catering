@@ -518,31 +518,30 @@ TN_STEPS = [  # step key, title, which thali, where on it
     ("main", "Main course", "b", "both"),
     ("sweets", "Desserts &amp; sweets", "a", "ring"),
 ]
-TN_DISHES = [  # id, name, step, served as (bowl = katori, plated = straight on the thali), diet, image
-    ("pani-puri", "Pani Puri", "starters", "plated", "veg", "cut/p-pani-puri"),
-    ("dahi-puri", "Dahi Puri Chaat", "starters", "bowl", "veg", "hd/dahi-puri"),
-    ("papdi-chaat", "Papdi Chaat", "starters", "bowl", "veg", "cut/chaat"),
-    ("samosa", "Punjabi Samosa", "starters", "plated", "veg", "cut/p-samosa"),
-    ("paneer-tikka", "Paneer Tikka", "starters", "plated", "veg jain", "hd/paneer-tikka"),
-    ("chicken-tikka", "Malai Chicken Tikka", "starters", "plated", "nonveg", "cut/p-chicken-tikka"),
-    ("tandoori", "Tandoori Chicken", "starters", "plated", "nonveg", "hd/tandoori"),
-    ("butter-chicken", "Butter Chicken", "main", "bowl", "nonveg", "hd/butter-chicken"),
-    ("chicken-tikka-masala", "Chicken Tikka Masala", "main", "bowl", "nonveg", "cut/karahi"),
-    ("dal-makhani", "Dal Makhani", "main", "bowl", "veg", "hd/dal-makhani"),
-    ("paneer-makhani", "Paneer Makhani", "main", "bowl", "veg jain", "hd/paneer-makhani"),
-    ("palak-paneer", "Palak Paneer", "main", "bowl", "veg jain", "hd/palak-paneer"),
-    ("malai-kofta", "Malai Kofta", "main", "bowl", "veg", "cut/dal-makhani"),
-    ("dal-tadka", "Dal Tadka", "main", "bowl", "veg jain", "hd/dal-tadka"),
-    ("raita", "Raita", "main", "bowl", "veg jain", "hd/raita"),
-    ("chicken-biryani", "Chicken Biryani", "main", "plated", "nonveg", "hd/chicken-biryani"),
-    ("lamb-biryani", "Lamb Biryani", "main", "plated", "nonveg", "hd/lamb-biryani"),
-    ("jeera-rice", "Jeera Rice", "main", "plated", "veg jain", "hd/jeera-rice"),
-    ("butter-naan", "Butter Naan", "main", "plated", "veg jain", "hd/butter-naan"),
-    ("garlic-naan", "Garlic Naan", "main", "plated", "veg", "hd/garlic-naan"),
-    ("roti-lachha", "Roti &amp; Lachha Paratha", "main", "plated", "veg jain", "hd/roti-lachha"),
-    ("gulab-jamun", "Gulab Jamun", "sweets", "plated", "veg jain", "cut/p-gulab-jamun"),
-    ("imrati", "Imrati", "sweets", "plated", "veg jain", "hd/imrati"),
-    ("gajar-halwa", "Gajar Halwa", "sweets", "bowl", "veg", "hd/gajar-halwa"),
+TN_DISHES = [  # id, name, step, served as (bowl = katori, dish = shallow brass dish, plated = straight on the thali), diet, image, kind (its slot)
+    ("pani-puri", "Pani Puri", "starters", "plated", "veg", "cut/p-pani-puri", "chaat"),
+    ("dahi-puri", "Dahi Puri Chaat", "starters", "bowl", "veg", "hd/dahi-puri", "chaat"),
+    ("samosa", "Punjabi Samosa", "starters", "plated", "veg", "cut/p-samosa", "snack"),
+    ("paneer-tikka", "Paneer Tikka", "starters", "dish", "veg jain", "hd/paneer-tikka", "tandoor"),
+    ("chicken-tikka", "Malai Chicken Tikka", "starters", "plated", "nonveg", "cut/p-chicken-tikka", "tandoor"),
+    ("tandoori", "Tandoori Chicken", "starters", "dish", "nonveg", "hd/tandoori", "tandoor"),
+    ("butter-chicken", "Butter Chicken", "main", "bowl", "nonveg", "hd/butter-chicken", "curry"),
+    ("chicken-tikka-masala", "Chicken Tikka Masala", "main", "bowl", "nonveg", "cut/karahi", "curry"),
+    ("dal-makhani", "Dal Makhani", "main", "bowl", "veg", "hd/dal-makhani", "dal"),
+    ("paneer-makhani", "Paneer Makhani", "main", "bowl", "veg jain", "hd/paneer-makhani", "sabzi"),
+    ("palak-paneer", "Palak Paneer", "main", "bowl", "veg jain", "hd/palak-paneer", "sabzi"),
+    ("malai-kofta", "Malai Kofta", "main", "bowl", "veg", "cut/dal-makhani", "sabzi"),
+    ("dal-tadka", "Dal Tadka", "main", "bowl", "veg jain", "hd/dal-tadka", "dal"),
+    ("raita", "Raita", "main", "bowl", "veg jain", "hd/raita", "raita"),
+    ("chicken-biryani", "Chicken Biryani", "main", "plated", "nonveg", "hd/chicken-biryani", "rice"),
+    ("lamb-biryani", "Lamb Biryani", "main", "plated", "nonveg", "hd/lamb-biryani", "rice"),
+    ("jeera-rice", "Jeera Rice", "main", "plated", "veg jain", "hd/jeera-rice", "rice"),
+    ("butter-naan", "Butter Naan", "main", "plated", "veg jain", "hd/butter-naan", "bread"),
+    ("garlic-naan", "Garlic Naan", "main", "plated", "veg", "hd/garlic-naan", "bread"),
+    ("roti-lachha", "Roti &amp; Lachha Paratha", "main", "plated", "veg jain", "hd/roti-lachha", "bread"),
+    ("gulab-jamun", "Gulab Jamun", "sweets", "plated", "veg jain", "cut/p-gulab-jamun", "mithai"),
+    ("imrati", "Imrati", "sweets", "dish", "veg jain", "hd/imrati", "mithai"),
+    ("gajar-halwa", "Gajar Halwa", "sweets", "bowl", "veg", "hd/gajar-halwa", "halwa"),
 ]
 
 
@@ -552,13 +551,13 @@ def thali_new_page():
     groups = ""
     for i, (k, t, _, _) in enumerate(TN_STEPS):
         cards = "".join(
-            f'<button type="button" class="tn-card" data-id="{d}" data-name="{n}" data-step="{k}" data-as="{a}" data-diet="{di}" data-img="img/{im}.webp" style="--n:{j}">'
-            f'<span class="tn-pic{" round" if a == "bowl" else ""}"><img src="img/{im}.webp" alt="" loading="lazy"></span><span class="tn-name">{n}</span>'
+            f'<button type="button" class="tn-card" data-id="{d}" data-name="{n}" data-step="{k}" data-as="{a}" data-diet="{di}" data-kind="{kd}" data-img="img/{im}.webp" style="--n:{j}">'
+            f'<span class="tn-pic{"" if a == "plated" else " round"}"><img src="img/{im}.webp" alt="" loading="lazy"></span><span class="tn-name">{n}</span>'
             f'<i class="tn-dot {"nv" if "nonveg" in di else "v"}"></i><b class="tn-tick" aria-hidden="true">✓</b></button>'
-            for j, (d, n, s, a, di, im) in enumerate([x for x in TN_DISHES if x[2] == k]))
+            for j, (d, n, s, a, di, im, kd) in enumerate([x for x in TN_DISHES if x[2] == k]))
         groups += f'<div class="tn-group" data-group="{i}"{"" if i == 0 else " hidden"}><p class="tn-hint">Pick as many as you like.</p><div class="tn-cards">{cards}</div></div>'
     plate = lambda key, label: (f'<figure class="tn-plate" data-plate="{key}"><div class="tn-disc"><img class="tn-plate-img" src="img/hd/thali-plain.webp" alt="" width="1544" height="1408">'
-                                f'<div class="tn-sheen" aria-hidden="true"></div><div class="tn-food"></div></div><figcaption>{label}</figcaption></figure>')
+                                f'<div class="tn-sheen" aria-hidden="true"></div><div class="tn-food"></div><div class="tn-cloche" aria-hidden="true"></div></div><figcaption>{label}</figcaption></figure>')
     return f'''<section class="tn" aria-label="Prepare your own thali">
   <div class="wrap tn-top">
     <p class="crumbs"><a href="index.html">Home</a> &nbsp;/&nbsp; Prepare your thali</p>
@@ -864,7 +863,7 @@ if __name__ == "__main__":
             shutil.copy(f, os.path.join(OUT, f))
         used = set()
         for fn in os.listdir(OUT):
-            if fn.endswith((".html", ".css")):
+            if fn.endswith((".html", ".css", ".js")):
                 used |= set(re.findall(r"img/[A-Za-z0-9._/-]+?\.(?:webp|png|jpg)", open(os.path.join(OUT, fn)).read()))
         os.makedirs(os.path.join(OUT, "img", "cut"), exist_ok=True)
         for u in sorted(used):
