@@ -1,0 +1,473 @@
+<title>Desi Glasgow Brochure Studio</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Parisienne&family=Cinzel:wght@500;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Inter:wght@400;500;600&display=swap">
+<style id="css">
+/* Layout: dark studio chrome (toolbar top, layers right), brochure sheets at true mm scale on a pan/zoom stage. */
+:root{
+  --chrome:#1E1418; --chrome-2:#2A1C21; --line:#3D2A31; --ink:#F3E7DA; --muted:#B8A39A;
+  --accent:#D9A84E; --sel:#3FA9F5; --warn:#E0245E;
+  --ui:Inter,system-ui,sans-serif; color-scheme:dark;
+}
+html,body{height:100%}
+body{background:var(--chrome);color:var(--ink);font:13px/1.4 var(--ui);overflow:hidden}
+.app{display:grid;grid-template-rows:auto 1fr;height:100%}
+.bar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:8px max(12px,env(safe-area-inset-right,0px)) 8px max(12px,env(safe-area-inset-left,0px));background:var(--chrome-2);border-bottom:1px solid var(--line)}
+.bar .grp{display:flex;gap:4px;align-items:center;padding-right:8px;margin-right:2px;border-right:1px solid var(--line)}
+.bar .grp:last-child{border-right:0}
+.brand{font:600 13px var(--ui);color:var(--accent);margin-right:6px;white-space:nowrap}
+button,select,label.btn{font:500 12px var(--ui);color:var(--ink);background:#33242A;border:1px solid var(--line);border-radius:6px;padding:6px 9px;cursor:pointer;white-space:nowrap}
+button:hover,label.btn:hover{background:#43303A}
+button:focus-visible,select:focus-visible{outline:2px solid var(--sel);outline-offset:1px}
+button:disabled{opacity:.35;cursor:default}
+button.primary{background:var(--accent);color:#2A1A10;border-color:var(--accent);font-weight:600}
+button.on{background:#4A3540;border-color:var(--accent)}
+input[type=color]{width:30px;height:28px;padding:0;border:1px solid var(--line);border-radius:6px;background:none;cursor:pointer}
+.status{margin-left:auto;color:var(--muted);font-size:12px;white-space:nowrap}
+.main{display:grid;grid-template-columns:1fr 240px;min-height:0}
+.stagewrap{overflow:auto;position:relative;background:#120C0F;touch-action:none}
+.stage{transform-origin:0 0;padding:24px;width:max-content}
+.sheet{position:relative;width:318mm;height:154mm;background-size:330mm 160mm;background-position:0 0;box-shadow:0 6px 30px rgba(0,0,0,.5);margin-bottom:28px}
+.sheetname{font:600 11px var(--ui);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 26px}
+.panel{position:absolute;top:0;height:154mm;overflow:hidden}
+.panel .plabel{display:none}
+.el{position:absolute;transform-origin:50% 50%}
+.el.svgel{pointer-events:none}
+.el.svgel svg{display:block;width:100%;height:100%;overflow:visible}
+.el.svgel svg *{pointer-events:visiblePainted}
+.el.imgel img{display:block;width:100%;height:100%;max-width:none;user-select:none;-webkit-user-drag:none}
+.el.textel>.inner{position:static!important;left:auto!important;right:auto!important;top:auto!important;width:auto!important}
+.el.hid{display:none}
+.el [contenteditable=true]{outline:1px dashed var(--sel);cursor:text}
+.guides{position:absolute;inset:0;pointer-events:none;z-index:50}
+.guides .trim{position:absolute;left:3mm;top:3mm;right:3mm;bottom:3mm;outline:1px solid rgba(0,255,120,.7)}
+.guides .fold{position:absolute;top:0;bottom:0;border-left:1px dashed rgba(0,220,255,.85)}
+.guides .pn{position:absolute;top:-18px;font:600 10px var(--ui);color:var(--muted);letter-spacing:.06em}
+.selbox{position:absolute;z-index:60;border:1.5px solid var(--sel);pointer-events:none;transform-origin:50% 50%}
+.selbox .h{position:absolute;width:12px;height:12px;background:#fff;border:1.5px solid var(--sel);border-radius:2px;pointer-events:auto;touch-action:none}
+.selbox .h.se{right:-7px;bottom:-7px;cursor:nwse-resize}
+.selbox .h.e{right:-7px;top:calc(50% - 6px);cursor:ew-resize}
+.selbox .h.rot{left:calc(50% - 6px);top:-30px;border-radius:50%;cursor:grab}
+.selbox .h.rot::after{content:"";position:absolute;left:4px;top:11px;width:1.5px;height:16px;background:var(--sel)}
+.side{border-left:1px solid var(--line);background:var(--chrome-2);overflow:auto;padding:10px}
+.side h3{font:600 11px var(--ui);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:10px 0 6px}
+.layer{display:flex;align-items:center;gap:6px;padding:5px 6px;border-radius:5px;cursor:pointer;font-size:12px}
+.layer:hover{background:#33242A}
+.layer.sel{background:#3A2A33;outline:1px solid var(--sel)}
+.layer span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.layer button{padding:2px 6px;font-size:11px}
+.layer .k{font-size:10px;color:var(--muted);width:30px}
+.hint{color:var(--muted);font-size:12px;line-height:1.5;margin-top:12px}
+.banner{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);background:#33242A;border:1px solid var(--accent);border-radius:8px;padding:10px 14px;display:flex;gap:10px;align-items:center;z-index:100;max-width:calc(100% - 32px)}
+@media (max-width:760px){.main{grid-template-columns:1fr}.side{display:none}.brand{display:none}}
+/* brochure typography, copied from the print build */
+.t{position:absolute;left:0;right:0;text-align:center}
+.box{position:absolute;text-align:center}
+.script{font-family:'Great Vibes',cursive;color:#7A0F22;line-height:1.1}
+.caps{font-family:'Cinzel',serif;font-weight:700;color:#7A0F22;text-transform:uppercase}
+.calli{font-family:'Parisienne',cursive;color:#4A1A1E;font-size:11.3pt;line-height:1.36}
+.body{font-family:'Cormorant Garamond',serif;font-weight:600;color:#4A1A1E;font-size:9.4pt;line-height:1.45}
+.it{font-style:italic;font-size:10pt;color:#7A0F22}
+.bul{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:700;color:#8A5A18;font-size:9.6pt;line-height:1.5}
+.rib{position:absolute;text-align:center;font-family:'Cinzel',serif;font-weight:700;color:#FBEFD6;font-size:7.2pt;letter-spacing:.08em;text-transform:uppercase}
+.evl{list-style:none;columns:2;column-gap:4mm;font-family:'Cormorant Garamond',serif;font-weight:700;font-size:9.4pt;line-height:1.5;color:#4A1A1E;text-align:left;margin:0;padding:0}
+.evl li:before{content:'\25C6';color:#A8752A;font-size:5pt;margin-right:1.6mm;vertical-align:middle}
+.logo{position:absolute}
+/* print mode (#print): sheets only, 1:1, one per page */
+body.print{background:#fff;overflow:visible;margin:0}
+body.print .app{display:block;height:auto}
+body.print .sheet{overflow:hidden}
+body.print .stage>.sheet:last-child{break-after:auto}
+body.print .bar,body.print .side,body.print .sheetname,body.print .guides,body.print .selbox,body.print .banner{display:none!important}
+body.print .main{display:block}
+body.print .stagewrap{overflow:visible;background:#fff}
+body.print .stage{padding:0;transform:none!important}
+body.print .sheet{box-shadow:none;margin:0;break-after:page}
+@page{size:318mm 154mm;margin:0}
+</style>
+
+<div class="app">
+  <div class="bar" role="toolbar" aria-label="Editor tools">
+    <span class="brand">Brochure Studio</span>
+    <div class="grp">
+      <button id="undo" title="Undo (Ctrl+Z)">Undo</button>
+      <button id="redo" title="Redo (Ctrl+Shift+Z)">Redo</button>
+    </div>
+    <div class="grp">
+      <button id="zout" aria-label="Zoom out">−</button>
+      <button id="zfit">Fit</button>
+      <button id="zin" aria-label="Zoom in">+</button>
+      <button id="guides" class="on" title="Show trim and fold lines">Guides</button>
+    </div>
+    <div class="grp">
+      <button id="addText">Add text</button>
+      <label class="btn" for="addImgFile">Add image</label>
+      <input id="addImgFile" type="file" accept="image/*" hidden>
+    </div>
+    <div class="grp" id="selTools">
+      <button id="fsDown" title="Smaller text">A−</button>
+      <button id="fsUp" title="Larger text">A+</button>
+      <input id="color" type="color" title="Text colour" aria-label="Text colour">
+      <label class="btn" for="replaceFile" id="replaceBtn">Replace image</label>
+      <input id="replaceFile" type="file" accept="image/*" hidden>
+      <button id="rotL" title="Rotate −5°">⟲</button>
+      <button id="rotR" title="Rotate +5°">⟳</button>
+      <button id="back" title="Send backward">Back</button>
+      <button id="front" title="Bring forward">Front</button>
+      <button id="dup">Duplicate</button>
+      <button id="del">Delete</button>
+    </div>
+    <div class="grp">
+      <button id="save" class="primary">Save</button>
+    </div>
+    <span class="status" id="status" role="status"></span>
+  </div>
+  <div class="main">
+    <div class="stagewrap" id="wrap"><div class="stage" id="stage"></div></div>
+    <aside class="side">
+      <h3>Layers</h3>
+      <div id="layers"></div>
+      <p class="hint">Drag to move. Corner handle resizes (hold Shift to stretch). Top handle rotates. Double-click text to type. Arrow keys nudge 0.5 mm, Shift+arrow 5 mm. Save keeps your changes at this link; then ask Claude for the print PDF.</p>
+    </aside>
+  </div>
+</div>
+<div id="defs"></div>
+
+<script type="application/json" id="state">{"sheets": [{"id": "outside", "name": "Outside", "bg": "a/cream-bg.webp", "panels": [{"id": "p5", "name": "Page 5", "x": 0, "w": 105, "els": [{"kind": "svg", "vb": [7, 7, 88, 134], "svg": "\u003cg>\u003crect x=\"7\" y=\"7\" width=\"88\" height=\"134\" fill=\"none\" stroke=\"url(#goldDk)\" stroke-width=\".6\">\u003c/rect>\u003crect x=\"8.6\" y=\"8.6\" width=\"84.8\" height=\"130.8\" fill=\"none\" stroke=\"url(#goldDk)\" stroke-width=\".22\">\u003c/rect>\u003c/g>", "img": null, "id": "e0", "x": 10, "y": 10, "w": 88, "h": 134}, {"kind": "svg", "vb": [71, -3, 34, 21.082], "svg": "\u003cimage href=\"a/roses-tr.webp\" x=\"71\" y=\"-3\" width=\"34\" height=\"21.08179419525066\" transform=\"\">\u003c/image>", "img": "a/roses-tr.webp", "id": "e2", "x": 50.89, "y": -0.19, "w": 54.17, "h": 33.58}, {"kind": "svg", "vb": [-3, 118.537, 28, 32.463], "svg": "\u003cimage href=\"a/roses-bl.webp\" x=\"-3\" y=\"118.5375\" width=\"28\" height=\"32.4625\" transform=\"\">\u003c/image>", "img": "a/roses-bl.webp", "id": "e3", "x": 0.39, "y": 108.14, "w": 39.29, "h": 45.55}, {"kind": "svg", "vb": [28.25, 35.937, 45.5, 4.963], "svg": "\u003cg transform=\"translate(51.0 38.5)\" fill=\"url(#goldDk)\">\u003cpath d=\"M-22,0 Q0,-.75 22,0 Q0,.75 -22,0Z\">\u003c/path>\u003ccircle cx=\"-22\" cy=\"0\" r=\".75\">\u003c/circle>\u003ccircle cx=\"22\" cy=\"0\" r=\".75\">\u003c/circle>\u003cpath d=\"M0,0 C2.2,-2.6 5.6,-3.2 8.4,-1.9 C6.2,-1.9 4.6,-1.2 3.6,0 C4.6,.4 5.6,1.2 6.2,2.2 C4,1.4 1.8,.9 0,0Z\" transform=\"translate(1.3 0)\">\u003c/path>\u003cpath d=\"M0,0 C2.2,-2.6 5.6,-3.2 8.4,-1.9 C6.2,-1.9 4.6,-1.2 3.6,0 C4.6,.4 5.6,1.2 6.2,2.2 C4,1.4 1.8,.9 0,0Z\" transform=\"translate(-1.3 0) scale(-1 1)\">\u003c/path>\u003cpath d=\"M0,-2.4 L1.1,0 L0,2.4 L-1.1,0Z\">\u003c/path>\u003c/g>", "img": null, "id": "e5", "x": 31.25, "y": 38.93, "w": 45.5, "h": 4.96}, {"kind": "svg", "vb": [19.7, 40.7, 62.6, 44.6], "svg": "\u003cg>\u003cclipPath id=\"ov\">\u003cellipse cx=\"51.0\" cy=\"63\" rx=\"29\" ry=\"20\">\u003c/ellipse>\u003c/clipPath>\u003cimage href=\"a/mandap.webp\" x=\"22.0\" y=\"43\" width=\"58\" height=\"40\" preserveAspectRatio=\"xMidYMid slice\" clip-path=\"url(#ov)\">\u003c/image>\u003cellipse cx=\"51.0\" cy=\"63\" rx=\"29\" ry=\"20\" fill=\"none\" stroke=\"url(#goldDk)\" stroke-width=\".75\">\u003c/ellipse>\u003cellipse cx=\"51.0\" cy=\"63\" rx=\"31.3\" ry=\"22.3\" fill=\"none\" stroke=\"url(#goldDk)\" stroke-width=\".55\" stroke-dasharray=\"0 1.25\" stroke-linecap=\"round\">\u003c/ellipse>\u003c/g>", "img": "a/mandap.webp", "id": "e6", "x": 22.7, "y": 43.7, "w": 62.6, "h": 44.6}, {"kind": "svg", "vb": [28.25, 87.437, 45.5, 4.963], "svg": "\u003cg transform=\"translate(51.0 90)\" fill=\"url(#goldDk)\">\u003cpath d=\"M-22,0 Q0,-.75 22,0 Q0,.75 -22,0Z\">\u003c/path>\u003ccircle cx=\"-22\" cy=\"0\" r=\".75\">\u003c/circle>\u003ccircle cx=\"22\" cy=\"0\" r=\".75\">\u003c/circle>\u003cpath d=\"M0,0 C2.2,-2.6 5.6,-3.2 8.4,-1.9 C6.2,-1.9 4.6,-1.2 3.6,0 C4.6,.4 5.6,1.2 6.2,2.2 C4,1.4 1.8,.9 0,0Z\" transform=\"translate(1.3 0)\">\u003c/path>\u003cpath d=\"M0,0 C2.2,-2.6 5.6,-3.2 8.4,-1.9 C6.2,-1.9 4.6,-1.2 3.6,0 C4.6,.4 5.6,1.2 6.2,2.2 C4,1.4 1.8,.9 0,0Z\" transform=\"translate(-1.3 0) scale(-1 1)\">\u003c/path>\u003cpath d=\"M0,-2.4 L1.1,0 L0,2.4 L-1.1,0Z\">\u003c/path>\u003c/g>", "img": null, "id": "e7", "x": 31.25, "y": 90.43, "w": 45.5, "h": 4.96}, {"kind": "text", "tag": "div", "cls": "t script", "style": "font-size:31pt", "html": "Celebrate", "id": "e11", "x": 3, "y": 18, "w": 102, "h": 12.03}, {"kind": "text", "tag": "div", "cls": "t caps", "style": "font-size:10.5pt;letter-spacing:.12em", "html": "Special Events", "id": "e12", "x": 3, "y": 31.49, "w": 102, "h": 5.03}, {"kind": "text", "tag": "div", "cls": "box body it", "style": "font-size:9.8pt;line-height:1.32", "html": "Every family celebrates in its own way. We tailor each menu to your traditions and your day.", "id": "e13", "x": 18, "y": 95.99, "w": 72, "h": 9.12}, {"kind": "text", "tag": "ul", "cls": "evl", "style": "", "html": "\u003cli>Weddings\u003c/li>\u003cli>Mehndi &amp; Sangeet\u003c/li>\u003cli>Engagements\u003c/li>\u003cli>Anniversaries\u003c/li>\u003cli>Birthdays\u003c/li>\u003cli>Corporate events\u003c/li>", "id": "e14", "x": 21.99, "y": 107.5, "w": 71, "h": 14.92}, {"kind": "text", "tag": "div", "cls": "t script", "style": "font-size:14pt", "html": "Menus tailored to your day", "id": "e15", "x": 3, "y": 129, "w": 102, "h": 5.43}]}, {"id": "p6", "name": "Page 6", "x": 105, "w": 105, "els": [{"kind": "img", "src": "a/cover-mirror.webp", "fit": null, "pos": null, "id": "e23", "x": -0.32, "y": -1.06, "w": 108, "h": 162}, {"kind": "svg", "vb": [25.75, 38.437, 53.5, 4.963], "svg": "\u003cg transform=\"translate(52.5 41)\" fill=\"url(#goldDk)\">\u003cpath d=\"M-26,0 Q0,-.75 26,0 Q0,.75 -26,0Z\">\u003c/path>\u003ccircle cx=\"-26\" cy=\"0\" r=\".75\">\u003c/circle>\u003ccircle cx=\"26\" cy=\"0\" r=\".75\">\u003c/circle>\u003cpath d=\"M0,0 C2.2,-2.6 5.6,-3.2 8.4,-1.9 C6.2,-1.9 4.6,-1.2 3.6,0 C4.6,.4 5.6,1.2 6.2,2.2 C4,1.4 1.8,.9 0,0Z\" transform=\"translate(1.3 0)\">\u003c/path>\u003cpath d=\"M0,0 C2.2,-2.6 5.6,-3.2 8.4,-1.9 C6.2,-1.9 4.6,-1.2 3.6,0 C4.6,.4 5.6,1.2 6.2,2.2 C4,1.4 1.8,.9 0,0Z\" transform=\"translate(-1.3 0) scale(-1 1)\">\u003c/path>\u003cpath d=\"M0,-2.4 L1.1,0 L0,2.4 L-1.1,0Z\">\u003c/path>\u003c/g>", "img": null, "id": "e8", "x": 25.75, "y": 30.2, "w": 53.5, "h": 4.96}, {"id": "v_head", "kind": "text", "tag": "div", "cls": "box caps", "style": "font-size:6.5pt;letter-spacing:.2em", "html": "Venues we've served", "x": 12.5, "y": 35.6, "w": 80, "h": 3}, {"id": "v_doubletree", "kind": "img", "src": "a/venue-doubletree.png", "x": 8.9, "y": 40.5, "w": 20, "h": 14, "label": "Doubletree logo"}, {"id": "v_hilton", "kind": "img", "src": "a/venue-hilton.png", "x": 31.3, "y": 40.5, "w": 20, "h": 14, "label": "Hilton logo"}, {"id": "v_radisson-blu", "kind": "img", "src": "a/venue-radisson-blu.png", "x": 53.7, "y": 40.5, "w": 20, "h": 14, "label": "Radisson Blu logo"}, {"id": "v_crowne-plaza", "kind": "img", "src": "a/venue-crowne-plaza.png", "x": 76.1, "y": 40.5, "w": 20, "h": 14, "label": "Crowne Plaza logo"}, {"id": "v_fairmont", "kind": "img", "src": "a/venue-fairmont.png", "x": 8.9, "y": 56.9, "w": 20, "h": 14, "label": "Fairmont logo"}, {"id": "v_macdonald", "kind": "img", "src": "a/venue-macdonald.png", "x": 31.3, "y": 56.9, "w": 20, "h": 14, "label": "Macdonald logo"}, {"id": "v_murrayshall", "kind": "img", "src": "a/venue-murrayshall.png", "x": 53.7, "y": 56.9, "w": 20, "h": 14, "label": "Murrayshall logo"}, {"id": "v_turnberry", "kind": "img", "src": "a/venue-turnberry.png", "x": 76.1, "y": 56.9, "w": 20, "h": 14, "label": "Turnberry logo"}, {"id": "v_guthrie-castle", "kind": "img", "src": "a/venue-guthrie-castle.png", "x": 20.1, "y": 73.3, "w": 20, "h": 14, "label": "Guthrie Castle logo"}, {"id": "v_ingliston", "kind": "img", "src": "a/venue-ingliston.png", "x": 42.5, "y": 73.3, "w": 20, "h": 14, "label": "Ingliston logo"}, {"id": "v_normandy", "kind": "img", "src": "a/venue-normandy.png", "x": 64.9, "y": 73.3, "w": 20, "h": 14, "label": "Normandy logo"}, {"kind": "svg", "vb": [25.75, 81.437, 53.5, 4.963], "svg": "\u003cg transform=\"translate(52.5 84)\" fill=\"url(#goldDk)\">\u003cpath d=\"M-26,0 Q0,-.75 26,0 Q0,.75 -26,0Z\">\u003c/path>\u003ccircle cx=\"-26\" cy=\"0\" r=\".75\">\u003c/circle>\u003ccircle cx=\"26\" cy=\"0\" r=\".75\">\u003c/circle>\u003cpath d=\"M0,0 C2.2,-2.6 5.6,-3.2 8.4,-1.9 C6.2,-1.9 4.6,-1.2 3.6,0 C4.6,.4 5.6,1.2 6.2,2.2 C4,1.4 1.8,.9 0,0Z\" transform=\"translate(1.3 0)\">\u003c/path>\u003cpath d=\"M0,0 C2.2,-2.6 5.6,-3.2 8.4,-1.9 C6.2,-1.9 4.6,-1.2 3.6,0 C4.6,.4 5.6,1.2 6.2,2.2 C4,1.4 1.8,.9 0,0Z\" transform=\"translate(-1.3 0) scale(-1 1)\">\u003c/path>\u003cpath d=\"M0,-2.4 L1.1,0 L0,2.4 L-1.1,0Z\">\u003c/path>\u003c/g>", "img": null, "id": "e10", "x": 25.75, "y": 92.3, "w": 53.5, "h": 4.96}, {"kind": "text", "tag": "div", "cls": "box script", "style": "font-size:27pt", "html": "It's your day", "id": "e16", "x": 20.5, "y": 13.5, "w": 64, "h": 10.5}, {"kind": "text", "tag": "div", "cls": "box caps", "style": "font-size:9.5pt;letter-spacing:.1em", "html": "Make it memorable", "id": "e17", "x": 20.5, "y": 25.2, "w": 64, "h": 5.03}, {"kind": "img", "src": "a/logo.webp", "id": "e18", "x": 10.5, "y": 96.5, "w": 19.5, "h": 19.5}, {"kind": "text", "tag": "div", "cls": "box caps", "style": "letter-spacing:.18em;font-size:6pt", "html": "Book your celebration", "id": "e19", "x": 32, "y": 99.2, "w": 40, "h": 3.17}, {"kind": "text", "tag": "div", "cls": "box body", "style": "font-size:11.5pt;font-weight:700;color:#7A0F22;line-height:1.22", "html": "07818 478036\u003cbr>07828 218002", "id": "e20", "x": 32, "y": 102.6, "w": 40, "h": 12.78}, {"kind": "text", "tag": "div", "cls": "box body", "style": "font-size:8pt", "html": "hello@apnacatering.co.uk", "id": "e21", "x": 32, "y": 113.4, "w": 40, "h": 4.86}, {"kind": "text", "tag": "div", "cls": "box script", "style": "font-size:12.5pt", "html": "apnacatering.co.uk", "id": "e22", "x": 32, "y": 117.3, "w": 40, "h": 6.21}, {"kind": "img", "src": "a/roses-fold.webp", "fit": null, "pos": null, "id": "e25", "x": 52.27, "y": 86.29, "w": 105.47, "h": 72.35}, {"id": "n2kfj9j4", "kind": "img", "src": "uploads/ff2c563a03a3edf8e48d726c48d2699b.png", "x": -3.89, "y": 112.19, "w": 41.22, "h": 55.15, "rot": 20}]}, {"id": "p1", "name": "Page 1 \u00b7 Cover", "x": 210, "w": 108, "els": [{"kind": "img", "src": "a/cover.webp", "fit": "cover", "pos": "50% 30%", "id": "e24", "x": 0, "y": 0, "w": 108, "h": 154}, {"kind": "img", "src": "a/roses-fold.webp", "fit": null, "pos": null, "id": "e26", "x": -52.73, "y": 87.25, "w": 105.47, "h": 72.35}]}]}, {"id": "inside", "name": "Inside", "bg": "a/cream-bg.webp", "panels": [{"id": "p2", "name": "Page 2", "x": 0, "w": 108, "els": [{"kind": "svg", "vb": [7, 7, 91, 134], "svg": "\u003cg>\u003crect x=\"7\" y=\"7\" width=\"91\" height=\"134\" fill=\"none\" stroke=\"url(#goldDk)\" stroke-width=\".6\">\u003c/rect>\u003crect x=\"8.6\" y=\"8.6\" width=\"87.8\" height=\"130.8\" fill=\"none\" stroke=\"url(#goldDk)\" stroke-width=\".22\">\u003c/rect>\u003c/g>", "img": null, "id": "e27", "x": 10, "y": 10, "w": 91, "h": 134}, {"kind": "svg", "vb": [-3, -3, 34, 21.082], "svg": "\u003cimage href=\"a/roses-tr.webp\" x=\"-3\" y=\"-3\" width=\"34\" height=\"21.08179419525066\" transform=\"translate(28 0) scale(-1 1)\">\u003c/image>", "img": "a/roses-tr.webp", "id": "e28", "x": 0, "y": 0, "w": 56.66, "h": 35.13}, {"kind": "svg", "vb": [74, -3, 34, 21.082], "svg": "\u003cimage href=\"a/roses-tr.webp\" x=\"74\" y=\"-3\" width=\"34\" height=\"21.08179419525066\" transform=\"\">\u003c/image>", "img": "a/roses-tr.webp", "id": "e29", "x": 77, "y": 0, "w": 34, "h": 21.08}, {"kind": "svg", "vb": [80, 118.537, 28, 32.463], "svg": "\u003cimage href=\"a/roses-bl.webp\" x=\"80\" y=\"118.5375\" width=\"28\" height=\"32.4625\" transform=\"translate(188 0) scale(-1 1)\">\u003c/image>", "img": "a/roses-bl.webp", "id": "e31", "x": 65.02, "y": 104.8, "w": 42.9, "h": 49.73}, {"kind": "svg", "vb": [29.75, 38.437, 45.5, 4.963], "svg": "\u003cg transform=\"translate(52.5 41)\" fill=\"url(#goldDk)\">\u003cpath d=\"M-22,0 Q0,-.75 22,0 Q0,.75 -22,0Z\">\u003c/path>\u003ccircle cx=\"-22\" cy=\"0\" r=\".75\">\u003c/circle>\u003ccircle cx=\"22\" cy=\"0\" r=\".75\">\u003c/circle>\u003cpath d=\"M0,0 C2.2,-2.6 5.6,-3.2 8.4,-1.9 C6.2,-1.9 4.6,-1.2 3.6,0 C4.6,.4 5.6,1.2 6.2,2.2 C4,1.4 1.8,.9 0,0Z\" transform=\"translate(1.3 0)\">\u003c/path>\u003cpath d=\"M0,0 C2.2,-2.6 5.6,-3.2 8.4,-1.9 C6.2,-1.9 4.6,-1.2 3.6,0 C4.6,.4 5.6,1.2 6.2,2.2 C4,1.4 1.8,.9 0,0Z\" transform=\"translate(-1.3 0) scale(-1 1)\">\u003c/path>\u003cpath d=\"M0,-2.4 L1.1,0 L0,2.4 L-1.1,0Z\">\u003c/path>\u003c/g>", "img": null, "id": "e32", "x": 32.75, "y": 32.93, "w": 45.5, "h": 4.96}, {"kind": "svg", "vb": [35.104, 100.99, 34.793, 30.019], "svg": "\u003cimage href=\"a/feather.webp\" x=\"-11.0\" y=\"-14.717592592592593\" width=\"22\" height=\"29.435185185185187\" transform=\"translate(52.5 116) rotate(72)\">\u003c/image>", "img": "a/feather.webp", "id": "e33", "x": -27.35, "y": 80.28, "w": 105.79, "h": 91.28, "rot": -45}, {"kind": "text", "tag": "div", "cls": "t caps", "style": "font-size:6pt;letter-spacing:.24em", "html": "Our story", "id": "e49", "x": 3, "y": 15, "w": 105, "h": 2.91}, {"kind": "text", "tag": "div", "cls": "t script", "style": "font-size:32pt", "html": "Love for Food", "id": "e50", "x": 3, "y": 18.49, "w": 105, "h": 12.42}, {"kind": "text", "tag": "div", "cls": "box calli", "style": "line-height:1.36;font-size:9.4pt", "html": "Welcome to Apna Catering, Glasgow's wedding &amp; event caterers with a passion for fine food. We specialise in quality\n        Indian &amp; Asian delicacies, blessing weddings with an inventive menu of delights. With an incredibly experienced team\n        we uphold the values of our customers, creating meal plans of true prestige, and have built a reputation for excellence\n        in hospitality.\u003cspan style=\"display:block;height:1.8mm\">\u003c/span>\n        We specialise in Sikh, Hindu and Muslim wedding catering. If you are inspired by authentic Indian food, allow\n        Apna Catering to share that passion with you.", "id": "e51", "x": 17, "y": 39.49, "w": 77, "h": 51.66}, {"kind": "text", "tag": "div", "cls": "t script", "style": "font-size:17pt", "html": "With love, Apna Catering", "id": "e52", "x": 1.09, "y": 87.45, "w": 105, "h": 6.21}]}, {"id": "p34", "name": "Pages 3\u20134", "x": 108, "w": 210, "els": [{"kind": "img", "src": "a/garden.webp", "fit": "cover", "pos": "50% 45%", "id": "e57", "x": 0, "y": -0.96, "w": 210, "h": 154}, {"kind": "svg", "vb": [-4, 52, 215, 100], "svg": "\u003crect x=\"-4\" y=\"52\" width=\"215\" height=\"100\" fill=\"url(#fadeB)\">\u003c/rect>", "img": null, "id": "e34", "x": -4, "y": 55, "w": 215, "h": 100}, {"kind": "svg", "vb": [54, 57, 99, 25], "svg": "\u003crect x=\"54\" y=\"57\" width=\"99\" height=\"25\" rx=\"5\" fill=\"#FBF0DC\" fill-opacity=\".9\" filter=\"url(#soft)\">\u003c/rect>", "img": null, "id": "e35", "x": 54, "y": 60, "w": 99, "h": 25}, {"kind": "svg", "vb": [56, 122, 95, 11], "svg": "\u003crect x=\"56\" y=\"122\" width=\"95\" height=\"11\" rx=\"4\" fill=\"#FBF0DC\" fill-opacity=\".85\" filter=\"url(#soft)\">\u003c/rect>", "img": null, "id": "e36", "x": 56, "y": 124.99, "w": 95, "h": 11}, {"kind": "svg", "vb": [7, 7, 193, 134], "svg": "\u003cg>\u003crect x=\"7\" y=\"7\" width=\"193\" height=\"134\" fill=\"none\" stroke=\"url(#goldDk)\" stroke-width=\".6\">\u003c/rect>\u003crect x=\"8.6\" y=\"8.6\" width=\"189.8\" height=\"130.8\" fill=\"none\" stroke=\"url(#goldDk)\" stroke-width=\".22\">\u003c/rect>\u003c/g>", "img": null, "id": "e37", "x": 7, "y": 10, "w": 193, "h": 134}, {"kind": "svg", "vb": [-3, -3, 34, 21.082], "svg": "\u003cimage href=\"a/roses-tr.webp\" x=\"-3\" y=\"-3\" width=\"34\" height=\"21.08179419525066\" transform=\"translate(28 0) scale(-1 1)\">\u003c/image>", "img": "a/roses-tr.webp", "id": "e38", "x": -3, "y": 0, "w": 34, "h": 21.08}, {"kind": "svg", "vb": [-3, 118.537, 28, 32.463], "svg": "\u003cimage href=\"a/roses-bl.webp\" x=\"-3\" y=\"118.5375\" width=\"28\" height=\"32.4625\" transform=\"\">\u003c/image>", "img": "a/roses-bl.webp", "id": "e40", "x": -0.5, "y": 107.5, "w": 40.43, "h": 46.87}, {"kind": "svg", "vb": [182, 118.537, 28, 32.463], "svg": "\u003cimage href=\"a/roses-bl.webp\" x=\"182\" y=\"118.5375\" width=\"28\" height=\"32.4625\" transform=\"translate(392 0) scale(-1 1)\">\u003c/image>", "img": "a/roses-bl.webp", "id": "e41", "x": 182, "y": 121.53, "w": 28, "h": 32.46}, {"kind": "svg", "vb": [58.3, 12.5, 90.4, 9], "svg": "\u003cg>\u003cdefs>\u003clinearGradient id=\"rib\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\">\u003cstop offset=\"0\" stop-color=\"#9B1A30\">\u003c/stop>\u003cstop offset=\".5\" stop-color=\"#7A0F22\">\u003c/stop>\u003cstop offset=\"1\" stop-color=\"#5C0816\">\u003c/stop>\u003c/linearGradient>\u003c/defs>\u003cpath d=\"M58.3,12.5 H148.7 L145.5,17 L148.7,21.5 H58.3 L61.5,17 Z\" fill=\"url(#rib)\">\u003c/path>\u003cpath d=\"M59.5,13.4 H147.5 M59.5,20.6 H147.5\" stroke=\"url(#goldDk)\" stroke-width=\".35\">\u003c/path>\u003c/g>", "img": null, "id": "e42", "x": 58.3, "y": 15.5, "w": 90.4, "h": 9}, {"kind": "svg", "vb": [10.4, 26.4, 38.2, 95.2], "svg": "\u003cg>\u003crect x=\"10.4\" y=\"26.4\" width=\"38.2\" height=\"95.2\" fill=\"#FFF8EC\">\u003c/rect>\u003cimage href=\"a/photo-1.webp\" x=\"12\" y=\"28\" width=\"35\" height=\"92\" preserveAspectRatio=\"xMidYMid slice\">\u003c/image>\u003crect x=\"10.4\" y=\"26.4\" width=\"38.2\" height=\"95.2\" fill=\"none\" stroke=\"url(#goldDk)\" stroke-width=\".55\">\u003c/rect>\u003crect x=\"11.5\" y=\"27.5\" width=\"36\" height=\"93\" fill=\"none\" stroke=\"url(#goldDk)\" stroke-width=\".2\">\u003c/rect>\u003c/g>", "img": "a/photo-1.webp", "id": "e43", "x": 10.4, "y": 29.4, "w": 38.2, "h": 95.2}, {"kind": "svg", "vb": [53.4, 82.4, 44.2, 39.2], "svg": "\u003cg>\u003crect x=\"53.4\" y=\"82.4\" width=\"44.2\" height=\"39.2\" fill=\"#FFF8EC\">\u003c/rect>\u003cimage href=\"a/photo-2.webp\" x=\"55\" y=\"84\" width=\"41\" height=\"36\" preserveAspectRatio=\"xMidYMid slice\">\u003c/image>\u003crect x=\"53.4\" y=\"82.4\" width=\"44.2\" height=\"39.2\" fill=\"none\" stroke=\"url(#goldDk)\" stroke-width=\".55\">\u003c/rect>\u003crect x=\"54.5\" y=\"83.5\" width=\"42\" height=\"37\" fill=\"none\" stroke=\"url(#goldDk)\" stroke-width=\".2\">\u003c/rect>\u003c/g>", "img": "a/photo-2.webp", "id": "e44", "x": 53.4, "y": 85.4, "w": 44.2, "h": 39.2}, {"kind": "svg", "vb": [109.4, 82.4, 44.2, 39.2], "svg": "\u003cg>\u003crect x=\"109.4\" y=\"82.4\" width=\"44.2\" height=\"39.2\" fill=\"#FFF8EC\">\u003c/rect>\u003cimage href=\"a/photo-4.webp\" x=\"111\" y=\"84\" width=\"41\" height=\"36\" preserveAspectRatio=\"xMidYMid slice\">\u003c/image>\u003crect x=\"109.4\" y=\"82.4\" width=\"44.2\" height=\"39.2\" fill=\"none\" stroke=\"url(#goldDk)\" stroke-width=\".55\">\u003c/rect>\u003crect x=\"110.5\" y=\"83.5\" width=\"42\" height=\"37\" fill=\"none\" stroke=\"url(#goldDk)\" stroke-width=\".2\">\u003c/rect>\u003c/g>", "img": "a/photo-4.webp", "id": "e45", "x": 109.4, "y": 85.4, "w": 44.2, "h": 39.2}, {"kind": "svg", "vb": [158.4, 26.4, 38.2, 95.2], "svg": "\u003cg>\u003crect x=\"158.4\" y=\"26.4\" width=\"38.2\" height=\"95.2\" fill=\"#FFF8EC\">\u003c/rect>\u003cimage href=\"a/photo-3.webp\" x=\"160\" y=\"28\" width=\"35\" height=\"92\" preserveAspectRatio=\"xMidYMid slice\">\u003c/image>\u003crect x=\"158.4\" y=\"26.4\" width=\"38.2\" height=\"95.2\" fill=\"none\" stroke=\"url(#goldDk)\" stroke-width=\".55\">\u003c/rect>\u003crect x=\"159.5\" y=\"27.5\" width=\"36\" height=\"93\" fill=\"none\" stroke=\"url(#goldDk)\" stroke-width=\".2\">\u003c/rect>\u003c/g>", "img": "a/photo-3.webp", "id": "e46", "x": 158.4, "y": 29.4, "w": 38.2, "h": 95.2}, {"kind": "svg", "vb": [52.75, 73.437, 45.5, 4.963], "svg": "\u003cg transform=\"translate(75.5 76)\" fill=\"url(#goldDk)\">\u003cpath d=\"M-22,0 Q0,-.75 22,0 Q0,.75 -22,0Z\">\u003c/path>\u003ccircle cx=\"-22\" cy=\"0\" r=\".75\">\u003c/circle>\u003ccircle cx=\"22\" cy=\"0\" r=\".75\">\u003c/circle>\u003cpath d=\"M0,0 C2.2,-2.6 5.6,-3.2 8.4,-1.9 C6.2,-1.9 4.6,-1.2 3.6,0 C4.6,.4 5.6,1.2 6.2,2.2 C4,1.4 1.8,.9 0,0Z\" transform=\"translate(1.3 0)\">\u003c/path>\u003cpath d=\"M0,0 C2.2,-2.6 5.6,-3.2 8.4,-1.9 C6.2,-1.9 4.6,-1.2 3.6,0 C4.6,.4 5.6,1.2 6.2,2.2 C4,1.4 1.8,.9 0,0Z\" transform=\"translate(-1.3 0) scale(-1 1)\">\u003c/path>\u003cpath d=\"M0,-2.4 L1.1,0 L0,2.4 L-1.1,0Z\">\u003c/path>\u003c/g>", "img": null, "id": "e47", "x": 52.75, "y": 76.43, "w": 45.5, "h": 4.96}, {"kind": "svg", "vb": [108.75, 73.437, 45.5, 4.963], "svg": "\u003cg transform=\"translate(131.5 76)\" fill=\"url(#goldDk)\">\u003cpath d=\"M-22,0 Q0,-.75 22,0 Q0,.75 -22,0Z\">\u003c/path>\u003ccircle cx=\"-22\" cy=\"0\" r=\".75\">\u003c/circle>\u003ccircle cx=\"22\" cy=\"0\" r=\".75\">\u003c/circle>\u003cpath d=\"M0,0 C2.2,-2.6 5.6,-3.2 8.4,-1.9 C6.2,-1.9 4.6,-1.2 3.6,0 C4.6,.4 5.6,1.2 6.2,2.2 C4,1.4 1.8,.9 0,0Z\" transform=\"translate(1.3 0)\">\u003c/path>\u003cpath d=\"M0,0 C2.2,-2.6 5.6,-3.2 8.4,-1.9 C6.2,-1.9 4.6,-1.2 3.6,0 C4.6,.4 5.6,1.2 6.2,2.2 C4,1.4 1.8,.9 0,0Z\" transform=\"translate(-1.3 0) scale(-1 1)\">\u003c/path>\u003cpath d=\"M0,-2.4 L1.1,0 L0,2.4 L-1.1,0Z\">\u003c/path>\u003c/g>", "img": null, "id": "e48", "x": 108.75, "y": 76.43, "w": 45.5, "h": 4.96}, {"kind": "text", "tag": "div", "cls": "rib", "style": "font-size:8.2pt", "html": "Wedding Banquets \u00b7 Served with Love", "id": "e53", "x": 61.5, "y": 17.59, "w": 84, "h": 3.44}, {"kind": "text", "tag": "div", "cls": "box script", "style": "font-size:19pt", "html": "From our kitchen\u2026", "id": "e54", "x": 50, "y": 64, "w": 51, "h": 7.37}, {"kind": "text", "tag": "div", "cls": "box script", "style": "font-size:19pt", "html": "\u2026to your table", "id": "e55", "x": 106, "y": 64, "w": 51, "h": 7.37}, {"kind": "text", "tag": "div", "cls": "box script", "style": "font-size:25pt", "html": "Celebrating love, one feast at a time", "id": "e56", "x": 47.7, "y": 131.75, "w": 107, "h": 5.82}]}]}], "defs": "\u003cclipPath id=\"rf1023\">\u003crect x=\"-3\" y=\"-3\" width=\"105\" height=\"154\">\u003c/rect>\u003c/clipPath>\u003cclipPath id=\"rf1053\">\u003crect x=\"-3\" y=\"-3\" width=\"108\" height=\"154\">\u003c/rect>\u003c/clipPath>\u003cdefs>\u003clinearGradient id=\"fadeB\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\">\u003cstop offset=\"0\" stop-color=\"#F7E8CF\" stop-opacity=\"0\">\u003c/stop>\u003cstop offset=\".45\" stop-color=\"#F7E8CF\" stop-opacity=\".55\">\u003c/stop>\u003cstop offset=\"1\" stop-color=\"#F3DFC0\" stop-opacity=\".92\">\u003c/stop>\u003c/linearGradient>\u003c/defs>\u003cdefs>\u003cfilter id=\"soft\">\u003cfeGaussianBlur stdDeviation=\"2.2\">\u003c/feGaussianBlur>\u003c/filter>\u003c/defs>\u003cclipPath id=\"rf2070\">\u003crect x=\"0\" y=\"-3\" width=\"207\" height=\"154\">\u003c/rect>\u003c/clipPath>", "globalDefs": "\u003cdefs>\n  \u003clinearGradient id=\"gold\" gradientUnits=\"userSpaceOnUse\" x1=\"0\" y1=\"0\" x2=\"30\" y2=\"18\" spreadMethod=\"reflect\">\n    \u003cstop class=\"g\" offset=\"0\" stop-color=\"#FBE7A8\">\u003c/stop>\u003cstop class=\"g\" offset=\".35\" stop-color=\"#E0B25A\">\u003c/stop>\n    \u003cstop class=\"g\" offset=\".62\" stop-color=\"#A8752A\">\u003c/stop>\u003cstop class=\"g\" offset=\"1\" stop-color=\"#F1D287\">\u003c/stop>\u003c/linearGradient>\n  \u003clinearGradient id=\"goldDk\" gradientUnits=\"userSpaceOnUse\" x1=\"0\" y1=\"0\" x2=\"30\" y2=\"18\" spreadMethod=\"reflect\">\n    \u003cstop class=\"g\" offset=\"0\" stop-color=\"#C99A45\">\u003c/stop>\u003cstop class=\"g\" offset=\".4\" stop-color=\"#9E6E22\">\u003c/stop>\n    \u003cstop class=\"g\" offset=\".7\" stop-color=\"#7A5214\">\u003c/stop>\u003cstop class=\"g\" offset=\"1\" stop-color=\"#B8863A\">\u003c/stop>\u003c/linearGradient>\n  \n  \u003cpattern id=\"velvet\" width=\"4\" height=\"4\" patternUnits=\"userSpaceOnUse\">\u003crect width=\"4\" height=\"4\" fill=\"#A81F36\">\u003c/rect>\u003ccircle cx=\"2.49\" cy=\"2.97\" r=\"0.17\" fill=\"#7C0A1D\" opacity=\"0.82\">\u003c/circle>\u003ccircle cx=\"2.96\" cy=\"3.69\" r=\"0.05\" fill=\"#7C0A1D\" opacity=\"0.61\">\u003c/circle>\u003ccircle cx=\"3.77\" cy=\"2.60\" r=\"0.19\" fill=\"#7C0A1D\" opacity=\"0.45\">\u003c/circle>\u003ccircle cx=\"1.88\" cy=\"0.99\" r=\"0.13\" fill=\"#7C0A1D\" opacity=\"0.66\">\u003c/circle>\u003ccircle cx=\"0.05\" cy=\"0.87\" r=\"0.09\" fill=\"#7C0A1D\" opacity=\"0.81\">\u003c/circle>\u003ccircle cx=\"3.06\" cy=\"0.64\" r=\"0.17\" fill=\"#7C0A1D\" opacity=\"0.46\">\u003c/circle>\u003ccircle cx=\"2.47\" cy=\"0.51\" r=\"0.05\" fill=\"#7C0A1D\" opacity=\"0.79\">\u003c/circle>\u003ccircle cx=\"0.84\" cy=\"0.86\" r=\"0.20\" fill=\"#7C0A1D\" opacity=\"0.79\">\u003c/circle>\u003ccircle cx=\"1.16\" cy=\"3.85\" r=\"0.13\" fill=\"#7C0A1D\" opacity=\"0.71\">\u003c/circle>\u003ccircle cx=\"0.82\" cy=\"3.76\" r=\"0.15\" fill=\"#7C0A1D\" opacity=\"0.83\">\u003c/circle>\u003ccircle cx=\"3.57\" cy=\"1.20\" r=\"0.10\" fill=\"#7C0A1D\" opacity=\"0.47\">\u003c/circle>\u003ccircle cx=\"0.58\" cy=\"0.26\" r=\"0.10\" fill=\"#7C0A1D\" opacity=\"0.67\">\u003c/circle>\u003ccircle cx=\"0.01\" cy=\"2.71\" r=\"0.10\" fill=\"#7C0A1D\" opacity=\"0.54\">\u003c/circle>\u003ccircle cx=\"3.27\" cy=\"1.92\" r=\"0.10\" fill=\"#7C0A1D\" opacity=\"0.62\">\u003c/circle>\u003ccircle cx=\"2.82\" cy=\"0.23\" r=\"0.20\" fill=\"#7C0A1D\" opacity=\"0.41\">\u003c/circle>\u003ccircle cx=\"3.00\" cy=\"3.38\" r=\"0.05\" fill=\"#7C0A1D\" opacity=\"0.75\">\u003c/circle>\u003ccircle cx=\"1.46\" cy=\"2.31\" r=\"0.05\" fill=\"#7C0A1D\" opacity=\"0.42\">\u003c/circle>\u003ccircle cx=\"0.72\" cy=\"3.82\" r=\"0.08\" fill=\"#7C0A1D\" opacity=\"0.74\">\u003c/circle>\u003ccircle cx=\"3.72\" cy=\"3.77\" r=\"0.10\" fill=\"#7C0A1D\" opacity=\"0.56\">\u003c/circle>\u003ccircle cx=\"2.10\" cy=\"3.10\" r=\"0.07\" fill=\"#7C0A1D\" opacity=\"0.74\">\u003c/circle>\u003ccircle cx=\"3.19\" cy=\"3.44\" r=\"0.06\" fill=\"#7C0A1D\" opacity=\"0.83\">\u003c/circle>\u003ccircle cx=\"0.36\" cy=\"1.36\" r=\"0.14\" fill=\"#7C0A1D\" opacity=\"0.81\">\u003c/circle>\u003ccircle cx=\"1.36\" cy=\"3.70\" r=\"0.13\" fill=\"#7C0A1D\" opacity=\"0.54\">\u003c/circle>\u003ccircle cx=\"1.27\" cy=\"0.71\" r=\"0.06\" fill=\"#7C0A1D\" opacity=\"0.47\">\u003c/circle>\u003ccircle cx=\"2.76\" cy=\"3.99\" r=\"0.07\" fill=\"#7C0A1D\" opacity=\"0.42\">\u003c/circle>\u003ccircle cx=\"3.95\" cy=\"2.13\" r=\"0.11\" fill=\"#7C0A1D\" opacity=\"0.51\">\u003c/circle>\u003ccircle cx=\"2.38\" cy=\"3.31\" r=\"0.12\" fill=\"#7C0A1D\" opacity=\"0.59\">\u003c/circle>\u003ccircle cx=\"0.22\" cy=\"3.66\" r=\"0.05\" fill=\"#7C0A1D\" opacity=\"0.62\">\u003c/circle>\u003ccircle cx=\"3.35\" cy=\"0.52\" r=\"0.16\" fill=\"#7C0A1D\" opacity=\"0.83\">\u003c/circle>\u003ccircle cx=\"2.52\" cy=\"3.15\" r=\"0.07\" fill=\"#7C0A1D\" opacity=\"0.60\">\u003c/circle>\u003ccircle cx=\"0.60\" cy=\"3.38\" r=\"0.09\" fill=\"#7C0A1D\" opacity=\"0.60\">\u003c/circle>\u003ccircle cx=\"4.00\" cy=\"3.41\" r=\"0.20\" fill=\"#7C0A1D\" opacity=\"0.60\">\u003c/circle>\u003ccircle cx=\"1.95\" cy=\"2.92\" r=\"0.12\" fill=\"#7C0A1D\" opacity=\"0.53\">\u003c/circle>\u003ccircle cx=\"1.62\" cy=\"0.59\" r=\"0.11\" fill=\"#7C0A1D\" opacity=\"0.84\">\u003c/circle>\u003ccircle cx=\"3.84\" cy=\"2.51\" r=\"0.12\" fill=\"#7C0A1D\" opacity=\"0.55\">\u003c/circle>\u003ccircle cx=\"0.36\" cy=\"1.09\" r=\"0.17\" fill=\"#7C0A1D\" opacity=\"0.79\">\u003c/circle>\u003ccircle cx=\"1.45\" cy=\"3.14\" r=\"0.17\" fill=\"#7C0A1D\" opacity=\"0.71\">\u003c/circle>\u003ccircle cx=\"2.66\" cy=\"3.04\" r=\"0.10\" fill=\"#7C0A1D\" opacity=\"0.72\">\u003c/circle>\u003ccircle cx=\"1.12\" cy=\"1.94\" r=\"0.17\" fill=\"#7C0A1D\" opacity=\"0.71\">\u003c/circle>\u003ccircle cx=\"1.18\" cy=\"3.78\" r=\"0.15\" fill=\"#7C0A1D\" opacity=\"0.66\">\u003c/circle>\u003ccircle cx=\"0.05\" cy=\"2.19\" r=\"0.09\" fill=\"#7C0A1D\" opacity=\"0.70\">\u003c/circle>\u003ccircle cx=\"1.85\" cy=\"3.27\" r=\"0.15\" fill=\"#7C0A1D\" opacity=\"0.76\">\u003c/circle>\u003ccircle cx=\"1.39\" cy=\"2.58\" r=\"0.16\" fill=\"#7C0A1D\" opacity=\"0.77\">\u003c/circle>\u003ccircle cx=\"1.40\" cy=\"3.37\" r=\"0.18\" fill=\"#7C0A1D\" opacity=\"0.71\">\u003c/circle>\u003ccircle cx=\"3.90\" cy=\"3.83\" r=\"0.13\" fill=\"#7C0A1D\" opacity=\"0.64\">\u003c/circle>\u003ccircle cx=\"0.66\" cy=\"3.35\" r=\"0.19\" fill=\"#7C0A1D\" opacity=\"0.61\">\u003c/circle>\u003ccircle cx=\"2.77\" cy=\"2.88\" r=\"0.10\" fill=\"#C2394F\" opacity=\".6\">\u003c/circle>\u003ccircle cx=\"0.69\" cy=\"3.12\" r=\"0.09\" fill=\"#C2394F\" opacity=\".6\">\u003c/circle>\u003ccircle cx=\"2.66\" cy=\"1.68\" r=\"0.09\" fill=\"#C2394F\" opacity=\".6\">\u003c/circle>\u003ccircle cx=\"3.10\" cy=\"2.55\" r=\"0.10\" fill=\"#C2394F\" opacity=\".6\">\u003c/circle>\u003ccircle cx=\"0.11\" cy=\"0.64\" r=\"0.08\" fill=\"#C2394F\" opacity=\".6\">\u003c/circle>\u003ccircle cx=\"2.60\" cy=\"0.88\" r=\"0.09\" fill=\"#C2394F\" opacity=\".6\">\u003c/circle>\u003ccircle cx=\"2.52\" cy=\"0.17\" r=\"0.08\" fill=\"#C2394F\" opacity=\".6\">\u003c/circle>\u003ccircle cx=\"0.90\" cy=\"0.22\" r=\"0.05\" fill=\"#C2394F\" opacity=\".6\">\u003c/circle>\u003ccircle cx=\"1.27\" cy=\"0.73\" r=\"0.06\" fill=\"#C2394F\" opacity=\".6\">\u003c/circle>\u003ccircle cx=\"0.14\" cy=\"1.86\" r=\"0.07\" fill=\"#C2394F\" opacity=\".6\">\u003c/circle>\u003ccircle cx=\"2.45\" cy=\"2.36\" r=\"0.06\" fill=\"#C2394F\" opacity=\".6\">\u003c/circle>\u003ccircle cx=\"3.61\" cy=\"0.00\" r=\"0.07\" fill=\"#C2394F\" opacity=\".6\">\u003c/circle>\u003ccircle cx=\"1.11\" cy=\"1.64\" r=\"0.05\" fill=\"#C2394F\" opacity=\".6\">\u003c/circle>\u003ccircle cx=\"3.33\" cy=\"1.50\" r=\"0.04\" fill=\"#C2394F\" opacity=\".6\">\u003c/circle>\u003ccircle cx=\"2.45\" cy=\"0.38\" r=\"0.08\" fill=\"#C2394F\" opacity=\".6\">\u003c/circle>\u003c/pattern>\n  \u003cpattern id=\"velvet2\" width=\"4\" height=\"4\" patternUnits=\"userSpaceOnUse\" patternTransform=\"rotate(37)\">\u003crect width=\"4\" height=\"4\" fill=\"#94152B\">\u003c/rect>\u003ccircle cx=\"1.36\" cy=\"2.32\" r=\"0.19\" fill=\"#6E0718\" opacity=\"0.77\">\u003c/circle>\u003ccircle cx=\"1.68\" cy=\"3.25\" r=\"0.15\" fill=\"#6E0718\" opacity=\"0.57\">\u003c/circle>\u003ccircle cx=\"0.57\" cy=\"2.38\" r=\"0.13\" fill=\"#6E0718\" opacity=\"0.83\">\u003c/circle>\u003ccircle cx=\"3.87\" cy=\"2.43\" r=\"0.10\" fill=\"#6E0718\" opacity=\"0.80\">\u003c/circle>\u003ccircle cx=\"0.00\" cy=\"0.43\" r=\"0.13\" fill=\"#6E0718\" opacity=\"0.68\">\u003c/circle>\u003ccircle cx=\"0.56\" cy=\"2.52\" r=\"0.18\" fill=\"#6E0718\" opacity=\"0.57\">\u003c/circle>\u003ccircle cx=\"1.73\" cy=\"0.91\" r=\"0.09\" fill=\"#6E0718\" opacity=\"0.84\">\u003c/circle>\u003ccircle cx=\"1.52\" cy=\"3.84\" r=\"0.19\" fill=\"#6E0718\" opacity=\"0.67\">\u003c/circle>\u003ccircle cx=\"1.04\" cy=\"3.92\" r=\"0.12\" fill=\"#6E0718\" opacity=\"0.59\">\u003c/circle>\u003ccircle cx=\"1.28\" cy=\"3.94\" r=\"0.12\" fill=\"#6E0718\" opacity=\"0.53\">\u003c/circle>\u003ccircle cx=\"1.91\" cy=\"0.49\" r=\"0.14\" fill=\"#6E0718\" opacity=\"0.60\">\u003c/circle>\u003ccircle cx=\"1.17\" cy=\"3.13\" r=\"0.17\" fill=\"#6E0718\" opacity=\"0.41\">\u003c/circle>\u003ccircle cx=\"2.13\" cy=\"1.10\" r=\"0.19\" fill=\"#6E0718\" opacity=\"0.75\">\u003c/circle>\u003ccircle cx=\"0.98\" cy=\"1.07\" r=\"0.07\" fill=\"#6E0718\" opacity=\"0.84\">\u003c/circle>\u003ccircle cx=\"1.17\" cy=\"2.43\" r=\"0.12\" fill=\"#6E0718\" opacity=\"0.69\">\u003c/circle>\u003ccircle cx=\"2.42\" cy=\"2.97\" r=\"0.07\" fill=\"#6E0718\" opacity=\"0.74\">\u003c/circle>\u003ccircle cx=\"1.20\" cy=\"2.13\" r=\"0.10\" fill=\"#6E0718\" opacity=\"0.53\">\u003c/circle>\u003ccircle cx=\"2.12\" cy=\"1.86\" r=\"0.10\" fill=\"#6E0718\" opacity=\"0.74\">\u003c/circle>\u003ccircle cx=\"2.36\" cy=\"0.15\" r=\"0.09\" fill=\"#6E0718\" opacity=\"0.61\">\u003c/circle>\u003ccircle cx=\"3.67\" cy=\"3.55\" r=\"0.13\" fill=\"#6E0718\" opacity=\"0.41\">\u003c/circle>\u003ccircle cx=\"3.11\" cy=\"1.71\" r=\"0.14\" fill=\"#6E0718\" opacity=\"0.72\">\u003c/circle>\u003ccircle cx=\"2.53\" cy=\"1.93\" r=\"0.19\" fill=\"#6E0718\" opacity=\"0.57\">\u003c/circle>\u003ccircle cx=\"1.57\" cy=\"3.41\" r=\"0.08\" fill=\"#6E0718\" opacity=\"0.53\">\u003c/circle>\u003ccircle cx=\"3.32\" cy=\"0.26\" r=\"0.18\" fill=\"#6E0718\" opacity=\"0.71\">\u003c/circle>\u003ccircle cx=\"1.73\" cy=\"1.15\" r=\"0.17\" fill=\"#6E0718\" opacity=\"0.81\">\u003c/circle>\u003ccircle cx=\"0.57\" cy=\"1.91\" r=\"0.13\" fill=\"#6E0718\" opacity=\"0.62\">\u003c/circle>\u003ccircle cx=\"1.32\" cy=\"0.61\" r=\"0.14\" fill=\"#6E0718\" opacity=\"0.77\">\u003c/circle>\u003ccircle cx=\"0.27\" cy=\"0.92\" r=\"0.17\" fill=\"#6E0718\" opacity=\"0.76\">\u003c/circle>\u003ccircle cx=\"2.65\" cy=\"0.10\" r=\"0.16\" fill=\"#6E0718\" opacity=\"0.84\">\u003c/circle>\u003ccircle cx=\"3.99\" cy=\"2.80\" r=\"0.06\" fill=\"#6E0718\" opacity=\"0.78\">\u003c/circle>\u003ccircle cx=\"0.88\" cy=\"2.58\" r=\"0.19\" fill=\"#6E0718\" opacity=\"0.72\">\u003c/circle>\u003ccircle cx=\"0.54\" cy=\"1.17\" r=\"0.19\" fill=\"#6E0718\" opacity=\"0.47\">\u003c/circle>\u003ccircle cx=\"2.44\" cy=\"1.66\" r=\"0.07\" fill=\"#6E0718\" opacity=\"0.68\">\u003c/circle>\u003ccircle cx=\"0.17\" cy=\"0.43\" r=\"0.11\" fill=\"#6E0718\" opacity=\"0.43\">\u003c/circle>\u003ccircle cx=\"0.23\" cy=\"2.30\" r=\"0.16\" fill=\"#6E0718\" opacity=\"0.80\">\u003c/circle>\u003ccircle cx=\"0.54\" cy=\"1.73\" r=\"0.10\" fill=\"#6E0718\" opacity=\"0.67\">\u003c/circle>\u003ccircle cx=\"1.96\" cy=\"3.75\" r=\"0.11\" fill=\"#6E0718\" opacity=\"0.43\">\u003c/circle>\u003ccircle cx=\"2.79\" cy=\"0.60\" r=\"0.14\" fill=\"#6E0718\" opacity=\"0.63\">\u003c/circle>\u003ccircle cx=\"3.64\" cy=\"2.22\" r=\"0.14\" fill=\"#6E0718\" opacity=\"0.52\">\u003c/circle>\u003ccircle cx=\"2.21\" cy=\"1.02\" r=\"0.16\" fill=\"#6E0718\" opacity=\"0.63\">\u003c/circle>\u003ccircle cx=\"0.54\" cy=\"0.94\" r=\"0.11\" fill=\"#6E0718\" opacity=\"0.73\">\u003c/circle>\u003ccircle cx=\"0.72\" cy=\"2.85\" r=\"0.15\" fill=\"#6E0718\" opacity=\"0.44\">\u003c/circle>\u003ccircle cx=\"2.67\" cy=\"0.36\" r=\"0.07\" fill=\"#6E0718\" opacity=\"0.67\">\u003c/circle>\u003ccircle cx=\"0.95\" cy=\"3.51\" r=\"0.12\" fill=\"#6E0718\" opacity=\"0.55\">\u003c/circle>\u003ccircle cx=\"3.19\" cy=\"0.12\" r=\"0.16\" fill=\"#6E0718\" opacity=\"0.42\">\u003c/circle>\u003ccircle cx=\"0.60\" cy=\"3.81\" r=\"0.15\" fill=\"#6E0718\" opacity=\"0.50\">\u003c/circle>\u003ccircle cx=\"0.46\" cy=\"3.89\" r=\"0.09\" fill=\"#B02A40\" opacity=\".6\">\u003c/circle>\u003ccircle cx=\"3.28\" cy=\"0.56\" r=\"0.09\" fill=\"#B02A40\" opacity=\".6\">\u003c/circle>\u003ccircle cx=\"1.42\" cy=\"0.94\" r=\"0.07\" fill=\"#B02A40\" opacity=\".6\">\u003c/circle>\u003ccircle cx=\"2.46\" cy=\"1.39\" r=\"0.07\" fill=\"#B02A40\" opacity=\".6\">\u003c/circle>\u003ccircle cx=\"0.55\" cy=\"3.32\" r=\"0.09\" fill=\"#B02A40\" opacity=\".6\">\u003c/circle>\u003ccircle cx=\"3.22\" cy=\"1.73\" r=\"0.11\" fill=\"#B02A40\" opacity=\".6\">\u003c/circle>\u003ccircle cx=\"2.07\" cy=\"2.37\" r=\"0.09\" fill=\"#B02A40\" opacity=\".6\">\u003c/circle>\u003ccircle cx=\"2.96\" cy=\"1.58\" r=\"0.05\" fill=\"#B02A40\" opacity=\".6\">\u003c/circle>\u003ccircle cx=\"0.13\" cy=\"0.81\" r=\"0.04\" fill=\"#B02A40\" opacity=\".6\">\u003c/circle>\u003ccircle cx=\"3.56\" cy=\"1.92\" r=\"0.10\" fill=\"#B02A40\" opacity=\".6\">\u003c/circle>\u003ccircle cx=\"0.00\" cy=\"1.88\" r=\"0.11\" fill=\"#B02A40\" opacity=\".6\">\u003c/circle>\u003ccircle cx=\"2.48\" cy=\"1.71\" r=\"0.08\" fill=\"#B02A40\" opacity=\".6\">\u003c/circle>\u003ccircle cx=\"0.40\" cy=\"0.62\" r=\"0.05\" fill=\"#B02A40\" opacity=\".6\">\u003c/circle>\u003ccircle cx=\"1.50\" cy=\"1.54\" r=\"0.11\" fill=\"#B02A40\" opacity=\".6\">\u003c/circle>\u003ccircle cx=\"0.61\" cy=\"1.02\" r=\"0.06\" fill=\"#B02A40\" opacity=\".6\">\u003c/circle>\u003c/pattern>\n  \u003cradialGradient id=\"blot\">\u003cstop offset=\"0\" stop-color=\"#3E000A\" stop-opacity=\".5\">\u003c/stop>\u003cstop offset=\"1\" stop-color=\"#3E000A\" stop-opacity=\"0\">\u003c/stop>\u003c/radialGradient>\n  \u003cradialGradient id=\"copper\" cx=\".45\" cy=\".35\" r=\".7\">\u003cstop offset=\"0\" stop-color=\"#F0BC92\">\u003c/stop>\u003cstop offset=\".55\" stop-color=\"#C47F55\">\u003c/stop>\u003cstop offset=\"1\" stop-color=\"#7E4127\">\u003c/stop>\u003c/radialGradient>\n  \u003cradialGradient id=\"turq\" cx=\".5\" cy=\".45\" r=\".55\">\u003cstop offset=\".55\" stop-color=\"#4FCDDB\">\u003c/stop>\u003cstop offset=\"1\" stop-color=\"#1C8BA6\">\u003c/stop>\u003c/radialGradient>\n  \u003cradialGradient id=\"violet\" cx=\".38\" cy=\".3\" r=\".75\">\u003cstop offset=\"0\" stop-color=\"#6B55D8\">\u003c/stop>\u003cstop offset=\".5\" stop-color=\"#2C2EA4\">\u003c/stop>\u003cstop offset=\"1\" stop-color=\"#12135E\">\u003c/stop>\u003c/radialGradient>\n  \u003clinearGradient id=\"neck\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\">\u003cstop offset=\"0\" stop-color=\"#2F9C82\">\u003c/stop>\u003cstop offset=\"1\" stop-color=\"#1B6A5A\" stop-opacity=\"0\">\u003c/stop>\u003c/linearGradient>\n  \u003clinearGradient id=\"eyeblue\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\">\u003cstop offset=\"0\" stop-color=\"#3C86F0\">\u003c/stop>\u003cstop offset=\".6\" stop-color=\"#1F49C4\">\u003c/stop>\u003cstop offset=\"1\" stop-color=\"#142E8E\">\u003c/stop>\u003c/linearGradient>\n  \u003cradialGradient id=\"eyebronze\" cx=\".5\" cy=\".6\" r=\".6\">\u003cstop offset=\".3\" stop-color=\"#F4B65A\">\u003c/stop>\u003cstop offset=\".8\" stop-color=\"#C8742C\">\u003c/stop>\u003cstop offset=\"1\" stop-color=\"#8E4A1C\">\u003c/stop>\u003c/radialGradient>\n  \u003cradialGradient id=\"deepblue\" cx=\".4\" cy=\".35\" r=\".7\">\u003cstop offset=\"0\" stop-color=\"#4A72F6\">\u003c/stop>\u003cstop offset=\".55\" stop-color=\"#1A33C4\">\u003c/stop>\u003cstop offset=\"1\" stop-color=\"#0A1670\">\u003c/stop>\u003c/radialGradient>\n\u003c/defs>", "rev": 2}</script>
+<script id="app">
+(() => {
+'use strict';
+const MM = 96 / 25.4;
+let S = JSON.parse(document.getElementById('state').textContent);
+const $ = (id) => document.getElementById(id);
+const stage = $('stage'), wrap = $('wrap'), statusEl = $('status');
+const printMode = location.hash === '#print';
+if (printMode) document.body.classList.add('print');
+let zoom = 1, sel = null, editing = null, showGuides = true, dirty = false;
+const undo = [], redo = [];
+let artifactApi = null, assetsApi = null;
+
+function setStatus(t) { statusEl.textContent = t; }
+function snapshot() { undo.push(JSON.stringify(S)); if (undo.length > 80) undo.shift(); redo.length = 0; markDirty(); }
+function markDirty() { dirty = true; setStatus('Unsaved changes'); try { localStorage.setItem('draft', JSON.stringify({ rev: S.rev || 0, at: Date.now(), S })); } catch (e) {} syncButtons(); }
+function find(id) {
+  for (const sh of S.sheets) for (const pn of sh.panels) { const i = pn.els.findIndex((e) => e.id === id); if (i >= 0) return { sh, pn, i, el: pn.els[i] }; }
+  return null;
+}
+function uid() { return 'n' + Math.random().toString(36).slice(2, 9); }
+
+// ---------- rendering
+function renderDefs() {
+  $('defs').innerHTML = `<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>${S.globalDefs}${S.defs}</defs></svg>`;
+}
+function elNode(e) {
+  const d = document.createElement('div');
+  d.className = 'el ' + e.kind + 'el' + (e.hidden ? ' hid' : '');
+  d.dataset.id = e.id;
+  d.style.cssText = `left:${e.x}mm;top:${e.y}mm;width:${e.w}mm;` + (e.kind === 'text' ? '' : `height:${e.h}mm;`) + (e.rot ? `transform:rotate(${e.rot}deg);` : '');
+  if (e.kind === 'svg') {
+    d.innerHTML = `<svg viewBox="${e.vb.join(' ')}" preserveAspectRatio="none">${e.svg}</svg>`;
+  } else if (e.kind === 'img') {
+    const im = document.createElement('img');
+    im.src = e.src; im.alt = ''; im.draggable = false;
+    if (e.fit) { im.style.objectFit = e.fit; if (e.pos) im.style.objectPosition = e.pos; }
+    d.appendChild(im);
+  } else {
+    const inner = document.createElement(e.tag || 'div');
+    inner.className = 'inner ' + (e.cls || '');
+    inner.setAttribute('style', e.style || '');
+    inner.innerHTML = e.html;
+    d.appendChild(inner);
+  }
+  return d;
+}
+function render() {
+  stage.innerHTML = '';
+  for (const sh of S.sheets) {
+    const name = document.createElement('p'); name.className = 'sheetname'; name.textContent = sh.name + ' sheet · 318 × 154 mm with bleed';
+    stage.appendChild(name);
+    const sd = document.createElement('div');
+    sd.className = 'sheet'; sd.dataset.sheet = sh.id;
+    sd.style.backgroundImage = `url(${sh.bg})`;
+    for (const pn of sh.panels) {
+      const pd = document.createElement('div');
+      pd.className = 'panel'; pd.dataset.panel = pn.id;
+      pd.style.left = pn.x + 'mm'; pd.style.width = pn.w + 'mm';
+      pn.els.forEach((e) => pd.appendChild(elNode(e)));
+      sd.appendChild(pd);
+    }
+    if (showGuides && !printMode) {
+      const g = document.createElement('div'); g.className = 'guides';
+      g.innerHTML = '<div class="trim"></div>' + sh.panels.slice(1).map((p) => `<div class="fold" style="left:${p.x}mm"></div>`).join('') +
+        sh.panels.map((p) => `<div class="pn" style="left:${p.x + 4}mm">${p.name}</div>`).join('');
+      sd.appendChild(g);
+    }
+    stage.appendChild(sd);
+  }
+  drawSel(); renderLayers(); syncButtons();
+}
+function rerenderEl(id) {
+  const f = find(id); if (!f) return;
+  const old = stage.querySelector(`.el[data-id="${id}"]`);
+  if (old) old.replaceWith(elNode(f.el));
+  drawSel();
+}
+
+// ---------- selection overlay
+function drawSel() {
+  stage.querySelectorAll('.selbox').forEach((n) => n.remove());
+  if (!sel || printMode) return;
+  const f = find(sel); if (!f) { sel = null; return; }
+  const node = stage.querySelector(`.el[data-id="${sel}"]`);
+  const sd = stage.querySelector(`.sheet[data-sheet="${f.sh.id}"]`);
+  const h = f.el.kind === 'text' ? node.offsetHeight / MM : f.el.h;
+  const b = document.createElement('div'); b.className = 'selbox';
+  b.style.cssText = `left:${f.pn.x + f.el.x}mm;top:${f.el.y}mm;width:${f.el.w}mm;height:${h}mm;` + (f.el.rot ? `transform:rotate(${f.el.rot}deg)` : '');
+  b.innerHTML = '<div class="h rot" data-h="rot"></div>' + (f.el.kind === 'text' ? '<div class="h e" data-h="e"></div>' : '') + '<div class="h se" data-h="se"></div>';
+  sd.appendChild(b);
+}
+function select(id) {
+  if (editing && editing !== id) stopEdit();
+  sel = id; drawSel(); renderLayers(); syncButtons();
+}
+
+// ---------- layers
+function labelOf(e) {
+  if (e.label) return e.label;
+  if (e.kind === 'text') { const t = document.createElement('div'); t.innerHTML = e.html; return (t.textContent || 'Text').trim().replace(/\s+/g, ' ').slice(0, 34) || 'Text'; }
+  const src = e.kind === 'img' ? e.src : e.img;
+  if (src) { const n = src.split('/').pop().replace(/\.\w+$/, ''); return ({ 'roses-tr': 'Roses', 'roses-bl': 'Roses', 'roses-fold': 'Rose bouquet', 'cover-mirror': 'Curtain & roses', cover: 'Cover artwork', garden: 'Garden background', mandap: 'Mandap photo', feather: 'Peacock feather', logo: 'Logo' })[n] || (n.startsWith('photo') ? 'Photo ' + n.slice(6) : src.startsWith('data:') || src.includes('_blob') ? 'Image' : n); }
+  if (e.svg.includes('<text')) return 'Script heading';
+  if (/<circle[^>]*r="1[0-9]/.test(e.svg)) return 'Gold ring';
+  if (e.svg.includes('id="rib"')) return 'Ribbon';
+  if (e.svg.includes('<rect') && e.w > 60 && e.h > 100) return 'Gold frame';
+  if (e.svg.includes('fadeB')) return 'Soft fade';
+  if (e.svg.includes('<rect') && e.svg.includes('FBF0DC')) return 'Cream panel';
+  if (e.w > 15 && e.h < 8) return 'Gold divider';
+  return 'Ornament';
+}
+function renderLayers() {
+  const L = $('layers'); if (!L) return;
+  L.innerHTML = '';
+  for (const sh of S.sheets) for (const pn of sh.panels) {
+    const h = document.createElement('h3'); h.textContent = pn.name; L.appendChild(h);
+    [...pn.els].reverse().forEach((e) => {
+      const row = document.createElement('div'); row.className = 'layer' + (e.id === sel ? ' sel' : '');
+      row.innerHTML = `<span class="k">${e.kind === 'text' ? 'Text' : 'Art'}</span><span></span><button aria-label="Show or hide">${e.hidden ? 'Show' : 'Hide'}</button>`;
+      row.children[1].textContent = labelOf(e);
+      row.addEventListener('click', (ev) => { if (ev.target.tagName === 'BUTTON') return; select(e.id); scrollToSel(); });
+      row.querySelector('button').addEventListener('click', () => { snapshot(); e.hidden = !e.hidden; rerenderEl(e.id); renderLayers(); });
+      L.appendChild(row);
+    });
+  }
+}
+function scrollToSel() {
+  const n = stage.querySelector(`.el[data-id="${sel}"]`); if (!n) return;
+  const r = n.getBoundingClientRect(), w = wrap.getBoundingClientRect();
+  if (r.top < w.top || r.bottom > w.bottom || r.left < w.left || r.right > w.right) wrap.scrollBy({ left: r.left - w.left - 60, top: r.top - w.top - 60, behavior: 'smooth' });
+}
+
+// ---------- toolbar state
+function syncButtons() {
+  const f = sel && find(sel); const k = f ? f.el.kind : null;
+  for (const id of ['rotL', 'rotR', 'back', 'front', 'dup', 'del']) $(id).disabled = !f;
+  $('fsDown').disabled = $('fsUp').disabled = $('color').disabled = k !== 'text';
+  const canReplace = k === 'img' || (k === 'svg' && f.el.img);
+  $('replaceBtn').style.opacity = canReplace ? 1 : .35; $('replaceBtn').style.pointerEvents = canReplace ? 'auto' : 'none';
+  $('undo').disabled = !undo.length; $('redo').disabled = !redo.length;
+  if (k === 'text') {
+    const n = stage.querySelector(`.el[data-id="${sel}"] .inner`);
+    if (n) { const c = getComputedStyle(n).color.match(/\d+/g); if (c) $('color').value = '#' + c.slice(0, 3).map((v) => (+v).toString(16).padStart(2, '0')).join(''); }
+  }
+}
+
+// ---------- pointer interactions
+let drag = null;
+stage.addEventListener('pointerdown', (ev) => {
+  if (printMode) return;
+  const handle = ev.target.closest('.h');
+  if (handle && sel) { startDrag(ev, handle.dataset.h); return; }
+  const node = ev.target.closest('.el');
+  if (!node) { if (!ev.target.closest('[contenteditable=true]')) { stopEdit(); select(null); } return; }
+  if (editing === node.dataset.id) return;
+  select(node.dataset.id);
+  startDrag(ev, 'move');
+});
+function startDrag(ev, mode) {
+  const f = find(sel); if (!f) return;
+  ev.preventDefault();
+  const node = stage.querySelector(`.el[data-id="${sel}"]`);
+  const r = node.getBoundingClientRect();
+  drag = { mode, x0: ev.clientX, y0: ev.clientY, e0: { ...f.el }, moved: false, cx: r.left + r.width / 2, cy: r.top + r.height / 2, shift: ev.shiftKey };
+  wrap.setPointerCapture?.(ev.pointerId);
+}
+window.addEventListener('pointermove', (ev) => {
+  if (!drag) return;
+  const f = find(sel); if (!f) return;
+  const dx = (ev.clientX - drag.x0) / (MM * zoom), dy = (ev.clientY - drag.y0) / (MM * zoom);
+  if (!drag.moved && Math.hypot(dx, dy) < 0.4) return;
+  if (!drag.moved) { snapshot(); drag.moved = true; }
+  const e = f.el, o = drag.e0;
+  if (drag.mode === 'move') { e.x = +(o.x + dx).toFixed(2); e.y = +(o.y + dy).toFixed(2); }
+  else if (drag.mode === 'e') { e.w = Math.max(5, +(o.w + dx).toFixed(2)); }
+  else if (drag.mode === 'se') {
+    if (e.kind === 'text') { e.w = Math.max(5, +(o.w + dx).toFixed(2)); }
+    else if (ev.shiftKey) { e.w = Math.max(3, +(o.w + dx).toFixed(2)); e.h = Math.max(3, +(o.h + dy).toFixed(2)); }
+    else { const k = Math.max(0.05, (o.w + (dx + dy * o.w / o.h) / 2) / o.w); e.w = +(o.w * k).toFixed(2); e.h = +(o.h * k).toFixed(2); }
+  } else if (drag.mode === 'rot') {
+    const a = Math.atan2(ev.clientY - drag.cy, ev.clientX - drag.cx) * 180 / Math.PI + 90;
+    e.rot = ev.shiftKey ? Math.round(a) : Math.round(a / 5) * 5;
+  }
+  const node = stage.querySelector(`.el[data-id="${sel}"]`);
+  node.style.left = e.x + 'mm'; node.style.top = e.y + 'mm'; node.style.width = e.w + 'mm';
+  if (e.kind !== 'text') node.style.height = e.h + 'mm';
+  node.style.transform = e.rot ? `rotate(${e.rot}deg)` : '';
+  drawSel();
+});
+window.addEventListener('pointerup', () => { if (drag && drag.moved) markDirty(); drag = null; });
+
+// ---------- text editing
+stage.addEventListener('dblclick', (ev) => {
+  const node = ev.target.closest('.el.textel'); if (!node) return;
+  const inner = node.querySelector('.inner');
+  editing = node.dataset.id; snapshot();
+  inner.contentEditable = 'true'; inner.focus();
+  const range = document.createRange(); range.selectNodeContents(inner); const s = getSelection(); s.removeAllRanges(); s.addRange(range);
+});
+function stopEdit() {
+  if (!editing) return;
+  const f = find(editing); const node = stage.querySelector(`.el[data-id="${editing}"] .inner`);
+  if (f && node) { node.contentEditable = 'false'; if (f.el.html !== node.innerHTML) { f.el.html = node.innerHTML; markDirty(); } }
+  editing = null; renderLayers(); drawSel();
+}
+stage.addEventListener('focusout', (ev) => { if (ev.target.isContentEditable) stopEdit(); });
+
+// ---------- style helpers
+function styleGet(e, prop) { const m = (e.style || '').match(new RegExp('(?:^|;)\\s*' + prop + '\\s*:\\s*([^;]+)')); return m ? m[1].trim() : null; }
+function styleSet(e, prop, val) {
+  const parts = (e.style || '').split(';').map((s) => s.trim()).filter((s) => s && !s.startsWith(prop + ':') && !s.startsWith(prop + ' :'));
+  parts.push(prop + ':' + val); e.style = parts.join(';');
+}
+function fontSize(delta) {
+  const f = find(sel); if (!f || f.el.kind !== 'text') return;
+  const n = stage.querySelector(`.el[data-id="${sel}"] .inner`);
+  const cur = parseFloat(styleGet(f.el, 'font-size')) || parseFloat(getComputedStyle(n).fontSize) * 0.75;
+  snapshot(); styleSet(f.el, 'font-size', Math.max(4, +(cur + delta).toFixed(1)) + 'pt'); rerenderEl(sel);
+}
+$('fsUp').onclick = () => fontSize(1);
+$('fsDown').onclick = () => fontSize(-1);
+$('color').addEventListener('input', (ev) => { const f = find(sel); if (!f || f.el.kind !== 'text') return; if (!drag) { snapshot(); } styleSet(f.el, 'color', ev.target.value); rerenderEl(sel); });
+$('rotL').onclick = () => { const f = find(sel); if (!f) return; snapshot(); f.el.rot = ((f.el.rot || 0) - 5) % 360; rerenderEl(sel); };
+$('rotR').onclick = () => { const f = find(sel); if (!f) return; snapshot(); f.el.rot = ((f.el.rot || 0) + 5) % 360; rerenderEl(sel); };
+function restack(dir) {
+  const f = find(sel); if (!f) return; const j = f.i + dir; if (j < 0 || j >= f.pn.els.length) return;
+  snapshot(); const [e] = f.pn.els.splice(f.i, 1); f.pn.els.splice(j, 0, e); render();
+}
+$('back').onclick = () => restack(-1);
+$('front').onclick = () => restack(1);
+$('dup').onclick = () => { const f = find(sel); if (!f) return; snapshot(); const c = JSON.parse(JSON.stringify(f.el)); c.id = uid(); c.x += 4; c.y += 4; f.pn.els.splice(f.i + 1, 0, c); sel = c.id; render(); };
+$('del').onclick = () => { const f = find(sel); if (!f) return; snapshot(); f.pn.els.splice(f.i, 1); sel = null; render(); };
+
+// ---------- images
+async function imageUrl(file) {
+  if (assetsApi) {
+    try { setStatus('Uploading image…'); const r = await assetsApi.upload(file); return r.url; }
+    catch (e) { setStatus('Upload failed, keeping the image inside the page instead'); }
+  }
+  return await new Promise((res, rej) => {
+    const img = new Image(); const u = URL.createObjectURL(file);
+    img.onload = () => { const k = Math.min(1, 2400 / Math.max(img.width, img.height)); const c = document.createElement('canvas'); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k); c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(u); res(c.toDataURL('image/jpeg', 0.9)); };
+    img.onerror = rej; img.src = u;
+  });
+}
+$('replaceFile').addEventListener('change', async (ev) => {
+  const file = ev.target.files[0]; ev.target.value = ''; const f = sel && find(sel); if (!file || !f) return;
+  const url = await imageUrl(file); snapshot();
+  if (f.el.kind === 'img') f.el.src = url;
+  else { f.el.svg = f.el.svg.replace(/(<image[^>]*?\shref=")[^"]*(")/, `$1${url}$2`); f.el.img = url; }
+  rerenderEl(sel); renderLayers(); setStatus('Image replaced · unsaved');
+});
+function targetPanel() { const f = sel && find(sel); if (f) return f; const sh = S.sheets[0]; return { sh, pn: sh.panels[1] }; }
+$('addImgFile').addEventListener('change', async (ev) => {
+  const file = ev.target.files[0]; ev.target.value = ''; if (!file) return;
+  const url = await imageUrl(file); const im = new Image();
+  im.onload = () => { const { pn } = targetPanel(); const w = Math.min(60, pn.w - 20), h = w * im.height / im.width; snapshot(); const e = { id: uid(), kind: 'img', src: url, x: (pn.w - w) / 2, y: 40, w, h }; pn.els.push(e); sel = e.id; render(); scrollToSel(); };
+  im.src = url;
+});
+$('addText').onclick = () => { const { pn } = targetPanel(); snapshot(); const e = { id: uid(), kind: 'text', tag: 'div', cls: 'box script', style: 'font-size:20pt', html: 'Your text', x: 10, y: 70, w: Math.min(80, pn.w - 20), h: 10 }; pn.els.push(e); sel = e.id; render(); scrollToSel(); };
+
+// ---------- undo / zoom / guides / keys
+function applyHist(from, to) { if (!from.length) return; to.push(JSON.stringify(S)); S = JSON.parse(from.pop()); if (sel && !find(sel)) sel = null; renderDefs(); render(); markDirty(); }
+$('undo').onclick = () => applyHist(undo, redo);
+$('redo').onclick = () => applyHist(redo, undo);
+function setZoom(z) { zoom = Math.max(0.2, Math.min(4, z)); stage.style.transform = `scale(${zoom})`; }
+function fit() { const avail = wrap.clientWidth - 20; setZoom(avail / (318 * MM + 48)); }
+$('zin').onclick = () => setZoom(zoom * 1.2);
+$('zout').onclick = () => setZoom(zoom / 1.2);
+$('zfit').onclick = fit;
+$('guides').onclick = () => { showGuides = !showGuides; $('guides').classList.toggle('on', showGuides); render(); };
+window.addEventListener('keydown', (ev) => {
+  if (ev.target.isContentEditable) { if (ev.key === 'Escape') stopEdit(); return; }
+  if (ev.target.tagName === 'INPUT' || ev.target.tagName === 'SELECT') return;
+  const mod = ev.ctrlKey || ev.metaKey;
+  if (mod && ev.key.toLowerCase() === 'z') { ev.preventDefault(); ev.shiftKey ? applyHist(redo, undo) : applyHist(undo, redo); return; }
+  if (mod && ev.key.toLowerCase() === 's') { ev.preventDefault(); save(); return; }
+  const f = sel && find(sel); if (!f) return;
+  const step = ev.shiftKey ? 5 : 0.5;
+  const mv = { ArrowLeft: [-step, 0], ArrowRight: [step, 0], ArrowUp: [0, -step], ArrowDown: [0, step] }[ev.key];
+  if (mv) { ev.preventDefault(); snapshot(); f.el.x = +(f.el.x + mv[0]).toFixed(2); f.el.y = +(f.el.y + mv[1]).toFixed(2); rerenderEl(sel); }
+  if (ev.key === 'Delete' || ev.key === 'Backspace') { ev.preventDefault(); $('del').click(); }
+  if (ev.key === 'Escape') select(null);
+});
+wrap.addEventListener('wheel', (ev) => { if (ev.ctrlKey) { ev.preventDefault(); setZoom(zoom * (ev.deltaY < 0 ? 1.1 : 1 / 1.1)); } }, { passive: false });
+
+// ---------- save (republish this page with the state embedded)
+const RESET = ':root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}';
+function buildDoc() {
+  const head = document.querySelector('title').outerHTML + document.querySelector('link[href*="fonts.googleapis"]').outerHTML;
+  const css = '<style id="css">' + $('css').textContent + '</style>';
+  const state = JSON.stringify({ ...S, rev: (S.rev || 0) + 1 }).replace(/</g, '\\u003c');
+  return '<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>' + RESET + '</style></head><body>' +
+    head + '\n' + css + '\n' + TEMPLATE_APP_MARKUP + '\n<div id="defs"></div>\n<script type="application/json" id="state">' + state + '<\/script>\n<script id="app">' + $('app').textContent + '<\/script></body></html>';
+}
+const TEMPLATE_APP_MARKUP = document.querySelector('.app').outerHTML;
+async function save() {
+  stopEdit();
+  if (!artifactApi) { setStatus('Saving is not available in this view. Your draft is kept in this browser.'); return; }
+  try {
+    setStatus('Saving…'); $('save').disabled = true;
+    await artifactApi.publish(buildDoc());
+    try { localStorage.removeItem('draft'); } catch (e) {}
+    setStatus('Saved');
+  } catch (e) {
+    const c = e && e.code;
+    setStatus(c === 'conflict' ? 'Someone else saved first; reloading their version' : c === 'not_writer' || c === 'not_granted' ? 'You can view this page but not save to it' : 'Save failed: ' + (e.message || c || 'unknown error'));
+  } finally { $('save').disabled = false; }
+}
+$('save').onclick = save;
+
+// ---------- start
+renderDefs(); render();
+if (!printMode) {
+  requestAnimationFrame(fit);
+  try {
+    const d = JSON.parse(localStorage.getItem('draft') || 'null');
+    if (d && d.rev === (S.rev || 0) && d.S) {
+      const b = document.createElement('div'); b.className = 'banner';
+      b.innerHTML = '<span>You have unsaved edits from your last visit.</span><button class="primary">Restore</button><button>Discard</button>';
+      b.children[1].onclick = () => { snapshot(); S = d.S; renderDefs(); render(); b.remove(); };
+      b.children[2].onclick = () => { try { localStorage.removeItem('draft'); } catch (e) {} b.remove(); };
+      document.body.appendChild(b);
+    }
+  } catch (e) {}
+  setStatus('All changes saved');
+  let tries = 0;
+  (function hook() {
+    if (window.claude && window.claude.use) {
+      window.claude.use('artifact').then((a) => { artifactApi = a; if (!a) setStatus('Viewing only · edits stay in this browser'); });
+      window.claude.use('assets').then((a) => { assetsApi = a; });
+    } else if (tries++ < 30) setTimeout(hook, 100);
+    else setStatus('Saving needs the Claude viewer · edits stay in this browser');
+  })();
+  window.addEventListener('resize', () => { if (!drag) fit(); });
+}
+})();
+</script>
