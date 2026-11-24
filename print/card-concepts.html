@@ -1,0 +1,147 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Card concepts</title>
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cinzel:wght@500;700&family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&display=block" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#efe6da;font-family:'Cormorant Garamond',serif;color:#4A1A1E;padding:10mm 10mm 4mm;width:300mm}
+h1{font:400 30pt 'Great Vibes';color:#7A0F22}
+.sub{font:600 9pt 'Cormorant Garamond';color:#6b5040;margin:0 0 6mm}
+.row{display:grid;grid-template-columns:38mm 1fr;gap:6mm;padding:6mm 0;border-top:.3mm solid #cdb593;align-items:center}
+.lab b{display:block;font:700 9.5pt Cinzel;color:#7A0F22;letter-spacing:.04em}
+.lab span{display:block;font:600 8.6pt 'Cormorant Garamond';line-height:1.35;margin-top:1.5mm}
+.lab i{display:block;font:italic 600 8pt 'Cormorant Garamond';color:#8A5A18;margin-top:1.5mm}
+.stage{display:flex;gap:9mm;align-items:center;flex-wrap:nowrap}
+.cap{font:700 6pt Cinzel;letter-spacing:.18em;color:#8a7360;text-align:center;margin-top:2mm}
+.card{position:relative;width:85mm;height:55mm;overflow:hidden;box-shadow:0 1.2mm 3mm rgba(60,20,10,.3);background:#FBF3E6 url(assets/cream-bg.jpg) center/cover}
+.script{font-family:'Great Vibes';color:#7A0F22;line-height:1}
+.caps{font-family:Cinzel;font-weight:700;color:#7A0F22;letter-spacing:.12em;text-transform:uppercase}
+.gold{background:linear-gradient(135deg,#FBE7A8,#D9AE5A 40%,#A8752A 65%,#F1D287)}
+.contact{font:700 7pt 'Cormorant Garamond';line-height:1.35;color:#4A1A1E}
+.center{position:absolute;left:0;right:0;text-align:center}
+.roses-tr{position:absolute;right:-3mm;top:-3mm;width:26mm}
+.roses-tl{position:absolute;left:-3mm;top:-3mm;width:26mm;transform:scaleX(-1)}
+.roses-bl{position:absolute;left:-2mm;bottom:-3mm;width:19mm}
+.roses-br{position:absolute;right:-2mm;bottom:-3mm;width:19mm;transform:scaleX(-1)}
+.curtain{background:url(assets/invitation-cover.jpg) 50% 0/260% auto}
+.maroon{background:#6C000C url(assets/floral-1.jpg) center/cover}
+.fold{position:absolute;top:0;bottom:0;border-left:.3mm dashed rgba(255,255,255,.7)}
+.logo{position:absolute;border-radius:50%}
+</style></head><body>
+<h1>Business card concepts</h1>
+<p class="sub">Rough ideas in the brochure's theme · every one closes to standard 85 × 55 mm so it fits a wallet</p>
+
+<!-- 1 curtain gatefold -->
+<div class="row">
+  <div class="lab"><b>1 · Curtain reveal</b><span>Two flaps printed with the cover's red-gold curtain meet in the middle; a gold seal holds them. Open them like a wedding entrance.</span><i>Gatefold, no die · low cost · recommended</i></div>
+  <div class="stage">
+    <div><div class="card curtain">
+      <div style="position:absolute;left:50%;top:0;bottom:0;width:.6mm;margin-left:-.3mm" class="gold"></div>
+      <div class="logo gold" style="left:33.5mm;top:18.5mm;width:18mm;height:18mm;padding:1.3mm"><img src="assets/logo-256.png" style="width:100%"></div>
+      <div class="center caps" style="bottom:3mm;color:#FBEFD6;font-size:5.5pt;text-shadow:0 .3mm 1mm #000">Desi Glasgow Caterer</div>
+    </div><div class="cap">Closed</div></div>
+    <div><div style="display:flex;box-shadow:0 1.2mm 3mm rgba(60,20,10,.3)">
+      <div class="card curtain" style="width:42.5mm;box-shadow:none;background-size:221mm auto;background-position:-68mm 0;transform:perspective(80mm) rotateY(28deg);transform-origin:right"></div>
+      <div class="card" style="box-shadow:none">
+        <img class="roses-tl" src="assets/roses-tr.png" style="width:20mm"><img class="roses-tr" src="assets/roses-tr.png" style="width:20mm">
+        <img src="assets/logo-256.png" class="logo" style="left:35mm;top:4mm;width:15mm">
+        <div class="center script" style="top:20mm;font-size:17pt">Apna Catering</div>
+        <div class="center caps" style="top:28.5mm;font-size:5pt">Wedding &amp; Event Caterers</div>
+        <div class="center contact" style="top:34mm">07818 478036 · 07828 218002<br>hello@apnacatering.co.uk<br>4 Glebe Street, East Kilbride G74 4LY</div>
+      </div>
+      <div class="card curtain" style="width:42.5mm;box-shadow:none;background-size:221mm auto;background-position:-110.5mm 0;transform:perspective(80mm) rotateY(-28deg);transform-origin:left"></div>
+    </div><div class="cap">Opened</div></div>
+  </div>
+</div>
+
+<!-- 2 mini envelope -->
+<div class="row">
+  <div class="lab"><b>2 · Mini envelope</b><span>A tiny version of your maroon peacock envelope with a V flap and gold seal. Lift the flap, the card slides out.</span><i>Die-cut + glue · matches the guest envelope</i></div>
+  <div class="stage">
+    <div><div class="card maroon">
+      <svg viewBox="0 0 85 55" style="position:absolute;inset:0;width:100%;height:100%"><path d="M0,0 L42.5,30 L85,0" fill="#5A000A" stroke="#E0B25A" stroke-width=".7"/></svg>
+      <div class="logo gold" style="left:35mm;top:23mm;width:15mm;height:15mm;padding:1.2mm"><img src="assets/logo-256.png" style="width:100%"></div>
+      <div class="center script" style="bottom:4mm;color:#F1D287;font-size:13pt">Desi Glasgow Caterer</div>
+    </div><div class="cap">Closed</div></div>
+    <div style="position:relative;width:85mm;height:78mm">
+      <svg viewBox="0 0 85 30" style="position:absolute;left:0;top:-7mm;width:85mm;height:30mm"><path d="M0,30 L42.5,0 L85,30Z" fill="#5A000A" stroke="#E0B25A" stroke-width=".7"/><circle cx="42.5" cy="9" r="5" fill="#D9AE5A"/></svg>
+      <div class="card" style="position:absolute;top:2mm;left:6mm;width:73mm;height:46mm">
+        <img class="roses-tr" src="assets/roses-tr.png" style="width:18mm">
+        <div class="center script" style="top:4mm;font-size:15pt">Apna Catering</div>
+        <div class="center contact" style="top:14mm">07818 478036 · 07828 218002<br>hello@apnacatering.co.uk</div>
+      </div>
+      <div class="card maroon" style="position:absolute;top:23mm">
+              </div>
+    </div><div class="cap" style="margin-left:-60mm">Opened</div>
+  </div>
+</div>
+
+<!-- 3 arch die-cut -->
+<div class="row">
+  <div class="lab"><b>3 · Mughal arch</b><span>The top is cut into a jharokha arch. Folds like a booklet: roses outside, services and contacts on the two inside panels.</span><i>Die-cut fold · striking on a table</i></div>
+  <div class="stage">
+    <div><svg width="55mm" height="85mm" viewBox="0 0 55 85" style="filter:drop-shadow(0 1mm 1.5mm rgba(60,20,10,.3))">
+      <defs><clipPath id="ar"><path d="M0,85 L0,26 C0,13 14,10 22,4 Q26,1 27.5,0 Q29,1 33,4 C41,10 55,13 55,26 L55,85Z"/></clipPath></defs>
+      <g clip-path="url(#ar)"><image href="assets/cream-bg.jpg" width="55" height="85" preserveAspectRatio="xMidYMid slice"/>
+        <image href="assets/roses-bl.png" x="-4" y="58" width="24"/><image href="assets/roses-bl.png" x="35" y="58" width="24" transform="translate(94 0) scale(-1 1)"/></g>
+      <path d="M2,83 L2,26 C2,15 15,12 23,6 Q26,3.4 27.5,2.4 Q29,3.4 32,6 C40,12 53,15 53,26 L53,83Z" fill="none" stroke="#B8863A" stroke-width=".5"/>
+      <image href="assets/logo-256.png" x="17" y="16" width="21"/>
+      <text x="27.5" y="48" text-anchor="middle" font-family="Great Vibes" font-size="9" fill="#7A0F22">Desi Glasgow</text>
+      <text x="27.5" y="56" text-anchor="middle" font-family="Great Vibes" font-size="9" fill="#7A0F22">Caterer</text>
+    </svg><div class="cap">Front (portrait)</div></div>
+    <div><div style="display:flex;box-shadow:0 1.2mm 3mm rgba(60,20,10,.3)">
+      <div class="card" style="width:55mm;height:85mm;box-shadow:none;border-right:.3mm dashed #c9a86a">
+        <div class="center caps" style="top:10mm;font-size:6pt">Our services</div>
+        <div class="center contact" style="top:17mm;font-size:8pt;line-height:1.7">Weddings<br>Mehndi &amp; Sangeet<br>Engagements<br>Anniversaries<br>Birthdays<br>Corporate events</div>
+        <img class="roses-bl" src="assets/roses-bl.png">
+      </div>
+      <div class="card" style="width:55mm;height:85mm;box-shadow:none">
+        <div class="center script" style="top:10mm;font-size:16pt">Apna Catering</div>
+        <div class="center contact" style="top:24mm;font-size:7.6pt">07818 478036<br>07828 218002<br><br>hello@apnacatering.co.uk<br>apnacatering.co.uk<br><br>4 Glebe Street<br>East Kilbride G74 4LY</div>
+        <img class="roses-br" src="assets/roses-bl.png">
+      </div>
+    </div><div class="cap">Inside</div></div>
+  </div>
+</div>
+
+<!-- 4 tent card -->
+<div class="row">
+  <div class="lab"><b>4 · Standing tent card</b><span>One fold, stands up on its own. Staff place them on buffet stations at every event; guests pick one up as they leave.</span><i>Single fold · cheapest · doubles as table card</i></div>
+  <div class="stage">
+    <div><svg width="85mm" height="55mm" viewBox="0 0 85 55">
+      <polygon points="8,50 42.5,8 77,50" fill="#e4d2b8"/><polygon points="8,50 42.5,8 50,50" fill="#F6EAD6"/>
+      <line x1="42.5" y1="8" x2="42.5" y2="8" stroke="#B8863A"/>
+      <line x1="3" y1="50.5" x2="82" y2="50.5" stroke="#b59a77" stroke-width=".5"/>
+      <text x="42.5" y="54" text-anchor="middle" font-family="Cinzel" font-size="2.6" fill="#8a7360">SIDE VIEW</text>
+    </svg></div>
+    <div><div class="card">
+      <img class="roses-tl" src="assets/roses-tr.png"><img class="roses-tr" src="assets/roses-tr.png">
+      <div class="center script" style="top:15mm;font-size:21pt">Desi Glasgow Caterer</div>
+      <div class="center caps" style="top:27mm;font-size:5.2pt">Authentic taste… unforgettable experience</div>
+      <div class="center contact" style="top:35mm;font-size:8pt">07818 478036 · apnacatering.co.uk</div>
+      <div class="gold" style="position:absolute;left:20mm;right:20mm;top:32mm;height:.4mm"></div>
+    </div><div class="cap">Face guests see</div></div>
+  </div>
+</div>
+
+<!-- 5 feather pull-tab -->
+<div class="row">
+  <div class="lab"><b>5 · Peacock pull-out</b><span>A maroon sleeve with a gold feather. Pull the feather tab and the contact card slides out to the side.</span><i>Two parts + die · most unique, most expensive</i></div>
+  <div class="stage">
+    <div><div class="card maroon">
+      <img src="assets/feather-gold.png" style="position:absolute;right:6mm;top:-2mm;width:30mm;transform:rotate(25deg)">
+      <div class="script" style="position:absolute;left:6mm;top:14mm;color:#F1D287;font-size:17pt">Desi Glasgow<br>Caterer</div>
+    </div><div class="cap">Closed sleeve</div></div>
+    <div style="position:relative;width:135mm;height:55mm">
+      <div class="card" style="position:absolute;left:45mm;top:0">
+        <img class="roses-br" src="assets/roses-bl.png">
+        <img src="assets/logo-256.png" style="position:absolute;left:47mm;top:5mm;width:14mm">
+        <div class="script" style="position:absolute;left:44mm;top:22mm;font-size:13pt;width:40mm;text-align:center">Apna Catering</div>
+        <div class="contact" style="position:absolute;left:44mm;top:30mm;width:40mm;text-align:center">07818 478036<br>07828 218002<br>apnacatering.co.uk</div>
+      </div>
+      <div class="card maroon" style="position:absolute;left:0;top:0">
+        <img src="assets/feather-gold.png" style="position:absolute;right:6mm;top:-2mm;width:30mm;transform:rotate(25deg)">
+        <div class="script" style="position:absolute;left:6mm;top:14mm;color:#F1D287;font-size:17pt">Desi Glasgow<br>Caterer</div>
+      </div>
+    </div><div class="cap" style="margin-left:-90mm">Card pulled out</div>
+  </div>
+</div>
+</body></html>
