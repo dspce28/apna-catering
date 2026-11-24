@@ -16,7 +16,7 @@ FONTS = ("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@
          + ("&family=Playfair+Display:ital,wght@0,400;0,500;1,400" if THEME == "b" else "")
          + "&family=Manrope:wght@400;500;600&display=swap")
 if THEME == "b":
-    PAGES.insert(4, ("thali.html", "Your Thali"))
+    PAGES.insert(4, ("thali-new.html", "Your Thali"))
 
 
 def img(name, sizes="100vw", alt="", lazy=True, extra=""):
@@ -501,12 +501,12 @@ def thali_page():
 def thali_teaser():
     return '''<section class="sec tz" id="thali">
   <div class="wrap tz-grid">
-    <a class="tz-img" href="thali.html" aria-label="Design your thali"><img src="img/hd/thali-served.webp" alt="A royal brass thali served with curries, biryani, naan, samosas, tandoori chicken and sweets" width="1200" height="1094" loading="lazy"></a>
+    <a class="tz-img" href="thali-new.html" aria-label="Design your thali"><img src="img/hd/thali-served.webp" alt="A royal brass thali served with curries, biryani, naan, samosas, tandoori chicken and sweets" width="1200" height="1094" loading="lazy"></a>
     <div>
       <p class="eyebrow" data-fade>Design your thali</p>
       <h2 class="h2" data-fade>Serve your own <em>maharaja thali.</em></h2>
-      <p class="lede" data-fade>Twenty-one dishes, a real brass thali and its katoris. Serve it your way, save a picture, and send it to us. We’ll build your wedding menu around it.</p>
-      <div class="ctas" data-fade><a class="btn" href="thali.html">Design your thali <i>→</i></a></div>
+      <p class="lede" data-fade>Two brass thalis, one for starters and sweets, one for the main course. Pick as many dishes as you like, watch them served, save a picture and send it to us. We’ll build your wedding menu around it.</p>
+      <div class="ctas" data-fade><a class="btn" href="thali-new.html">Design your thali <i>→</i></a></div>
     </div>
   </div>
 </section>'''
@@ -831,7 +831,8 @@ SITE = {
 
 if THEME == "b":
     SITE["thali-new.html"] = ("Prepare Your Thali — Apna Catering", "Prepare your own wedding thalis: starters and live counters, main course, desserts.", thali_new_page(), '<link rel="stylesheet" href="thali-new.css">')
-    SITE["thali.html"] = ("Design Your Thali — Apna Catering", "Serve your own royal wedding thali: curries, biryani, breads, starters and sweets on a brass thali.", thali_page(), '<link rel="stylesheet" href="thali.css">')
+    # the old thali page now forwards to the new one, so links already shared keep working
+    SITE["thali.html"] = ("Design Your Thali — Apna Catering", "Prepare your own wedding thalis.", '<section class="sec"><div class="wrap"><p class="lede">Taking you to <a href="thali-new.html">Prepare your thali</a>…</p></div></section><script>location.replace("thali-new.html")</script>', '<meta http-equiv="refresh" content="0; url=thali-new.html">')
 
 NIGHT = {"b-hall": "gw-buffet", "p-banquet": "gw-buffet", "p-henna": "gw-sikh", "b-mandap": "gw-mandap", "p-mandap": "gw-mandap"}
 
