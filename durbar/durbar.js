@@ -13,16 +13,6 @@
   const fmtDate = (d) => d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
   const WA = 'https://wa.me/447818478036?text=';
 
-  /* =========================================================
-     PRICES: PLACEHOLDERS until the client supplies real figures.
-     Per guest, per ceremony, buffet service. Plated adds 30%.
-     ========================================================= */
-  const PRICES = {
-    roka: 18, mehndi: 22, haldi: 12, wedding: 14, reception: 28,
-    platedUplift: 0.30, nonvegUplift: 0.12, jainUplift: 0.05,
-    extras: { chaat: 4, tandoor: 6, dessert: 5, bar: 4 },   // per guest, once
-    spread: [0.9, 1.25],                                     // shown as a range
-  };
   const CER = {
     roka: { name: 'Roka & Chunni', menu: { veg: 'Chaat, paneer tikka, samosas and fresh mithai', jain: 'Chaat, paneer tikka (no onion or garlic) and mithai', nonveg: 'Chaat, chicken tikka, seekh kebab and mithai' } },
     mehndi: { name: 'Mehndi & Sangeet', menu: { veg: 'Live chaat, paneer tikka, veg biryani and late-night chai', jain: 'Live chaat, paneer tikka and pulao, all Jain', nonveg: 'Live chaat, tandoori grill, biryani and late-night chai' } },
@@ -60,24 +50,14 @@
       countTo(gOut, guests);
       list.innerHTML = cer.length ? cer.map((k, i) => `<li style="--i:${i}"><b>${String(i + 1).padStart(2, '0')}</b><h4>${CER[k].name}</h4><p>${CER[k].menu[diet]}</p></li>`).join('')
         : '<li class="none">Choose at least one ceremony to see your plan.</li>';
-      let per = 0;
-      cer.forEach((k) => { per += PRICES[k]; });
-      per *= 1 + (style === 'plated' ? PRICES.platedUplift : 0) + (diet === 'nonveg' ? PRICES.nonvegUplift : 0) + (diet === 'jain' ? PRICES.jainUplift : 0);
-      if (cer.length) ext.forEach((x) => { per += PRICES.extras[x]; });
-      const lo = Math.round(per * guests * PRICES.spread[0] / 50) * 50, hi = Math.round(per * guests * PRICES.spread[1] / 50) * 50;
       const staff = cer.length ? Math.ceil(guests / (style === 'plated' ? 12 : 25)) : 0, chefs = cer.length ? Math.ceil(guests / 100) + 1 : 0;
       countTo($('.pl-staff', form), staff); countTo($('.pl-chefs', form), chefs); countTo($('.pl-count', form), guests * cer.length);
-      const total = $('.pl-total', form);
-      if (cer.length) {
-        total.textContent = `${gbp(lo)} – ${gbp(hi)}`;
-        $('.pl-per', form).textContent = `about ${gbp(lo / guests)} – ${gbp(hi / guests)} per guest across ${cer.length} ${cer.length === 1 ? 'event' : 'events'}`;
-      } else { total.textContent = '—'; $('.pl-per', form).textContent = ''; }
       summary = [
         'Hello Apna Catering, here is the feast I planned on your website:', '',
         `Guests: ${guests}`, `Food: ${{ veg: 'Vegetarian', jain: 'Jain', nonveg: 'Veg and non-veg' }[diet]}`, `Service: ${style === 'plated' ? 'Plated' : 'Buffet'}`,
         ...cer.map((k) => `• ${CER[k].name}: ${CER[k].menu[diet]}`),
         ext.length ? `Extras: ${ext.map((x) => EXTRA_NAME[x]).join(', ')}` : '',
-        cer.length ? `Indicative total shown: ${gbp(lo)} – ${gbp(hi)}` : '', '', 'Please let me know if my date is available.',
+        '', 'Please let me know if my date is available and send me a quote.',
       ].filter((l, i, a) => l !== '' || a[i - 1] !== '').join('\n');
       store.set('plan', { guests, diet, style, cer, ext });
     };

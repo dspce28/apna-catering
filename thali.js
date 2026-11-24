@@ -214,7 +214,7 @@
       }
       c.fillStyle = '#e9cf94'; c.textAlign = 'center';
       c.font = '400 54px "Playfair Display", Georgia, serif'; c.fillText('My Apna Catering thali', cv.width / 2, cv.height - 70);
-      c.font = '600 22px Manrope, sans-serif'; c.fillText('APNACATERING.CO.UK · GLASGOW · SINCE 1975', cv.width / 2, cv.height - 30);
+      c.font = '600 22px Manrope, sans-serif'; c.fillText('APNACATERING.CO.UK · GLASGOW · SINCE 1995', cv.width / 2, cv.height - 30);
       cv.toBlob((blob) => {
         const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'my-apna-thali.png';
         document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);

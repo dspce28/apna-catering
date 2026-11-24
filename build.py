@@ -60,7 +60,7 @@ def head(title, desc, preload=""):
 {preload}
 <link rel="stylesheet" href="site.css">{'<link rel="stylesheet" href="durbar.css">' if THEME == "b" else ""}
 <script type="application/ld+json">
-{{"@context":"https://schema.org","@type":"FoodEstablishment","name":"Apna Catering","servesCuisine":["Indian","Punjabi"],"foundingDate":"1975","telephone":["+447818478036","+447828218002"],"email":"hello@apnacatering.co.uk","areaServed":"Scotland","address":{{"@type":"PostalAddress","addressLocality":"Glasgow","addressCountry":"GB"}},"url":"https://apnacatering.co.uk"}}
+{{"@context":"https://schema.org","@type":"FoodEstablishment","name":"Apna Catering","servesCuisine":["Indian","Punjabi"],"foundingDate":"1995","telephone":["+447818478036","+447828218002"],"email":"hello@apnacatering.co.uk","areaServed":"Scotland","address":{{"@type":"PostalAddress","addressLocality":"Glasgow","addressCountry":"GB"}},"url":"https://apnacatering.co.uk"}}
 </script>
 </head>
 '''
@@ -70,7 +70,7 @@ def nav(active):
     links = "".join(f'<a href="{h}"{" aria-current=\"page\"" if h == active else ""}>{l}</a>' for h, l in PAGES[1:])
     drawer = "".join(f'<a href="{h}"{" aria-current=\"page\"" if h == active else ""}>{l}</a>' for h, l in PAGES)
     return f'''<header class="nav">
-  <a href="index.html" class="brand" aria-label="Apna Catering, home"><img src="img/logo-256.png" alt="" width="52" height="52"><span>Apna<small>Catering · Est. 1975</small></span></a>
+  <a href="index.html" class="brand" aria-label="Apna Catering, home"><img src="img/logo-256.png" alt="" width="52" height="52"><span>Apna<small>Catering · Est. 1995</small></span></a>
   <nav class="nav-links" aria-label="Main">{links}</nav>
   <a href="contact.html" class="btn">Get a quote</a>
   <button class="burger" aria-label="Menu" aria-expanded="false"><span></span><span></span></button>
@@ -89,7 +89,7 @@ def footer():
     <div><h5>Explore</h5><a href="about.html">Our story</a><a href="services.html">Weddings &amp; events</a><a href="menus.html">Menus</a><a href="contact.html">Get a quote</a></div>
     <div><h5>Talk to us</h5><a href="tel:+447818478036">07818 478036</a><a href="tel:+447828218002">07828 218002</a><a href="mailto:hello@apnacatering.co.uk">hello@apnacatering.co.uk</a><a href="https://wa.me/447818478036" target="_blank" rel="noopener">WhatsApp</a><a href="https://www.instagram.com/desiglasgowcaterer/" target="_blank" rel="noopener">Instagram</a></div>
   </div>
-  <div class="wrap foot-base"><span>© <span id="yr">2026</span> Apna Catering, Glasgow</span><span>Indian wedding &amp; event caterers since 1975</span></div>
+  <div class="wrap foot-base"><span>© <span id="yr">2026</span> Apna Catering, Glasgow</span><span>Indian wedding &amp; event caterers since 1995</span></div>
 </footer>
 <nav class="mbar" aria-label="Quick contact"><a href="tel:+447818478036">Call</a><a href="https://wa.me/447818478036" target="_blank" rel="noopener">WhatsApp</a><a href="contact.html" class="go">Quote</a></nav>
 <a class="picks" href="contact.html"><b>0</b>Dishes picked · enquire</a>
@@ -296,7 +296,7 @@ def hero_b():
   <div class="hx-pin">
     <div class="hx-media">{img("b-hall", "100vw", "", lazy=False)}</div>
     <div class="hx-copy">
-      <p class="eyebrow c">Wedding caterers · Glasgow since 1975</p>
+      <p class="eyebrow c">Wedding caterers · Glasgow since 1995</p>
       <h1 class="display">The wedding feast,<br><em>beautifully served.</em></h1>
       <p class="lede">Sikh and Hindu wedding catering from one family kitchen, for a hundred guests or a thousand. Nikah and Walima menus too.</p>
       <div class="ctas"><a href="contact.html" class="btn">Check your date <i>→</i></a><a href="#planner" class="btn line">Plan your feast</a></div>
@@ -330,8 +330,7 @@ def planner():
         <p class="eyebrow">Your feast</p>
         <ol class="pl-events"></ol>
         <div class="pl-team"><div><b class="pl-staff">0</b><span>Waiting staff</span></div><div><b class="pl-chefs">0</b><span>Chefs</span></div><div><b class="pl-count">0</b><span>Plates served</span></div></div>
-        <div class="pl-price"><span>Indicative total</span><b class="pl-total">£0</b><small class="pl-per"></small></div>
-        <p class="pl-note">Indicative only. Your exact per-head quote follows a free tasting.</p>
+        <p class="pl-note">Send us your plan and we’ll come back with a personal quote and invite you to a free tasting.</p>
         <div class="ctas"><button type="button" class="btn pl-send">Send this plan <i>→</i></button><a href="contact.html" class="btn line">Full enquiry</a></div>
       </div>
     </form>
@@ -396,7 +395,7 @@ def booklet(cats=MENU):
     import json
     roman = ["i.", "ii.", "iii.", "iv.", "v.", "vi."]
     pages = ['<div class="pg cover"><div class="cv-frame"><img class="cv-logo" src="img/logo-256.png" alt="" width="120" height="120">'
-             '<p class="cv-kicker">Apna Catering · Est. 1975</p><h3>The Wedding<br><em>Menu</em></h3>'
+             '<p class="cv-kicker">Apna Catering · Est. 1995</p><h3>The Wedding<br><em>Menu</em></h3>'
              '<p class="cv-sub">Glasgow · Sikh &amp; Hindu weddings</p><span class="cv-hint">Tap to open</span></div></div>']
     for i, (key, name, sub, photo, dishes) in enumerate(cats):
         pages.append(f'<div class="pg photo"><div class="pg-arch"><img src="img/{photo}.webp" alt="" loading="lazy"></div>'
@@ -519,11 +518,11 @@ def thali_teaser():
 HERO_A = f'''<section class="hero">
   <div class="hero-media">{img("b-hall", "100vw", "", lazy=False)}</div>
   <div>
-    <p class="eyebrow c" data-fade>Wedding caterers · Glasgow since 1975</p>
+    <p class="eyebrow c" data-fade>Wedding caterers · Glasgow since 1995</p>
     <h1 class="display" data-fade style="--d:.1s">The wedding feast,<br><em>beautifully served.</em></h1>
     <p class="lede" data-fade style="--d:.25s">Sikh and Hindu wedding catering from one family kitchen, for a hundred guests or a thousand. Nikah and Walima menus too.</p>
     <div class="ctas" data-fade style="--d:.4s"><a href="contact.html" class="btn">Check your date <i>→</i></a><a href="#menu" class="btn line">See the menu</a></div>
-    <div class="hero-foot" data-fade style="--d:.55s"><span><b>1975</b>Family kitchen</span><span><b>1,000+</b>Guests at one wedding</span><span><b>5</b>Ceremonies, five menus</span></div>
+    <div class="hero-foot" data-fade style="--d:.55s"><span><b>1995</b>Family kitchen</span><span><b>1,000+</b>Guests at one wedding</span><span><b>5</b>Ceremonies, five menus</span></div>
   </div>
 </section>'''
 
@@ -535,8 +534,8 @@ HOME = f'''{hero_b() if THEME == "b" else HERO_A}
     <div>
       <p class="eyebrow" data-fade>Our promise</p>
       <h2 class="h2"{" data-candle" if THEME == "b" else " data-fade"}>Every plate leaves our kitchen as if it were going to <em>our own table.</em></h2>
-      <p class="lede" data-fade>Three generations of one Glasgow family have cooked for Scotland’s biggest days, from an intimate roka to a thousand-guest reception. We use fresh ingredients from trusted suppliers and serve them with the care your guests will notice.</p>
-      <div class="stats" data-fade><div><b>50</b><span>Years of weddings</span></div><div><b>3</b><span>Faith traditions, deeply understood</span></div><div><b>1</b><span>Team from first call to last plate</span></div></div>
+      <p class="lede" data-fade>For thirty years one Glasgow family has cooked for Scotland’s biggest days, from an intimate roka to a thousand-guest reception. We use fresh ingredients from trusted suppliers and serve them with the care your guests will notice.</p>
+      <div class="stats" data-fade><div><b>30</b><span>Years of weddings</span></div><div><b>3</b><span>Faith traditions, deeply understood</span></div><div><b>1</b><span>Team from first call to last plate</span></div></div>
       <p style="margin-top:34px" data-fade><a href="about.html" class="link">Read our story <span>→</span></a></p>
     </div>
     <div class="intro-figs">{arch("p-tablesetting", "A table set with fine china and crystal", cls="framed")}{arch("px-jamun", "Gulab jamun", d=.3)}</div>
@@ -555,7 +554,7 @@ HOME = f'''{hero_b() if THEME == "b" else HERO_A}
 
 {countdown() if THEME == "b" else cta()}'''
 
-ABOUT = f'''{phero("Our story", "Love for food, <em>since 1975.</em>", "A Glasgow family kitchen that has grown up with the city’s Asian community, one celebration at a time.", "p-tablesetting", "")}
+ABOUT = f'''{phero("Our story", "Love for food, <em>since 1995.</em>", "A Glasgow family kitchen that has grown up with the city’s Asian community, one celebration at a time.", "p-tablesetting", "")}
 
 <section class="sec">
   {rose("tr")}
@@ -564,7 +563,7 @@ ABOUT = f'''{phero("Our story", "Love for food, <em>since 1975.</em>", "A Glasgo
     <div>
       <p class="eyebrow" data-fade>Who we are</p>
       <h2 class="h2" data-fade>A family kitchen that grew up with <em>Glasgow’s Asian community.</em></h2>
-      <p class="lede" data-fade>Since 1975 we have cooked quality Indian and Punjabi dishes for the biggest days in families’ lives, blessing weddings with an inventive menu of delights.</p>
+      <p class="lede" data-fade>Since 1995 we have cooked quality Indian and Punjabi dishes for the biggest days in families’ lives, blessing weddings with an inventive menu of delights.</p>
       <p class="lede" data-fade>Our team works with one mission: to uphold the values of every family we cook for. We use fresh ingredients from trusted suppliers, including small local family farms.</p>
       <p class="pull" data-fade>“There is no sincerer love than the love of food.”<small>George Bernard Shaw</small></p>
     </div>
@@ -587,7 +586,7 @@ ABOUT = f'''{phero("Our story", "Love for food, <em>since 1975.</em>", "A Glasgo
 <section class="sec">
   <div class="wrap center">
     <p class="eyebrow" data-fade>Why families choose us</p>
-    <h2 class="h2" data-fade>Three promises, <em>since 1975.</em></h2>
+    <h2 class="h2" data-fade>Three promises, <em>since 1995.</em></h2>
     <div class="values" style="text-align:left">
       <div data-fade><b>i.</b><h3>Always fresh</h3><p>Every dish is cooked on the day from fresh ingredients, never reheated or bought in.</p></div>
       <div data-fade style="--d:.12s"><b>ii.</b><h3>Your traditions first</h3><p>Gurdwara rules, satvik and Jain kitchens, halal meat: agreed with your family and respected throughout.</p></div>
@@ -600,7 +599,7 @@ ABOUT = f'''{phero("Our story", "Love for food, <em>since 1975.</em>", "A Glasgo
 
 {quotes()}
 
-{cta("Your celebration, <em>our kitchen.</em>", "Fifty years of weddings, rokas and receptions. Let’s plan yours.")}'''
+{cta("Your celebration, <em>our kitchen.</em>", "Thirty years of weddings, rokas and receptions. Let’s plan yours.")}'''
 
 TRAD = [
     ("sikh", "Sikh weddings", "p-henna", "Anand Karaj &amp; reception", "From the Roka and Chunni to the Jaggo, the Milni and the Anand Karaj, then the reception that night. We plan every event and respect Gurdwara customs.",
@@ -754,8 +753,8 @@ PRELOAD_HOME = ('<link rel="preload" as="image" href="img/b-hall.webp" imagesrcs
                 'img/b-hall-3840.webp 3840w" imagesizes="100vw">')
 
 SITE = {
-    "index.html": ("Apna Catering — Sikh & Hindu Wedding Caterers, Glasgow", "Glasgow’s family wedding caterers since 1975. Sikh and Hindu weddings, mehndis and receptions for a hundred guests or a thousand.", HOME, PRELOAD_HOME),
-    "about.html": ("Our Story — Apna Catering, Glasgow", "A Glasgow family kitchen cooking for weddings and celebrations since 1975.", ABOUT, ""),
+    "index.html": ("Apna Catering — Sikh & Hindu Wedding Caterers, Glasgow", "Glasgow’s family wedding caterers since 1995. Sikh and Hindu weddings, mehndis and receptions for a hundred guests or a thousand.", HOME, PRELOAD_HOME),
+    "about.html": ("Our Story — Apna Catering, Glasgow", "A Glasgow family kitchen cooking for weddings and celebrations since 1995.", ABOUT, ""),
     "services.html": ("Weddings & Events — Apna Catering", "Sikh and Hindu wedding catering, live stations, dessert bars and full event service across Scotland.", SERVICES, ""),
     "menus.html": ("Menus — Apna Catering", "Signature wedding menus and every dish we cook, ready to mix and match.", MENUS, ""),
     "contact.html": ("Get a Quote — Apna Catering", "Check your date and get a per-head quote for your wedding or celebration.", CONTACT, ""),
