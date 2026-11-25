@@ -1,0 +1,10 @@
+APNA CATERING — BUSINESS CARDS FOR CANVA
+
+1. In Canva: Create a design > Import file (or Upload > drag in) > choose one PDF, e.g. 1-The-Seal.pdf
+2. Canva opens it as an editable 2-page design (page 1 = front, page 2 = back), 85 x 55 mm.
+   Text stays editable; feather, logo, roses and QR are separate images you can move or swap.
+3. If Canva swaps a font, set it back:  headings = Cormorant Garamond,  small text = Montserrat.
+4. Colours:  Burgundy #4E0918 / #5E0B1E   Ivory #F6EFE3   Antique gold #B08D57   Text #2E1A1C
+5. Spare artwork is in /assets: gold monogram (SVG), feathers (PNG), roses, logo, QR code (SVG/PNG -> apnacatering.co.uk).
+6. Printing via Canva: choose Business cards > a premium/thick stock; if "Foil" is offered, apply it to the gold elements.
+   For blind emboss and painted edges, use a specialist printer instead and send them the print files from Claude.
