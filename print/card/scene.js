@@ -7,9 +7,10 @@ const fs = require('fs');
 
 const OPTIONS = [
   ['A', 'A · Classic'], ['B', 'B · Portrait'], ['C', 'C · The gold feather'], ['D', 'D · The jharokha'],
-  ['E', 'E · Rose corners'], ['Seal', '1 · The Seal'], ['Quill', '2 · The Quill'], ['Statement', '3 · The Statement'],
+  ['E', 'E · Rose corners'], ['F', 'F · The Split'], ['G', 'G · Filigree Corners'], ['H', 'H · The Gold Band'],
+  ['I', 'I · The Window'], ['J', 'J · The Feather Edge'], ['K', 'K · The Cartouche'], ['Seal', '1 · The Seal'], ['Quill', '2 · The Quill'], ['Statement', '3 · The Statement'],
 ];
-const EDGE = { A: 'gold', B: 'gold', C: 'burg', D: 'gold', E: 'gold', Seal: 'gold', Quill: 'burg', Statement: 'gold' };
+const EDGE = { A: 'gold', B: 'gold', C: 'burg', D: 'gold', E: 'gold', Seal: 'gold', Quill: 'burg', Statement: 'gold', F: 'gold', G: 'gold', H: 'gold', I: 'gold', J: 'gold', K: 'gold' };
 
 const noise = (freq, alpha, seed) => 'data:image/svg+xml;utf8,' + encodeURIComponent(
   `<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="${freq}" numOctaves="3" seed="${seed}" stitchTiles="stitch"/>` +

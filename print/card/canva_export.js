@@ -7,6 +7,7 @@ const OUT = path.join(__dirname, '..', 'out', 'canva');
 fs.mkdirSync(OUT, { recursive: true });
 const SETS = {
   'variants.html': [['A-Classic', 85, 55], ['B-Portrait', 55, 85], ['C-Gold-Feather', 85, 55], ['D-Jharokha', 85, 55], ['E-Rose-Corners', 85, 55]],
+  'templates.html': [['F-Split', 85, 55], ['G-Filigree-Corners', 85, 55], ['H-Gold-Band', 85, 55], ['I-Window', 85, 55], ['J-Feather-Edge', 85, 55], ['K-Cartouche', 85, 55]],
   'brand.html': [['1-The-Seal', 85, 55], ['2-The-Quill', 85, 55], ['3-The-Statement', 85, 55]],
 };
 (async () => {

@@ -5,7 +5,7 @@ const fs = require('fs');
   fs.mkdirSync('faces', { recursive: true });
   const b = await chromium.launch();
   const p = await b.newPage({ viewport: { width: 1400, height: 900 }, deviceScaleFactor: 8 });
-  const names = { 'variants.html': ['A', 'B', 'C', 'D', 'E'], 'brand.html': ['Seal', 'Quill', 'Statement'] };
+  const names = { 'variants.html': ['A', 'B', 'C', 'D', 'E'], 'brand.html': ['Seal', 'Quill', 'Statement'], 'templates.html': ['F', 'G', 'H', 'I', 'J', 'K'] };
   for (const [f, ids] of Object.entries(names)) {
     await p.goto('file://' + process.cwd() + '/' + f);
     await p.evaluate(() => {
