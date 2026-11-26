@@ -163,6 +163,15 @@
   /* ---------- remember the occasion a visitor clicked ---------- */
   $$('[data-occasion]').forEach((a) => a.addEventListener('click', () => store.set('occasion', a.dataset.occasion)));
 
+  /* ---------- big scroll sections load their photos early, so nobody waits on a blurred preview ---------- */
+  if ('IntersectionObserver' in window) {
+    const pre = new IntersectionObserver((es) => es.forEach((e) => {
+      if (!e.isIntersecting) return; pre.unobserve(e.target);
+      e.target.querySelectorAll('img[loading=lazy]').forEach((i) => { i.loading = 'eager'; });
+    }), { rootMargin: '1600px 0px' });
+    document.querySelectorAll('[data-preload]').forEach((s) => pre.observe(s));
+  }
+
   /* ---------- enquiry form ---------- */
   const form = $('#enquiry');
   if (form) {

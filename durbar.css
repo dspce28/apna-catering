@@ -350,7 +350,7 @@ h1,h2,h3,h4{font-weight:400;letter-spacing:0}
 .sec.paper+.sec.paper{padding-top:0}.sec.paper+.sec.paper>.orn{display:none}
 /* the house ornament sits on the seam between chapters */
 .orn{display:block;width:150px;height:auto;color:var(--gold)}
-.sec.paper>.orn,.foot>.orn{position:absolute;left:50%;top:0;transform:translate(-50%,-50%);width:190px;padding:0 18px;color:#b8873a;z-index:2}
+.sec.paper>.orn,.foot>.orn{position:absolute;left:50%;top:clamp(22px,3vw,36px);transform:translateX(-50%);width:170px;color:#b8873a;z-index:2}
 .sec.paper>.orn{filter:drop-shadow(0 1px 0 rgba(255,250,240,.6))}
 .foot{position:relative}
 .foot>.orn{color:var(--gold)}

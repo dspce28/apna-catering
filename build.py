@@ -249,7 +249,7 @@ def stage():
           <a href="contact.html" class="link" data-occasion="{e[5]}">{e[4]} <span>→</span></a>
         </article>''' for i, e in enumerate(EVENTS))
     dots = "<i></i>" * n
-    return f'''<section class="stage" style="--n:{n}" aria-label="Weddings and events we cater">
+    return f'''<section data-preload class="stage" style="--n:{n}" aria-label="Weddings and events we cater">
   <div class="stage-in">
     {bgs}
     <div class="st-head"><p class="eyebrow">What we cater</p><h2 class="h2">Every ceremony, <em>its own feast.</em></h2></div>
@@ -438,6 +438,59 @@ def booklet(cats=MENU):
 B_SPINE = '<div class="spine" aria-hidden="true"><i class="spine-fill"></i><i class="spine-flame"></i></div><div class="diya" aria-hidden="true"></div>'
 
 
+HALL = [  # photo, caption, small line. Stock and shared photos for now; swap for the client's own event photos.
+    ("s-panipuri", "Gol gappe counter", "Live station"),
+    ("s-chutneys", "House chutneys", "Made fresh"),
+    ("s-butter-chicken", "Butter chicken &amp; naan", "Main course"),
+    ("s-buffet-guests", "The banquet buffet", "Service"),
+    ("s-dahi-puri", "Dahi puri", "Chaat"),
+    ("s-mango-shots", "Mango lassi shots", "Drinks"),
+    ("s-saag-makki", "Sarson da saag &amp; makki di roti", "Punjabi table"),
+    ("px-tandoori", "Tandoori tikka", "Live tandoor"),
+    ("s-samosa-chaat", "Samosa chaat", "Chaat"),
+    ("px-jamun", "Gulab jamun", "Mithai"),
+    ("s-aloo-tikki", "Aloo tikki", "Street food"),
+    ("p-biryanibowl", "Biryani", "Main course"),
+]
+HALL_END = ("w-jeep-entry", "A grand entrance", "Photo courtesy: Sumit Productions")
+
+
+def full(name):
+    """The largest version of a photo, for the full-screen viewer."""
+    for w in ("-2400", "-2720", ""):
+        if os.path.exists(f"img/{name}{w}.webp"):
+            return f"img/{name}{w}.webp"
+
+
+def hall():
+    cards = "".join(
+        f'<button type="button" class="hall-card" data-full="{full(im)}" data-name="{cap.replace("&amp;", "&")}" aria-label="Open photo: {cap}">'
+        f'{img(im, "(max-width: 700px) 50vw, 22vw", cap)}<span class="hall-cap">{cap}<small>{sub}</small></span></button>'
+        for im, cap, sub in HALL)
+    end, end_cap, credit = HALL_END
+    return f'''<section class="hall" id="gallery" aria-label="Gallery" style="--n:{len(HALL)}" data-preload>
+  <div class="hall-pin">
+    <div class="hall-view"><div class="hall-world">
+      <div class="hall-room" aria-hidden="true"><i class="wl"></i><i class="wr"></i><i class="fl"></i><i class="cl"></i></div>
+      {cards}
+      <button type="button" class="hall-door" data-full="img/{end}.webp" data-name="{end_cap}" aria-label="Open photo: {end_cap}">{img(end, "40vh", end_cap)}</button>
+    </div></div>
+    <div class="hall-head"><div class="wrap"><p class="eyebrow">Gallery</p><h2 class="h2">A taste of <em>what we serve.</em></h2><p>Dishes and service from our menus. Tap any photo to see it larger.</p></div></div>
+    <p class="hall-hint" aria-hidden="true">Scroll to walk through</p>
+    <div class="hall-end" aria-hidden="true">
+      <div class="bg" style="background-image:url(img/{end}.webp)"></div><img class="pic" src="img/{end}.webp" alt="" loading="lazy">
+      <div class="txt"><div class="wrap"><p class="eyebrow">Your celebration</p><h2 class="h2">Your day, <em>next.</em></h2>
+        <div class="ctas"><a class="btn" href="contact.html">Plan your celebration <i>→</i></a></div><small class="credit">{credit}</small></div></div>
+    </div>
+  </div>
+  <div class="hall-box" hidden role="dialog" aria-modal="true" aria-label="Photo viewer">
+    <figure><img alt=""><figcaption class="hall-box-cap"></figcaption></figure>
+    <button type="button" class="hall-x" aria-label="Close">✕</button><button type="button" class="hall-prev" aria-label="Previous photo">←</button><button type="button" class="hall-next" aria-label="Next photo">→</button>
+  </div>
+</section>
+<script src="hall.js" defer></script>'''
+
+
 def thali_teaser():
     return '''<section class="sec tz" id="thali">
   <div class="wrap tz-grid">
@@ -556,6 +609,8 @@ HOME = f'''{hero_b() if THEME == "b" else HERO_A}
 {menu_board()}{"\n\n" + thali_teaser() if THEME == "b" else ""}
 
 {GLASS}
+
+{hall()}
 
 {process()}
 
@@ -763,7 +818,7 @@ PRELOAD_HOME = ('<link rel="preload" as="image" href="img/b-hall.webp" imagesrcs
                 'img/b-hall-3840.webp 3840w" imagesizes="100vw">')
 
 SITE = {
-    "index.html": ("Apna Catering — Sikh & Hindu Wedding Caterers, Glasgow", "Glasgow’s family wedding caterers since 1995. Sikh and Hindu weddings, mehndis and receptions for a hundred guests or a thousand.", HOME, PRELOAD_HOME),
+    "index.html": ("Apna Catering — Sikh & Hindu Wedding Caterers, Glasgow", "Glasgow’s family wedding caterers since 1995. Sikh and Hindu weddings, mehndis and receptions for a hundred guests or a thousand.", HOME, PRELOAD_HOME + '<link rel="stylesheet" href="hall.css">'),
     "about.html": ("Our Story — Apna Catering, Glasgow", "A Glasgow family kitchen cooking for weddings and celebrations since 1995.", ABOUT, ""),
     "services.html": ("Weddings & Events — Apna Catering", "Sikh and Hindu wedding catering, live stations, dessert bars and full event service across Scotland.", SERVICES, ""),
     "menus.html": ("Menus — Apna Catering", "Signature wedding menus and every dish we cook, ready to mix and match.", MENUS, ""),
@@ -800,7 +855,7 @@ if __name__ == "__main__":
         print("wrote", os.path.join(OUT, fn))
     if THEME == "b":
         # a self-contained folder: its own copies of the code and only the images it uses
-        for f in ("site.css", "site.js", "durbar.css", "durbar.js", "thali-new.css", "thali-new.js"):
+        for f in ("site.css", "site.js", "durbar.css", "durbar.js", "thali-new.css", "thali-new.js", "hall.css", "hall.js"):
             shutil.copy(f, os.path.join(OUT, f))
         used = set()
         for fn in os.listdir(OUT):
@@ -817,7 +872,7 @@ if __name__ == "__main__":
             if is_photo(u):
                 newest = max(os.path.getmtime(u), os.path.getmtime("grade.py"))
                 if not os.path.exists(dst) or os.path.getmtime(dst) < newest:
-                    grade(Image.open(u)).save(dst, "WEBP", quality=82, method=6)
+                    grade(Image.open(u)).save(dst, "WEBP", quality=74 if re.search(r"-(2400|2720|3840)\.webp$", u) else 82, method=6)
                     graded += 1
             else:
                 shutil.copy(u, dst)

@@ -1,0 +1,75 @@
+/* Gallery hallway (Home). A candlelit corridor in CSS 3D; hall.js moves the camera. */
+.hall{position:relative;height:calc((var(--n) + 2) * 46vh + 100vh);background:#140307;--glow:0}
+.hall-pin{position:sticky;top:0;height:100svh;overflow:hidden}
+.hall-view{position:absolute;inset:0;perspective:900px;perspective-origin:50% 46%}
+.hall-world{position:absolute;left:50%;top:50%;width:0;height:0;transform-style:preserve-3d;will-change:transform}
+
+/* the room: two walls, floor and ceiling, darker near you and warmer towards the doorway */
+.hall-room{position:absolute;left:0;top:0;transform-style:preserve-3d}
+.hall-room i{position:absolute;left:0;top:0;display:block}
+.hall-room .wl,.hall-room .wr{width:calc(var(--L) + 600px);height:calc(var(--hh) * 2);margin:calc(var(--hh) * -1) 0 0 calc((var(--L) + 600px) / -2)}
+.hall-room .wl{transform:translateX(calc(var(--hw) * -1)) translateZ(calc(var(--L) / -2 + 300px)) rotateY(90deg);
+  background:linear-gradient(90deg,#1a0409 0%,#2a0810 55%,#5a2116 100%),#1a0409}
+.hall-room .wr{transform:translateX(var(--hw)) translateZ(calc(var(--L) / -2 + 300px)) rotateY(-90deg);
+  background:linear-gradient(270deg,#1a0409 0%,#2a0810 55%,#5a2116 100%),#1a0409}
+.hall-room .wl::after,.hall-room .wr::after{content:"";position:absolute;inset:0;background:url(img/brocade.webp) center/520px;opacity:.07;mix-blend-mode:screen}
+.hall-room .fl,.hall-room .cl{width:calc(var(--hw) * 2);height:calc(var(--L) + 600px);margin:calc((var(--L) + 600px) / -2) 0 0 calc(var(--hw) * -1)}
+.hall-room .fl{transform:translateY(var(--hh)) translateZ(calc(var(--L) / -2 + 300px)) rotateX(90deg);
+  background:radial-gradient(60% 22% at 50% 0%,rgba(255,206,140,calc(.10 + var(--glow) * .35)),transparent 70%),linear-gradient(0deg,#0d0204,#2b0a0f 70%,#4a1b12)}
+.hall-room .cl{transform:translateY(calc(var(--hh) * -1)) translateZ(calc(var(--L) / -2 + 300px)) rotateX(-90deg);
+  background:linear-gradient(180deg,#0d0204,#1f060b 70%,#3a140f)}
+
+/* the photos, hung like framed pictures */
+.hall-card{position:absolute;left:0;top:0;width:var(--cw);aspect-ratio:4/5;margin:calc(var(--cw) * -.625) 0 0 calc(var(--cw) * -.5);padding:0;background:none;cursor:zoom-in;transform-style:preserve-3d;will-change:transform,filter}
+.hall-card img{display:block;width:100%;height:100%;object-fit:cover;border-radius:4px;box-shadow:0 30px 50px -18px rgba(0,0,0,.85);outline:1px solid rgba(212,168,90,.35);outline-offset:7px}
+.hall-cap{position:absolute;left:0;top:calc(100% + 16px);text-align:left;font-family:var(--serif);font-size:clamp(13px,1.05vw,16px);color:#f0dcb4;white-space:nowrap}
+.hall-cap small{display:block;margin-top:3px;font-family:var(--sans);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:rgba(233,207,148,.6)}
+.hall-card:focus-visible img{outline:2px solid var(--gold-lt)}
+
+/* the doorway at the end, with daylight in it */
+.hall-door{position:absolute;left:0;top:0;width:calc(var(--hh) * .88);aspect-ratio:736/1104;margin:calc(var(--hh) * -.66) 0 0 calc(var(--hh) * -.44);padding:0;background:none;cursor:zoom-in;
+  box-shadow:0 0 0 18px #2a0b0d,0 0 0 19px rgba(212,168,90,.4),0 0 calc(80px + var(--glow) * 220px) calc(10px + var(--glow) * 60px) rgba(255,214,160,calc(.18 + var(--glow) * .45))}
+.hall-door img{display:block;width:100%;height:100%;object-fit:cover;filter:brightness(calc(.75 + var(--glow) * .45))}
+.hall-door::before{content:"";position:absolute;left:-19px;right:-19px;top:-19px;height:28%;border-radius:50% 50% 0 0/100% 100% 0 0;transform:translateY(-62%);box-shadow:inset 0 0 0 1px rgba(212,168,90,.4);border:18px solid #2a0b0d;border-bottom:0}
+
+/* heading over the corridor */
+.hall-head{position:absolute;left:0;right:0;bottom:clamp(28px,6vh,64px);z-index:3;pointer-events:none;opacity:calc(1 - var(--walk,0));transform:translateY(calc(var(--walk,0) * 30px))}
+.hall-head .h2{max-width:13ch;color:#f6ead2}
+.hall-head p:not(.eyebrow){max-width:38ch;margin-top:12px;font-size:14px;color:rgba(246,234,210,.7)}
+.hall-hint{position:absolute;right:clamp(16px,4vw,56px);bottom:clamp(28px,6vh,64px);z-index:3;font-size:10.5px;font-weight:600;letter-spacing:.3em;text-transform:uppercase;color:var(--gold-lt);opacity:calc(.8 - var(--walk,0))}
+.hall-view::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(40% 50% at 50% 46%,rgba(255,214,160,calc(var(--glow) * .25)),transparent 70%),radial-gradient(120% 90% at 50% 50%,transparent 55%,rgba(8,1,3,.75))}
+
+/* stepping through: the last picture fills the screen, with the closing line */
+.hall-end{position:absolute;inset:0;z-index:4;opacity:0;pointer-events:none;display:grid;align-items:end;background:#140307}
+.hall-end.on{pointer-events:auto}
+.hall-end .bg{position:absolute;inset:-40px;background-size:cover;background-position:center;filter:blur(28px) brightness(.55);transform:scale(1.1)}
+.hall-end .pic{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+.hall-end .txt{position:relative;padding-bottom:clamp(30px,8vh,80px);background:linear-gradient(transparent,rgba(20,3,7,.85) 55%)}
+.hall-end .h2{color:#f6ead2;max-width:14ch}
+.hall-end .credit{display:block;margin-top:16px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:rgba(246,234,210,.6)}
+@media (max-width:700px){
+  .hall-view{perspective:620px}
+  .hall-end .pic{object-fit:cover;object-position:50% 40%}
+  .hall-cap{font-size:12px}.hall-cap small{display:none}
+  .hall-hint{display:none}
+}
+
+/* full-screen viewer */
+.hall-box[hidden]{display:none}
+.hall-box{position:fixed;inset:0;z-index:200;display:grid;place-items:center;background:rgba(12,2,5,.95);opacity:0;transition:opacity .35s}
+.hall-box.on{opacity:1}
+.hall-box figure{margin:0;display:grid;justify-items:center;gap:14px}
+.hall-box img{max-width:92vw;max-height:80svh;object-fit:contain;border-radius:4px;box-shadow:0 30px 80px rgba(0,0,0,.6)}
+.hall-box-cap{font-family:var(--serif);font-size:20px;color:#f0dcb4}
+.hall-box button{position:absolute;display:grid;place-items:center;width:52px;height:52px;border-radius:50%;font-size:20px;color:var(--gold-lt);box-shadow:inset 0 0 0 1px rgba(212,168,90,.45);background:rgba(20,3,7,.6)}
+.hall-x{top:18px;right:18px}.hall-prev{left:18px;top:50%;translate:0 -50%}.hall-next{right:18px;top:50%;translate:0 -50%}
+@media (max-width:700px){.hall-prev,.hall-next{top:auto;bottom:22px;translate:none}.hall-prev{left:calc(50% - 66px)}.hall-next{right:calc(50% - 66px)}}
+
+/* reduced motion: a plain grid */
+.hall.flat{height:auto;padding:clamp(70px,9vw,120px) 0}
+.hall.flat .hall-pin{position:static;height:auto;overflow:visible}
+.hall.flat .hall-view{position:static;perspective:none}.hall.flat .hall-view::after,.hall.flat .hall-room,.hall.flat .hall-end,.hall.flat .hall-hint{display:none}
+.hall.flat .hall-head{position:static;opacity:1;margin-bottom:30px}
+.hall.flat .hall-world{position:static;width:auto;height:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px 12px;padding:0 var(--pad);max-width:var(--max);margin:0 auto;transform:none!important}
+.hall.flat .hall-card,.hall.flat .hall-door{position:relative;width:auto;margin:0 0 34px;transform:none!important;box-shadow:none}
+.hall.flat .hall-door{aspect-ratio:4/5}.hall.flat .hall-door::before{display:none}
