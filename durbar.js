@@ -401,3 +401,72 @@
     }));
   });
 })();
+
+/* =========================================================
+   ABOUT: photos deal in and tilt towards the pointer; promise cards hang on pins and swing
+   ========================================================= */
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const fine = matchMedia('(pointer: fine)').matches;
+
+  // How we work: the photos fan out from a stack when the section arrives
+  document.querySelectorAll('.team.deal').forEach((t) => {
+    if (reduce) { t.classList.add('in'); return; }
+    new IntersectionObserver((es, o) => es.forEach((e) => { if (e.isIntersecting) { t.classList.add('in'); o.disconnect(); } }), { threshold: 0.25 }).observe(t);
+    if (!fine) return;
+    t.querySelectorAll('.arch').forEach((a) => {
+      a.addEventListener('pointermove', (e) => {
+        const r = a.getBoundingClientRect(), x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
+        a.style.setProperty('--ry', ((x - 0.5) * 14).toFixed(2) + 'deg'); a.style.setProperty('--rx', ((0.5 - y) * 12).toFixed(2) + 'deg');
+        a.style.setProperty('--gx', (x * 100).toFixed(1) + '%'); a.style.setProperty('--gy', (y * 100).toFixed(1) + '%'); a.style.setProperty('--go', 1);
+      });
+      a.addEventListener('pointerleave', () => { ['--rx', '--ry'].forEach((v) => a.style.setProperty(v, '0deg')); a.style.setProperty('--go', 0); });
+    });
+  });
+
+  // Three promises: each card hangs from its pin like a pendulum
+  document.querySelectorAll('[data-pins]').forEach((board) => {
+    const cards = [...board.querySelectorAll('.pin-card')];
+    const S = cards.map((c) => ({ c, rest: +getComputedStyle(c).getPropertyValue('--r') || 0, a: 0, v: 0, drop: 1, hover: false, drag: null }));
+    if (reduce) { S.forEach((s) => { s.c.style.transform = `rotate(${s.rest}deg)`; s.c.classList.add('in'); }); return; }
+    let raf = 0, last = 0;
+    const tick = (t) => {
+      const dt = Math.min(0.032, (t - (last || t)) / 1000) || 0.016; last = t;
+      let moving = false;
+      S.forEach((s) => {
+        const target = s.drag !== null ? s.drag : s.hover ? 0 : s.rest;
+        const k = s.drag !== null ? 160 : 38, damp = s.drag !== null ? 16 : 2.6;   // a loose pin: it swings a few times, then settles
+        s.v += (-k * (s.a - target) - damp * s.v) * dt; s.a += s.v * dt;
+        s.drop += (0 - s.drop) * Math.min(1, dt * 7);
+        s.c.style.transform = `translateY(${(s.drop * -110).toFixed(1)}vh) rotate(${s.a.toFixed(2)}deg) ${s.hover ? 'translateZ(0) scale(1.035)' : ''}`;
+        if (Math.abs(s.v) > 0.02 || Math.abs(s.a - target) > 0.02 || s.drop > 0.001) moving = true;
+      });
+      raf = moving ? requestAnimationFrame(tick) : 0; if (!moving) last = 0;
+    };
+    const go = () => { if (!raf) raf = requestAnimationFrame(tick); };
+    // they fall onto their pins one after another, arriving with a swing
+    new IntersectionObserver((es, o) => es.forEach((e) => {
+      if (!e.isIntersecting) return; o.disconnect();
+      S.forEach((s, i) => setTimeout(() => { s.c.classList.add('in'); s.a = s.rest + (i % 2 ? -26 : 24); s.drop = 1; go(); }, 180 + i * 220));
+    }), { threshold: 0.3 }).observe(board);
+    S.forEach((s) => {
+      s.c.style.transform = 'translateY(-110vh)';
+      s.c.addEventListener('pointerenter', () => { if (fine) { s.hover = true; go(); } });
+      s.c.addEventListener('pointerleave', () => { s.hover = false; s.drag = null; go(); });
+      // brushing past a card gives it a push in the direction the pointer moves
+      let px = null;
+      s.c.addEventListener('pointermove', (e) => {
+        if (s.drag !== null) {
+          const r = s.c.getBoundingClientRect(), pinX = r.left + r.width / 2, pinY = r.top;
+          s.drag = Math.max(-40, Math.min(40, Math.atan2(e.clientX - pinX, Math.max(40, e.clientY - pinY)) * -57.3 * 0.9)); go(); return;
+        }
+        if (px !== null && !s.hover) { s.v += (e.clientX - px) * 0.6; go(); }
+        px = e.clientX;
+      });
+      s.c.addEventListener('pointerdown', (e) => { s.drag = s.a; s.c.setPointerCapture(e.pointerId); go(); });
+      s.c.addEventListener('pointerup', () => { if (s.drag !== null) { s.v += (s.drag - s.rest) * -2; s.drag = null; go(); } });
+      s.c.addEventListener('click', () => { if (!fine) { s.v += (Math.random() > 0.5 ? 1 : -1) * 90; go(); } });
+      s.c.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); s.v += 90; go(); } });
+    });
+  });
+})();

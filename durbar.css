@@ -359,3 +359,43 @@ h1,h2,h3,h4{font-weight:400;letter-spacing:0}
 .stats b,.step>b,.values b{font-variant-numeric:oldstyle-nums proportional-nums;font-feature-settings:"onum" 1,"pnum" 1}
 /* photos show a soft blurred preview of themselves while the full image loads */
 img[style*="background-image"]{background-size:cover;background-position:center;background-repeat:no-repeat}
+
+/* ---- About: How we work. The photos deal in from a stack and tilt towards the pointer ---- */
+.team.deal figure{opacity:0;transform:translate(calc((1.5 - var(--i)) * 105%),50px) rotate(calc((var(--i) - 1.5) * 9deg)) scale(.86);
+  transition:transform 1.1s cubic-bezier(.2,.75,.2,1) calc(var(--i) * .1s),opacity .5s calc(var(--i) * .1s)}
+.team.deal.in figure{opacity:1;transform:none}
+.team.deal figcaption{opacity:0;transform:translateY(10px);transition:opacity .7s calc(.8s + var(--i) * .1s),transform .7s calc(.8s + var(--i) * .1s)}
+.team.deal.in figcaption{opacity:1;transform:none}
+.team.deal .arch{transform:perspective(900px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform .5s cubic-bezier(.2,.7,.2,1),box-shadow .5s}
+.team.deal .arch::before{content:"";position:absolute;inset:0;z-index:2;border-radius:inherit;pointer-events:none;mix-blend-mode:soft-light;
+  background:radial-gradient(circle at var(--gx,50%) var(--gy,30%),rgba(255,226,170,.55),transparent 55%);opacity:var(--go,0);transition:opacity .4s}
+.team.deal .arch:hover{box-shadow:0 44px 70px -30px #000}
+
+/* ---- About: the steps as a timeline, without repeating the photos ---- */
+.steps.text{margin-top:40px}
+.steps.text svg{top:0;height:120px}
+.steps.text .step b{display:grid;place-items:center;width:64px;height:64px;margin:28px auto 20px;border-radius:50%;font-style:normal;font-size:26px;
+  background:rgb(var(--bg-rgb));box-shadow:0 0 0 1px var(--line-gold),0 0 0 8px rgb(var(--bg-rgb));transition:transform .6s cubic-bezier(.2,1.5,.4,1) calc(var(--d,0s) + .2s)}
+.steps.text .step:not(.in) b{transform:scale(.4)}
+.steps.text .step{padding:0 8px}
+
+/* ---- About: three promises pinned to the page ---- */
+.pins{position:relative;display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(20px,3vw,48px);margin-top:64px;padding:36px 0 16px;text-align:left}
+.pins::before{content:"";position:absolute;left:10%;right:10%;top:-60px;bottom:0;pointer-events:none;background:radial-gradient(50% 70% at 50% 0%,rgba(255,250,238,.9),transparent 70%)}
+.pins-ghost{position:absolute;left:50%;top:50%;transform:translate(-50%,-52%);font-family:var(--serif);font-size:clamp(140px,24vw,340px);line-height:1;letter-spacing:-.02em;
+  color:rgba(154,107,34,.1);pointer-events:none;user-select:none;font-variant-numeric:oldstyle-nums}
+.pin-card{position:relative;z-index:1;padding:48px clamp(22px,2.4vw,32px) 24px;border-radius:6px;opacity:0;cursor:grab;touch-action:pan-y;user-select:none;transform-origin:50% 15px;
+  background:linear-gradient(160deg,#fffdf8,#f9efda);box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 26px 40px -22px rgba(58,15,25,.5),0 2px 6px rgba(58,15,25,.08);transition:opacity .3s,box-shadow .4s}
+.pin-card.in{opacity:1}
+.pin-card:active{cursor:grabbing}
+.pin-card:hover{box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 44px 60px -26px rgba(58,15,25,.55),0 2px 6px rgba(58,15,25,.08)}
+.pin-card:focus-visible{outline:2px solid #9a6b22;outline-offset:6px}
+.pin{position:absolute;left:50%;top:7px;width:18px;height:18px;margin-left:-9px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff4d6,#d9ac5c 42%,#7a5420 88%);box-shadow:0 5px 6px rgba(40,20,0,.4)}
+.pin-card b{display:block;font-family:var(--serif);font-style:italic;font-weight:400;font-size:24px;color:#9a6b22}
+.sec.paper .pin-card h3{font-size:clamp(24px,2.2vw,30px);margin:6px 0 10px;color:#3a0f19}
+.sec.paper .pin-card p{font-size:14.5px;color:#5a3b32}
+.sec.paper .pin-no{display:block;margin-top:22px;font-size:11px;letter-spacing:.2em;color:#9a6b22}
+@media (max-width:900px){.pins{grid-template-columns:1fr;gap:34px;max-width:440px;margin-left:auto;margin-right:auto}.pins-ghost{top:40%}}
+@media (prefers-reduced-motion:reduce){.team.deal figure,.team.deal figcaption{opacity:1;transform:none;transition:none}}
+.sec.paper .pins-ghost{color:rgba(154,107,34,.15)}
+.steps.text .step,.steps.text .step:nth-child(n){margin-top:0;transform:none}

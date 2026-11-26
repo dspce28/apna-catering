@@ -281,14 +281,15 @@ STEPS = [("team-waiter", "Tell us your date", "Share your date, venue, guest num
          ("team-wok", "We serve the day", "Our own chefs and waiting team cook, serve and clear, so your family can celebrate.")]
 
 
-def process(head_title="Four steps to <em>a perfect day.</em>", paper=True):
+def process(head_title="Four steps to <em>a perfect day.</em>", paper=True, photos=True):
+    pic = lambda s: f'<div class="arch framed">{img(s[0], "(max-width: 900px) 45vw, 22vw", "")}</div>' if photos else ""
     items = "".join(f'''
-      <li class="step" data-fade style="--d:{i * .12:.2f}s"><div class="arch framed">{img(s[0], "(max-width: 900px) 45vw, 22vw", "")}</div><b>0{i + 1}</b><h3>{s[1]}</h3><p>{s[2]}</p></li>''' for i, s in enumerate(STEPS))
+      <li class="step" data-fade style="--d:{i * .12:.2f}s">{pic(s)}<b>0{i + 1}</b><h3>{s[1]}</h3><p>{s[2]}</p></li>''' for i, s in enumerate(STEPS))
     return f'''<section class="sec{" paper" if paper else ""}">{ORN if paper else ""}
   <div class="wrap center">
     <p class="eyebrow" data-fade>How it works</p>
     <h2 class="h2" data-fade>{head_title}</h2>
-    <ol class="steps"><svg viewBox="0 0 1000 120" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M60,40 C220,40 260,110 375,110 S530,40 625,40 S780,110 940,110"/></svg>{items}
+    <ol class="steps{"" if photos else " text"}"><svg viewBox="0 0 1000 120" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="{"M60,40 C220,40 260,110 375,110 S530,40 625,40 S780,110 940,110" if photos else "M125,60 L875,60"}"/></svg>{items}
     </ol>
   </div>
 </section>'''
@@ -638,11 +639,11 @@ ABOUT = f'''{phero("Our story", "Love for food, <em>since 1995.</em>", "A Glasgo
   <div class="wrap center">
     <p class="eyebrow" data-fade>How we work</p>
     <h2 class="h2" data-fade>From our kitchen <em>to your table.</em></h2>
-    <div class="team">
-      <figure>{arch("team-waiter", "A waiter carrying plated dishes", "(max-width: 900px) 45vw, 22vw")}<figcaption>Served with care</figcaption></figure>
-      <figure>{arch("team-chef", "A chef plating dishes at the pass", "(max-width: 900px) 45vw, 22vw", d=.1)}<figcaption>Finished by hand</figcaption></figure>
-      <figure>{arch("team-pass", "Chefs preparing dishes together in a kitchen", "(max-width: 900px) 45vw, 22vw", d=.2)}<figcaption>Prepared together</figcaption></figure>
-      <figure>{arch("team-wok", "A chef cooking over a live flame", "(max-width: 900px) 45vw, 22vw", d=.3)}<figcaption>Cooked fresh</figcaption></figure>
+    <div class="team deal">
+      <figure style="--i:0">{arch("team-waiter", "A waiter carrying plated dishes", "(max-width: 900px) 45vw, 22vw", wipe=False)}<figcaption>Served with care</figcaption></figure>
+      <figure style="--i:1">{arch("team-chef", "A chef plating dishes at the pass", "(max-width: 900px) 45vw, 22vw", wipe=False)}<figcaption>Finished by hand</figcaption></figure>
+      <figure style="--i:2">{arch("team-pass", "Chefs preparing dishes together in a kitchen", "(max-width: 900px) 45vw, 22vw", wipe=False)}<figcaption>Prepared together</figcaption></figure>
+      <figure style="--i:3">{arch("team-wok", "A chef cooking over a live flame", "(max-width: 900px) 45vw, 22vw", wipe=False)}<figcaption>Cooked fresh</figcaption></figure>
     </div>
   </div>
 </section>
@@ -651,15 +652,16 @@ ABOUT = f'''{phero("Our story", "Love for food, <em>since 1995.</em>", "A Glasgo
   <div class="wrap center">
     <p class="eyebrow" data-fade>Why families choose us</p>
     <h2 class="h2" data-fade>Three promises, <em>since 1995.</em></h2>
-    <div class="values" style="text-align:left">
-      <div data-fade><b>i.</b><h3>Always fresh</h3><p>Every dish is cooked on the day from fresh ingredients, never reheated or bought in.</p></div>
-      <div data-fade style="--d:.12s"><b>ii.</b><h3>Your traditions first</h3><p>Gurdwara rules, satvik and Jain kitchens, halal meat: agreed with your family and respected throughout.</p></div>
-      <div data-fade style="--d:.24s"><b>iii.</b><h3>One team</h3><p>Food, staff, china, equipment and event management from one family business, start to finish.</p></div>
+    <div class="pins" data-pins>
+      <span class="pins-ghost" aria-hidden="true">1995</span>
+      <article class="pin-card" style="--r:-6" tabindex="0"><i class="pin" aria-hidden="true"></i><b>i.</b><h3>Always fresh</h3><p>Every dish is cooked on the day from fresh ingredients, never reheated or bought in.</p><span class="pin-no" aria-hidden="true">[ 1 ]</span></article>
+      <article class="pin-card" style="--r:4" tabindex="0"><i class="pin" aria-hidden="true"></i><b>ii.</b><h3>Your traditions first</h3><p>Gurdwara rules, satvik and Jain kitchens, halal meat: agreed with your family and respected throughout.</p><span class="pin-no" aria-hidden="true">[ 2 ]</span></article>
+      <article class="pin-card" style="--r:-3" tabindex="0"><i class="pin" aria-hidden="true"></i><b>iii.</b><h3>One team</h3><p>Food, staff, china, equipment and event management from one family business, start to finish.</p><span class="pin-no" aria-hidden="true">[ 3 ]</span></article>
     </div>
   </div>
 </section>
 
-{process("From first call <em>to final course.</em>", paper=False)}
+{process("From first call <em>to final course.</em>", paper=False, photos=False)}
 
 {quotes()}
 
