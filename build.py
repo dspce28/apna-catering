@@ -129,7 +129,7 @@ def phero(crumb, title, lede, image, alt):
 # ---------------------------------------------------------------- content
 EVENTS = [
     ("p-henna", "Sikh weddings", "Anand Karaj", "From the Milni tea at the Gurdwara doors and a vegetarian langar-style breakfast to the full Punjabi reception that night.", "Plan your Anand Karaj", "Sikh wedding"),
-    ("b-mandap", "Hindu weddings", "Saat Phere", "Haldi brunch, sangeet chaat stalls and a pure vegetarian, satvik or Jain wedding feast, planned with your family day by day.", "Plan your Hindu wedding", "Hindu wedding"),
+    ("s-bride", "Hindu weddings", "Saat Phere", "Haldi brunch, sangeet chaat stalls and a pure vegetarian, satvik or Jain wedding feast, planned with your family day by day.", "Plan your Hindu wedding", "Hindu wedding"),
     ("px-chaat", "Mehndi &amp; Sangeet", "Live stations", "Chaat counters, a live tandoor and late-night chai that keep the dance floor full until the last song.", "Plan your mehndi", "Mehndi / Sangeet"),
     ("p-banquet", "Receptions", "The grand evening", "Silver buffets or plated service for up to a thousand guests, with fine china, crystal and our own waiting team.", "Plan your reception", "Sikh wedding"),
     ("p-toast", "Celebrations", "Every milestone", "Rokas, birthdays, anniversaries and office Diwali and Vaisakhi parties, from the same family kitchen.", "Plan your event", "Private party"),
@@ -146,12 +146,12 @@ MENU = [
         ("Paneer Tikka", "Charred peppers, onion and chaat masala", "Veg · Live"),
         ("Seekh Kebab", "Minced lamb, ginger, green chilli and coriander", "Halal · Live"),
         ("Haryali Tikka", "Mint, coriander and green chilli chicken", "Halal")]),
-    ("mains", "Curries &amp; mains", "The heart of the wedding feast", "p-karahi", [
+    ("mains", "Curries &amp; mains", "The heart of the wedding feast", "s-butter-chicken", [
         ("Butter Chicken", "Tandoori chicken in a silky tomato and butter sauce", "Halal"),
         ("Lamb Rogan Josh", "Slow-cooked Kashmiri lamb with fennel and cardamom", "Halal"),
         ("Dal Makhani", "Black lentils simmered overnight with cream", "Veg"),
         ("Sarson da Saag", "Mustard greens with makki di roti and white butter", "Veg")]),
-    ("rice", "Rice &amp; breads", "Made fresh on the day", "px-buffet-gold", [
+    ("rice", "Rice &amp; breads", "Made fresh on the day", "s-buffet-guests", [
         ("Lamb Dum Biryani", "Saffron, fried onions and mint, sealed and slow-cooked", "Halal"),
         ("Vegetable Pulao", "Basmati with whole spices and garden vegetables", "Veg"),
         ("Butter Naan", "From the tandoor, brushed with butter", "Veg"),
@@ -425,7 +425,7 @@ TN_DISHES = [  # id, name, step, served as (bowl = katori, dish = shallow brass 
     ("chicken-tikka", "Malai Chicken Tikka", "starters", "plated", "nonveg", "cut/p-chicken-tikka", "tandoor"),
     ("tandoori", "Tandoori Chicken", "starters", "dish", "nonveg", "hd/tandoori", "tandoor"),
     ("butter-chicken", "Butter Chicken", "main", "bowl", "nonveg", "hd/butter-chicken", "curry"),
-    ("chicken-tikka-masala", "Chicken Tikka Masala", "main", "bowl", "nonveg", "cut/karahi", "curry"),
+    ("chicken-tikka-masala", "Chicken Tikka Masala", "main", "bowl", "nonveg", "hd/tikka-masala", "curry"),
     ("dal-makhani", "Dal Makhani", "main", "bowl", "veg", "hd/dal-makhani", "dal"),
     ("paneer-makhani", "Paneer Makhani", "main", "bowl", "veg jain", "hd/paneer-makhani", "sabzi"),
     ("palak-paneer", "Palak Paneer", "main", "bowl", "veg jain", "hd/palak-paneer", "sabzi"),
@@ -600,12 +600,12 @@ def traditions():
 </section>'''
 
 
-STATIONS = [("px-panipuri", "Chaat &amp; street-food stations", "Gol gappe, papdi chaat and aloo tikki, made fresh in front of your guests."),
+STATIONS = [("s-panipuri", "Chaat &amp; street-food stations", "Gol gappe, papdi chaat and aloo tikki, made fresh in front of your guests."),
             ("px-tandoori", "Live tandoor &amp; grill", "Chefs at the tandoor and grill, bringing the kitchen to the party."),
             ("px-jamun", "Dessert &amp; mithai bars", "Rasmalai, gulab jamun, jalebi made live, kulfi and a chocolate fountain."),
             ("p-tablesetting", "Table service", "Fine china, polished cutlery, linen and a waiting team who set and clear."),
-            ("px-buffet-gold", "Banquet buffets", "Polished chafing dishes and dressed buffet tables for any number of guests."),
-            ("p-cocktails", "Drinks &amp; mocktail bars", "Juice bars, mocktails and drinks fountains, plus ice cream and candyfloss.")]
+            ("s-buffet-guests", "Banquet buffets", "Polished chafing dishes and dressed buffet tables for any number of guests."),
+            ("s-mango-shots", "Drinks &amp; mocktail bars", "Juice bars, mocktails and drinks fountains, plus ice cream and candyfloss.")]
 
 SERVICES = f'''{phero("Weddings &amp; events", "Every tradition, <em>beautifully served.</em>", "Sikh and Hindu weddings at the heart of it, with live stations, desserts and full event service from one team.", "b-mandap", "")}
 
@@ -638,12 +638,12 @@ SERVICES = f'''{phero("Weddings &amp; events", "Every tradition, <em>beautifully
 
 {cta(rose_pos="br")}'''
 
-SIG = [("p-karahi", "The Classic", "Aloo papdi chaat · Chicken tikka &amp; lamb seekh kebab · Lamb aloo curry · Chicken desi style · Dal makhani · Rasmalai"),
-       ("px-tandoori", "Chaat &amp; Grill", "Chaat stall: gol gappe, papdi &amp; fruit chaat · Mixed kebab platter · Lamb rogan josh · Chicken bhuna · Palak paneer"),
+SIG = [("s-butter-chicken", "The Classic", "Aloo papdi chaat · Chicken tikka &amp; lamb seekh kebab · Lamb aloo curry · Chicken desi style · Dal makhani · Rasmalai"),
+       ("s-dahi-puri", "Chaat &amp; Grill", "Chaat stall: gol gappe, papdi &amp; fruit chaat · Mixed kebab platter · Lamb rogan josh · Chicken bhuna · Palak paneer"),
        ("p-tablesetting", "The Reception", "Canapés · Haryali tikka · Amritsari fish · Punjabi turka chicken · Bread basket · Kulfi selection"),
-       ("px-buffet-gold", "The Punjab Table", "Baingan palak pakora · Fish masala · Lamb saag · Tinda masala · Makki di roti &amp; bhatura · Boondi raita")]
+       ("s-saag-makki", "The Punjab Table", "Baingan palak pakora · Fish masala · Lamb saag · Tinda masala · Makki di roti &amp; bhatura · Boondi raita")]
 
-MENUS = f'''{phero("Menus", "Start with a classic, <em>make it yours.</em>", "Four signature menus our families return to, and every dish we cook, ready to mix and match.", "px-buffet-gold", "")}
+MENUS = f'''{phero("Menus", "Start with a classic, <em>make it yours.</em>", "Four signature menus our families return to, and every dish we cook, ready to mix and match.", "s-buffet-guests", "")}
 
 <section class="sec">
   {rose("tr")}
