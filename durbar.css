@@ -401,3 +401,5 @@ img[style*="background-image"]{background-size:cover;background-position:center;
 .steps.text .step,.steps.text .step:nth-child(n){margin-top:0;transform:none}
 /* footer ornament: its own centred row above the columns, never over the text */
 .foot>.orn{position:static;display:block;width:170px;margin:-20px auto 46px;transform:none;color:var(--gold)}
+/* thali teaser: the whole thali always fits on screen under the menu bar */
+.tz-img img{display:block;width:min(100%,calc((100svh - 190px) * 1200 / 1094));margin:0 auto}
