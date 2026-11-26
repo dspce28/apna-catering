@@ -403,3 +403,55 @@ img[style*="background-image"]{background-size:cover;background-position:center;
 .foot>.orn{position:static;display:block;width:170px;margin:-20px auto 46px;transform:none;color:var(--gold)}
 /* thali teaser: the whole thali always fits on screen under the menu bar */
 .tz-img img{display:block;width:min(100%,calc((100svh - 190px) * 1200 / 1094));margin:0 auto}
+
+/* ---- Step inside: petals cover the view and the pointer is a cluster of petals ---- */
+.glass.petal-cursor,.glass.petal-cursor *{cursor:none}
+.glass.petal-cursor .glass-toggle,.glass.petal-cursor .glass-toggle *{cursor:pointer}
+.glass-cursor{position:absolute;left:0;top:0;z-index:5;width:0;height:0;pointer-events:none;opacity:0;transition:opacity .25s}
+.glass-cursor.on{opacity:1}.glass-cursor.off{opacity:0}
+.glass-cursor svg{position:absolute;left:-10px;top:-14px;filter:drop-shadow(0 3px 4px rgba(30,0,6,.45))}
+.glass-cursor svg:nth-child(2){left:2px;top:-8px}.glass-cursor svg:nth-child(3){left:-6px;top:0}
+.glass-cursor{animation:petal-bob 2.4s ease-in-out infinite}
+@keyframes petal-bob{50%{rotate:12deg}}
+.petal-fly{position:absolute;z-index:4;pointer-events:none;line-height:0;filter:drop-shadow(0 4px 5px rgba(30,0,6,.4))}
+
+/* ---- Home gallery: a fan of cards in an arch (ivory) ---- */
+.hgal{overflow:clip}
+.hg-row{--g:0;display:flex;justify-content:center;align-items:flex-start;gap:clamp(10px,1.3vw,22px);margin-top:58px;padding:10px 0 40px}
+.hg-card{position:relative;flex:none;display:block;width:calc(clamp(104px,10.6vw,190px) * (1.16 - var(--a) * .06));aspect-ratio:3/4.3;border-radius:20px;overflow:hidden;
+  box-shadow:0 30px 50px -28px rgba(58,15,25,.6),0 0 0 1px rgba(154,107,34,.18);transform:translateY(calc(var(--a) * 32px));
+  translate:calc(var(--k) * var(--g) * 10px) 0;scale:calc(1 + var(--g) * (.1 - var(--a) * .05));opacity:calc(1 - var(--g) * var(--a) * .12);
+  transition:transform 1s cubic-bezier(.2,.75,.2,1) calc(var(--a) * .09s),opacity .7s calc(var(--a) * .09s),box-shadow .4s}
+.hg-row:not(.in) .hg-card{transform:translate(calc(var(--k) * -100%),70px) rotate(calc(var(--k) * -7deg)) scale(.8);opacity:0}
+.hg-card img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .9s cubic-bezier(.2,.7,.2,1)}
+.hg-row.in .hg-card:hover{transform:translateY(calc(var(--a) * 32px - 16px));box-shadow:0 44px 60px -28px rgba(58,15,25,.7),0 0 0 1px rgba(154,107,34,.35);transition-delay:0s}
+.hg-card:hover img{transform:scale(1.07)}
+.sec.paper .hg-cap{position:absolute;left:50%;bottom:12px;translate:-50% 8px;opacity:0;padding:6px 13px;border-radius:99px;background:rgba(255,250,240,.94);color:#3a0f19;
+  font-size:11.5px;font-weight:600;letter-spacing:.04em;white-space:nowrap;transition:opacity .35s,translate .35s}
+.hg-card:hover .hg-cap,.hg-card:focus-visible .hg-cap{opacity:1;translate:-50% 0}
+@media (max-width:700px){.hg-card[style*="--a:3"]{display:none}.hg-card{width:calc(25vw * (1.16 - var(--a) * .08));border-radius:14px;transform:translateY(calc(var(--a) * 20px))}.hg-row{gap:8px}}
+
+/* ---- Home: four steps pinned under spotlights on a dark board ---- */
+.sec.sboard{position:relative;overflow:clip;background:radial-gradient(70% 55% at 50% 0%,#6e1628,rgb(var(--bg-rgb)) 72%)}
+.pins.dark{grid-template-columns:repeat(4,1fr);margin-top:84px;padding-top:60px;gap:clamp(16px,2vw,32px)}
+.pins.dark::before{display:none}
+.beams{position:absolute;left:0;right:0;top:-190px;bottom:-30px;z-index:0;pointer-events:none}
+.beam{position:absolute;top:0;left:calc((var(--c) + .5) * 25%);width:46%;height:100%;translate:-50% 0;opacity:.55;transition:opacity .6s;mix-blend-mode:screen;
+  background:linear-gradient(180deg,rgba(255,224,168,.34),rgba(255,210,150,.08) 55%,transparent 82%);clip-path:polygon(47% 0,53% 0,100% 100%,0 100%);filter:blur(5px);animation:beam-flick 5s ease-in-out infinite alternate}
+.beam:nth-child(2){animation-delay:-1.3s}.beam:nth-child(3){animation-delay:-2.6s}.beam:nth-child(4){animation-delay:-3.9s}
+.beam.lit{opacity:1}
+@keyframes beam-flick{to{filter:blur(5px) brightness(1.25)}}
+.sec.sboard .pins-ghost{top:56%;font-style:italic;white-space:nowrap;font-size:clamp(80px,12vw,210px);color:rgba(246,234,210,.05)}
+.pins.dark .pin-card{text-align:left;padding:40px 18px 20px;color:var(--text);
+  background:linear-gradient(160deg,rgba(255,240,220,.1),rgba(255,240,220,.03));-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+  box-shadow:inset 0 0 0 1px rgba(212,168,90,.28),0 34px 50px -26px #000}
+.pins.dark .pin-card:hover{box-shadow:inset 0 0 0 1px rgba(212,168,90,.5),0 46px 60px -26px #000}
+.pins.dark .pin-card:nth-of-type(even){margin-top:44px}
+.pins.dark .pc-pic{aspect-ratio:4/3;margin-bottom:16px;border-radius:4px;overflow:hidden}
+.pins.dark .pc-pic img{width:100%;height:100%;object-fit:cover;object-position:50% 22%;pointer-events:none}
+.pins.dark .pin-card b{font-size:22px;color:var(--gold)}
+.pins.dark .pin-card h3{font-size:clamp(20px,1.7vw,25px);margin:4px 0 8px;color:#f6ead2}
+.pins.dark .pin-card p{font-size:13.5px;color:var(--mute)}
+.pins.dark .pin-no{display:block;margin-top:16px;font-size:11px;letter-spacing:.2em;color:var(--gold)}
+@media (max-width:900px){.pins.dark{grid-template-columns:1fr 1fr;max-width:none}.beam{width:90%;left:calc((var(--c) % 2 + .5) * 50%)}.beam:nth-child(n+3){display:none}}
+@media (max-width:560px){.pins.dark{grid-template-columns:1fr;max-width:340px;margin-left:auto;margin-right:auto}.pins.dark .pin-card:nth-of-type(even){margin-top:0}.beam:nth-child(n+2){display:none}.beam{left:50%;width:120%}}

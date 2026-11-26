@@ -448,7 +448,7 @@
     new IntersectionObserver((es, o) => es.forEach((e) => {
       if (!e.isIntersecting) return; o.disconnect();
       S.forEach((s, i) => setTimeout(() => { s.c.classList.add('in'); s.a = s.rest + (i % 2 ? -26 : 24); s.drop = 1; go(); }, 180 + i * 220));
-    }), { threshold: 0.3 }).observe(board);
+    }), { threshold: 0.08 }).observe(board);
     S.forEach((s) => {
       s.c.style.transform = 'translateY(-110vh)';
       s.c.addEventListener('pointerenter', () => { if (fine) { s.hover = true; go(); } });
@@ -467,6 +467,35 @@
       s.c.addEventListener('pointerup', () => { if (s.drag !== null) { s.v += (s.drag - s.rest) * -2; s.drag = null; go(); } });
       s.c.addEventListener('click', () => { if (!fine) { s.v += (Math.random() > 0.5 ? 1 : -1) * 90; go(); } });
       s.c.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); s.v += 90; go(); } });
+    });
+  });
+})();
+
+/* =========================================================
+   HOME: the gallery fan (cards fan out, the centre grows as you scroll) and the spotlit step cards
+   ========================================================= */
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.querySelectorAll('[data-hg]').forEach((row) => {
+    if (reduce) { row.classList.add('in'); return; }
+    new IntersectionObserver((es, o) => es.forEach((e) => { if (e.isIntersecting) { row.classList.add('in'); o.disconnect(); } }), { threshold: 0.2 }).observe(row);
+    let raf = 0;
+    const upd = () => {
+      raf = 0; const r = row.getBoundingClientRect(), vh = innerHeight;
+      if (r.bottom < -200 || r.top > vh + 200) return;
+      const g = Math.min(1, Math.max(0, (vh * 0.8 - r.top) / (vh * 0.9)));
+      row.style.setProperty('--g', g.toFixed(3));
+    };
+    addEventListener('scroll', () => { if (!raf) raf = requestAnimationFrame(upd); }, { passive: true }); upd();
+  });
+  // the spotlight over a step card brightens while you are on that card
+  document.querySelectorAll('.pins.dark').forEach((board) => {
+    const beams = [...board.querySelectorAll('.beam')];
+    board.querySelectorAll('.pin-card').forEach((c, i) => {
+      c.addEventListener('pointerenter', () => beams[i] && beams[i].classList.add('lit'));
+      c.addEventListener('pointerleave', () => beams[i] && beams[i].classList.remove('lit'));
+      c.addEventListener('focus', () => beams[i] && beams[i].classList.add('lit'));
+      c.addEventListener('blur', () => beams[i] && beams[i].classList.remove('lit'));
     });
   });
 })();

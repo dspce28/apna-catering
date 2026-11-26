@@ -81,7 +81,25 @@
   }));
   syncPicks();
 
-  /* ---------- glass venues: wipe the frost, it slowly returns ---------- */
+  /* ---------- glass venues: rose and marigold petals cover the view; brush them aside, they drift back ---------- */
+  const PETALS = [['#c4162f', '#f0607a'], ['#9c0f27', '#d8324d'], ['#e8780c', '#f6b04a'], ['#f08a1c', '#ffc46b'], ['#f3c2cc', '#fff0f2'], ['#b3123a', '#ff8fa3']];
+  const drawPetal = (c, x, y, len, rot, col) => {
+    c.save(); c.translate(x, y); c.rotate(rot);
+    const w = len * 0.62, g = c.createLinearGradient(0, -len, 0, len);
+    g.addColorStop(0, col[1]); g.addColorStop(1, col[0]);
+    c.fillStyle = g; c.beginPath(); c.moveTo(0, -len);
+    c.bezierCurveTo(w, -len * 0.6, w * 0.9, len * 0.55, 0, len);
+    c.bezierCurveTo(-w * 0.9, len * 0.55, -w, -len * 0.6, 0, -len); c.fill();
+    c.strokeStyle = 'rgba(80,0,10,.18)'; c.lineWidth = Math.max(0.6, len * 0.05); c.beginPath(); c.moveTo(0, -len * 0.7); c.quadraticCurveTo(len * 0.08, 0, 0, len * 0.8); c.stroke();
+    c.restore();
+  };
+  const strew = (c, W, H, dpr) => {
+    const n = Math.round((W * H) / (dpr * dpr * 2100));
+    c.shadowColor = 'rgba(40,0,8,.35)'; c.shadowBlur = 3 * dpr; c.shadowOffsetY = 1.5 * dpr;
+    for (let i = 0; i < n; i++) drawPetal(c, Math.random() * W, Math.random() * H, (11 + Math.random() * 12) * dpr, Math.random() * Math.PI * 2, PETALS[(Math.random() * PETALS.length) | 0]);
+    c.shadowColor = 'transparent';
+  };
+  const petalSVG = (col, rot, size) => `<svg viewBox="-12 -16 24 32" width="${size}" height="${size * 1.33}" style="transform:rotate(${rot}deg)"><defs><linearGradient id="pg${col[0].slice(1)}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${col[1]}"/><stop offset="1" stop-color="${col[0]}"/></linearGradient></defs><path d="M0-14C9-9 8 8 0 14C-8 8-9-9 0-14Z" fill="url(#pg${col[0].slice(1)})"/></svg>`;
   const glass = $('.glass');
   if (glass) {
     const cv = $('canvas', glass), ctx = cv.getContext('2d');
@@ -99,11 +117,12 @@
       frost = document.createElement('canvas'); frost.width = W; frost.height = H;
       const fc = frost.getContext('2d'); fc.imageSmoothingQuality = 'high'; fc.drawImage(tiny, 0, 0, W, H);
       fc.fillStyle = getComputedStyle(glass).getPropertyValue('--frost').trim() || 'rgba(250,245,236,.62)'; fc.fillRect(0, 0, W, H);
+      strew(fc, W, H, dpr);
       ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1; ctx.clearRect(0, 0, W, H); ctx.drawImage(frost, 0, 0);
       glass.classList.remove('wiped');
     };
     const wipe = (x, y) => {
-      const R = 120 * dpr, steps = last ? Math.max(1, Math.ceil(Math.hypot(x - last[0], y - last[1]) / (R * .3))) : 1;
+      const R = 140 * dpr, steps = last ? Math.max(1, Math.ceil(Math.hypot(x - last[0], y - last[1]) / (R * .3))) : 1;
       ctx.globalCompositeOperation = 'destination-out'; ctx.globalAlpha = 1;
       for (let k = 1; k <= steps; k++) {
         const px = last ? last[0] + (x - last[0]) * k / steps : x, py = last ? last[1] + (y - last[1]) * k / steps : y;
@@ -113,11 +132,35 @@
       }
       last = [x, y]; holdUntil = performance.now() + 1100; glass.classList.add('wiped');
     };
+    // the pointer becomes a little cluster of petals; brushed petals tumble away as you go
+    const cursor = $('.glass-cursor', glass), fine = matchMedia('(pointer: fine)').matches, calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (cursor) cursor.innerHTML = petalSVG(PETALS[0], -30, 22) + petalSVG(PETALS[2], 25, 20) + petalSVG(PETALS[4], 95, 17);
+    if (fine) glass.classList.add('petal-cursor');
+    let fly = 0, lastFly = null;
+    const tumble = (x, y, dx, dy) => {
+      if (calm || fly > 36) return;
+      const el = document.createElement('i'); el.className = 'petal-fly';
+      const size = 12 + Math.random() * 12, col = PETALS[(Math.random() * PETALS.length) | 0];
+      el.innerHTML = petalSVG(col, Math.random() * 360, size); el.style.left = x + 'px'; el.style.top = y + 'px';
+      glass.appendChild(el); fly++;
+      const sx = dx * (0.6 + Math.random() * 0.8) + (Math.random() - 0.5) * 60, fall = 120 + Math.random() * 160, spin = (Math.random() - 0.5) * 720;
+      const a = el.animate([
+        { transform: 'translate(-50%,-50%) rotate(0deg) scale(1)', opacity: 1 },
+        { transform: `translate(calc(-50% + ${sx * 0.6}px), calc(-50% + ${dy * 0.3 - 30}px)) rotate(${spin * 0.4}deg) scale(1.05)`, opacity: 1, offset: 0.3 },
+        { transform: `translate(calc(-50% + ${sx}px), calc(-50% + ${fall}px)) rotate(${spin}deg) scale(.8)`, opacity: 0 },
+      ], { duration: 1300 + Math.random() * 900, easing: 'cubic-bezier(.3,.6,.4,1)' });
+      a.onfinish = () => { el.remove(); fly--; };
+    };
     glass.addEventListener('pointermove', (e) => {
-      if (e.target.closest('.glass-toggle')) { last = null; return; }
-      const r = cv.getBoundingClientRect(); wipe((e.clientX - r.left) * dpr, (e.clientY - r.top) * dpr);
+      const r = glass.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
+      const onToggle = !!e.target.closest('.glass-toggle');
+      if (cursor) { cursor.style.transform = `translate(${x}px, ${y}px)`; cursor.classList.toggle('off', onToggle); }
+      if (onToggle) { last = null; lastFly = null; return; }
+      wipe(x * dpr, y * dpr);
+      if (lastFly) { const d = Math.hypot(x - lastFly[0], y - lastFly[1]); if (d > 26) { tumble(x, y, x - lastFly[0], y - lastFly[1]); if (d > 70) tumble(x, y, x - lastFly[0], y - lastFly[1]); lastFly = [x, y]; } } else lastFly = [x, y];
     });
-    glass.addEventListener('pointerleave', () => { last = null; });
+    glass.addEventListener('pointerenter', () => cursor && cursor.classList.add('on'));
+    glass.addEventListener('pointerleave', () => { last = null; lastFly = null; if (cursor) cursor.classList.remove('on'); });
     (function refrost(t) {
       if (frost && t > holdUntil) { ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = .02; ctx.drawImage(frost, 0, 0); ctx.globalAlpha = 1; }
       requestAnimationFrame(refrost);

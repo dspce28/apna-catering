@@ -23,6 +23,7 @@ FONTS = ("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@
          + "&family=Manrope:wght@400;500;600&display=swap")
 if THEME == "b":
     PAGES.insert(4, ("thali-new.html", "Your Thali"))
+    PAGES.insert(5, ("gallery.html", "Gallery"))
 
 
 # Direction B swaps a few daylight photos for candlelit ones
@@ -272,7 +273,8 @@ GLASS = '''<section class="glass" aria-label="Indoor and outdoor catering">
     <p class="lede" data-kind-text="outdoor" hidden>Marquees, gardens and country houses, with field kitchens, live grills and full service under canvas.</p>
     <div class="glass-toggle" role="tablist" aria-label="Venue"><button role="tab" aria-selected="true" data-kind="indoor">Indoors</button><button role="tab" aria-selected="false" data-kind="outdoor">Outdoors</button></div>
   </div>
-  <p class="glass-hint">✦ Move across the glass to look inside</p>
+  <p class="glass-hint">✦ Brush the petals aside to look inside</p>
+  <i class="glass-cursor" aria-hidden="true"></i>
 </section>'''
 
 STEPS = [("team-waiter", "Tell us your date", "Share your date, venue, guest numbers and traditions. We reply within one working day."),
@@ -281,7 +283,25 @@ STEPS = [("team-waiter", "Tell us your date", "Share your date, venue, guest num
          ("team-wok", "We serve the day", "Our own chefs and waiting team cook, serve and clear, so your family can celebrate.")]
 
 
-def process(head_title="Four steps to <em>a perfect day.</em>", paper=True, photos=True):
+def process(head_title="Four steps to <em>a perfect day.</em>", paper=True, photos=True, board=False):
+    if board:
+        rests = [-5, 4, -3, 6]
+        cards = "".join(
+            f'<article class="pin-card" style="--r:{rests[i]}" tabindex="0"><i class="pin" aria-hidden="true"></i>'
+            f'<div class="pc-pic">{img(s[0], "(max-width: 900px) 80vw, 260px", "")}</div><b>0{i + 1}</b><h3>{s[1]}</h3><p>{s[2]}</p><span class="pin-no" aria-hidden="true">[ {i + 1} ]</span></article>'
+            for i, s in enumerate(STEPS))
+        beams = "".join(f'<i class="beam" style="--c:{i}"></i>' for i in range(len(STEPS)))
+        return f'''<section class="sec sboard" aria-label="How it works">
+  <div class="wrap center">
+    <p class="eyebrow" data-fade>How it works</p>
+    <h2 class="h2" data-fade>{head_title}</h2>
+    <div class="pins dark" data-pins>
+      <div class="beams" aria-hidden="true">{beams}</div>
+      <span class="pins-ghost" aria-hidden="true">a perfect day</span>
+      {cards}
+    </div>
+  </div>
+</section>'''
     pic = lambda s: f'<div class="arch framed">{img(s[0], "(max-width: 900px) 45vw, 22vw", "")}</div>' if photos else ""
     items = "".join(f'''
       <li class="step" data-fade style="--d:{i * .12:.2f}s">{pic(s)}<b>0{i + 1}</b><h3>{s[1]}</h3><p>{s[2]}</p></li>''' for i, s in enumerate(STEPS))
@@ -463,10 +483,30 @@ def full(name):
             return f"img/{name}{w}.webp"
 
 
+HOME_GAL = [("s-saag-makki", "Sarson da saag"), ("s-chutneys", "House chutneys"), ("s-panipuri", "Gol gappe counter"), ("s-buffet-guests", "The banquet buffet"),
+            ("s-butter-chicken", "Butter chicken"), ("s-mango-shots", "Mango lassi shots"), ("px-jamun", "Gulab jamun")]
+
+
+def home_gallery():
+    mid = len(HOME_GAL) // 2
+    cards = "".join(
+        f'<a class="hg-card" href="gallery.html" style="--i:{i};--k:{i - mid};--a:{abs(i - mid)}">{img(im, "(max-width: 700px) 30vw, 240px", cap)}<span class="hg-cap">{cap}</span></a>'
+        for i, (im, cap) in enumerate(HOME_GAL))
+    return f'''<section class="sec paper hgal" aria-label="Gallery">{ORN}
+  <div class="wrap center">
+    <p class="eyebrow" data-fade>Gallery</p>
+    <h2 class="h2" data-fade>A taste of <em>what we serve.</em></h2>
+    <p class="lede" data-fade>Dishes and service from our wedding menus, from the chaat counter to the last gulab jamun.</p>
+    <div class="ctas" data-fade><a class="btn" href="gallery.html">Walk through the gallery <i>→</i></a></div>
+  </div>
+  <div class="hg-row" data-hg>{cards}</div>
+</section>'''
+
+
 def hall():
     cards = "".join(
         f'<button type="button" class="hall-card" data-full="{full(im)}" data-name="{cap.replace("&amp;", "&")}" aria-label="Open photo: {cap}">'
-        f'{img(im, "(max-width: 700px) 50vw, 22vw", cap)}<span class="hall-cap">{cap}<small>{sub}</small></span></button>'
+        f'{img(im, "(max-width: 700px) 50vw, 380px", cap)}<span class="hall-cap">{cap}<small>{sub}</small></span></button>'
         for im, cap, sub in HALL)
     end, end_cap, credit = HALL_END
     return f'''<section class="hall" id="gallery" aria-label="Gallery" style="--n:{len(HALL)}" data-preload>
@@ -611,9 +651,9 @@ HOME = f'''{hero_b() if THEME == "b" else HERO_A}
 
 {GLASS}
 
-{hall()}
+{home_gallery()}
 
-{process()}
+{process(board=True)}
 
 {quotes()}
 
@@ -820,7 +860,7 @@ PRELOAD_HOME = ('<link rel="preload" as="image" href="img/b-hall.webp" imagesrcs
                 'img/b-hall-3840.webp 3840w" imagesizes="100vw">')
 
 SITE = {
-    "index.html": ("Apna Catering — Sikh & Hindu Wedding Caterers, Glasgow", "Glasgow’s family wedding caterers since 1995. Sikh and Hindu weddings, mehndis and receptions for a hundred guests or a thousand.", HOME, PRELOAD_HOME + '<link rel="stylesheet" href="hall.css">'),
+    "index.html": ("Apna Catering — Sikh & Hindu Wedding Caterers, Glasgow", "Glasgow’s family wedding caterers since 1995. Sikh and Hindu weddings, mehndis and receptions for a hundred guests or a thousand.", HOME, PRELOAD_HOME),
     "about.html": ("Our Story — Apna Catering, Glasgow", "A Glasgow family kitchen cooking for weddings and celebrations since 1995.", ABOUT, ""),
     "services.html": ("Weddings & Events — Apna Catering", "Sikh and Hindu wedding catering, live stations, dessert bars and full event service across Scotland.", SERVICES, ""),
     "menus.html": ("Menus — Apna Catering", "Signature wedding menus and every dish we cook, ready to mix and match.", MENUS, ""),
@@ -828,6 +868,7 @@ SITE = {
 }
 
 if THEME == "b":
+    SITE["gallery.html"] = ("Gallery — Apna Catering", "Walk through a candlelit hallway of the dishes and service we bring to weddings across Scotland.", hall(), '<link rel="stylesheet" href="hall.css">')
     SITE["thali-new.html"] = ("Prepare Your Thali — Apna Catering", "Prepare your own wedding thalis: starters and live counters, main course, desserts.", thali_new_page(), '<link rel="stylesheet" href="thali-new.css">')
     # the old thali page now forwards to the new one, so links already shared keep working
     SITE["thali.html"] = ("Design Your Thali — Apna Catering", "Prepare your own wedding thalis.", '<section class="sec"><div class="wrap"><p class="lede">Taking you to <a href="thali-new.html">Prepare your thali</a>…</p></div></section><script>location.replace("thali-new.html")</script>', '<meta http-equiv="refresh" content="0; url=thali-new.html">')
