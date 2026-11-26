@@ -332,3 +332,30 @@ h1,h2,h3,h4{font-weight:400;letter-spacing:0}
   .book[data-side=L]{transform:translateX(calc(var(--pw) * .5)) rotateX(var(--tilt))}
   .book::after{left:30%;right:30%}
 }
+
+/* ===================== finishing: ivory chapters, ornament, type details, soft image loading ===================== */
+/* ivory "paper" chapters break up the wine, like turning to a new page of the menu */
+.sec.paper{position:relative;background:#f6ecd8 url(img/paper.webp) center/cover;color:#3a0f19;
+  --text:#3a0f19;--mute:#6b4b40;--line:rgba(58,15,25,.14);--line-gold:rgba(140,98,34,.45);--gold:#9a6b22;--gold-lt:#8a5d1c;--white:#fffaf0;--ivory:#fffaf0}
+.sec.paper .h2,.sec.paper h3,.sec.paper blockquote,.sec.paper summary{color:#3a0f19}
+.sec.paper .h2 em{color:#9a6b22}
+.sec.paper .eyebrow{color:#8a5d1c}
+.sec.paper .eyebrow::before,.sec.paper .eyebrow::after{background:rgba(140,98,34,.6)}
+.sec.paper p,.sec.paper span,.sec.paper cite,.sec.paper details p{color:#5a3b32}
+.sec.paper b{color:#9a6b22}
+.sec.paper .rose{opacity:.12}
+.sec.paper .quote-dots button{background:rgba(58,15,25,.25)}.sec.paper .quote-dots button[aria-current],.sec.paper .quote-dots button.on{background:#9a6b22}
+.sec.paper .occ a{color:#3a0f19;border-color:rgba(58,15,25,.14)}
+.sec.paper details{border-color:rgba(58,15,25,.14)}
+.sec.paper+.sec.paper{padding-top:0}.sec.paper+.sec.paper>.orn{display:none}
+/* the house ornament sits on the seam between chapters */
+.orn{display:block;width:150px;height:auto;color:var(--gold)}
+.sec.paper>.orn,.foot>.orn{position:absolute;left:50%;top:0;transform:translate(-50%,-50%);width:190px;padding:0 18px;color:#b8873a;z-index:2}
+.sec.paper>.orn{filter:drop-shadow(0 1px 0 rgba(255,250,240,.6))}
+.foot{position:relative}
+.foot>.orn{color:var(--gold)}
+/* typographic finishing */
+.dropcap::first-letter{float:left;margin:.06em .14em 0 0;font-family:var(--serif);font-size:4.4em;line-height:.78;color:var(--gold)}
+.stats b,.step>b,.values b{font-variant-numeric:oldstyle-nums proportional-nums;font-feature-settings:"onum" 1,"pnum" 1}
+/* photos show a soft blurred preview of themselves while the full image loads */
+img[style*="background-image"]{background-size:cover;background-position:center;background-repeat:no-repeat}

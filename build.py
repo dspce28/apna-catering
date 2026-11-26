@@ -1,7 +1,11 @@
-"""Builds the Apna Catering site (Direction A, "Ivory Palace") into static HTML pages.
+"""Builds the Apna Catering site (Version 2, "Candlelit Durbar") into static HTML pages in durbar/.
 
 Run: python3 build.py
 """
+import base64
+import io
+from PIL import Image
+from grade import grade
 import os
 import re
 import shutil
@@ -21,8 +25,43 @@ if THEME == "b":
     PAGES.insert(4, ("thali-new.html", "Your Thali"))
 
 
+# Direction B swaps a few daylight photos for candlelit ones
+NIGHT = {"b-hall": "gw-buffet", "p-banquet": "gw-buffet", "p-henna": "gw-sikh", "b-mandap": "gw-mandap", "p-mandap": "gw-mandap"}
+
+
+ORN = ('<svg class="orn" viewBox="0 0 160 44" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="1.5">'
+       '<path d="M6 28H54M106 28H154"/><path d="M2 28l4-3 4 3-4 3zM150 28l4-3 4 3-4 3z" fill="currentColor"/>'
+       '<path d="M80 3c4 6 13 8 13 18v19H67V21c0-10 9-12 13-18z"/><path d="M80 11c3 4 8 6 8 12v13H72V23c0-6 5-8 8-12z"/>'
+       '<path d="M60 40h40"/></g><circle cx="80" cy="26" r="2.2" fill="currentColor"/></svg>')
+
+
+NOT_PHOTOS = ("brocade", "paper", "logo", "favicon")
+
+
+def is_photo(path):
+    """Photos get the house grade; cut-outs (img/cut, img/hd), textures and the logo do not."""
+    return bool(re.fullmatch(r"img/[a-z0-9-]+\.webp", path)) and not os.path.basename(path).startswith(NOT_PHOTOS)
+
+
+_LQIP = {}
+
+
+def lqip(name):
+    """A 24px graded version as a data URI: it shows, softly blurred, while the real photo loads."""
+    if name not in _LQIP:
+        im = grade(Image.open(f"img/{name}.webp"))
+        im.thumbnail((24, 24))
+        buf = io.BytesIO()
+        im.save(buf, "WEBP", quality=40)
+        _LQIP[name] = "data:image/webp;base64," + base64.b64encode(buf.getvalue()).decode()
+    return _LQIP[name]
+
+
 def img(name, sizes="100vw", alt="", lazy=True, extra=""):
     """An <img> with whatever responsive widths exist for this image."""
+    name = NIGHT.get(name, name)
+    ph = f' style="background-image:url({lqip(name)})"' if is_photo(f"img/{name}.webp") else ""
+    extra = ph + extra
     cands = [(f"img/{name}.webp", 1200)] + [(f"img/{name}-{w}.webp", w) for w in (2400, 2720, 3840)
                                             if os.path.exists(f"img/{name}-{w}.webp")]
     srcset = ", ".join(f"{p} {w}w" for p, w in cands)
@@ -72,7 +111,7 @@ def nav(active):
     links = "".join(f'<a href="{h}"{" aria-current=\"page\"" if h == active else ""}>{l}</a>' for h, l in PAGES[1:])
     drawer = "".join(f'<a href="{h}"{" aria-current=\"page\"" if h == active else ""}>{l}</a>' for h, l in PAGES)
     return f'''<header class="nav">
-  <a href="index.html" class="brand" aria-label="Apna Catering, home"><img src="img/logo-256.png" alt="" width="52" height="52"><span>Apna<small>Catering · Est. 1995</small></span></a>
+  <a href="index.html" class="brand" aria-label="Apna Catering, home"><img src="img/logo-256.png" srcset="img/logo-256.png 1x, img/logo-512.png 2x, img/logo-mark.png 3x" alt="" width="52" height="52"><span>Apna<small>Catering · Est. 1995</small></span></a>
   <nav class="nav-links" aria-label="Main">{links}</nav>
   <a href="contact.html" class="btn">Get a quote</a>
   <button class="burger" aria-label="Menu" aria-expanded="false"><span></span><span></span></button>
@@ -82,10 +121,10 @@ def nav(active):
 
 
 def footer():
-    return f'''<footer class="foot">
+    return f'''<footer class="foot">{ORN}
   <div class="wrap foot-grid">
     <div>
-      <img src="img/logo-256.png" alt="Apna Catering" width="96" height="96">
+      <img src="img/logo-256.png" srcset="img/logo-256.png 1x, img/logo-512.png 2x, img/logo-mark.png 3x" alt="Apna Catering" width="96" height="96">
       <p class="foot-tag">It’s your day.<br><em>Make it memorable with us.</em></p>
     </div>
     <div><h5>Explore</h5><a href="about.html">Our story</a><a href="services.html">Weddings &amp; events</a><a href="menus.html">Menus</a><a href="contact.html">Get a quote</a></div>
@@ -242,10 +281,10 @@ STEPS = [("team-waiter", "Tell us your date", "Share your date, venue, guest num
          ("team-wok", "We serve the day", "Our own chefs and waiting team cook, serve and clear, so your family can celebrate.")]
 
 
-def process(head_title="Four steps to <em>a perfect day.</em>"):
+def process(head_title="Four steps to <em>a perfect day.</em>", paper=True):
     items = "".join(f'''
       <li class="step" data-fade style="--d:{i * .12:.2f}s"><div class="arch framed">{img(s[0], "(max-width: 900px) 45vw, 22vw", "")}</div><b>0{i + 1}</b><h3>{s[1]}</h3><p>{s[2]}</p></li>''' for i, s in enumerate(STEPS))
-    return f'''<section class="sec">
+    return f'''<section class="sec{" paper" if paper else ""}">{ORN if paper else ""}
   <div class="wrap center">
     <p class="eyebrow" data-fade>How it works</p>
     <h2 class="h2" data-fade>{head_title}</h2>
@@ -263,7 +302,7 @@ QUOTES = [("Everyone we’ve talked to has raved about the food! Compliments als
 def quotes():
     slides = "".join(f'<div class="quote-slide{" on" if i == 0 else ""}"><blockquote>“{q}”</blockquote><cite>{c}</cite></div>' for i, (q, c) in enumerate(QUOTES))
     dots = "".join(f'<button aria-label="Review {i + 1}"></button>' for i in range(len(QUOTES)))
-    return f'''<section class="sec sand">
+    return f'''<section class="sec paper">{ORN}
   <div class="wrap"><div class="quote" data-fade><p class="eyebrow c">Kind words</p>{slides}<div class="quote-dots">{dots}</div></div></div>
 </section>'''
 
@@ -370,7 +409,7 @@ def booklet(cats=MENU):
     """A 3D menu booklet: a cover, one spread per course (photo left, dishes right), a back cover."""
     import json
     roman = ["i.", "ii.", "iii.", "iv.", "v.", "vi."]
-    pages = ['<div class="pg cover"><div class="cv-frame"><img class="cv-logo" src="img/logo-256.png" alt="" width="120" height="120">'
+    pages = ['<div class="pg cover"><div class="cv-frame"><img class="cv-logo" src="img/logo-256.png" srcset="img/logo-256.png 1x, img/logo-512.png 2x, img/logo-mark.png 3x" alt="" width="120" height="120">'
              '<p class="cv-kicker">Apna Catering · Est. 1995</p><h3>The Wedding<br><em>Menu</em></h3>'
              '<p class="cv-sub">Glasgow · Sikh &amp; Hindu weddings</p><span class="cv-hint">Tap to open</span></div></div>']
     for i, (key, name, sub, photo, dishes) in enumerate(cats):
@@ -533,7 +572,7 @@ ABOUT = f'''{phero("Our story", "Love for food, <em>since 1995.</em>", "A Glasgo
     <div>
       <p class="eyebrow" data-fade>Who we are</p>
       <h2 class="h2" data-fade>A family kitchen that grew up with <em>Glasgow’s Asian community.</em></h2>
-      <p class="lede" data-fade>Since 1995 we have cooked quality Indian and Punjabi dishes for the biggest days in families’ lives, blessing weddings with an inventive menu of delights.</p>
+      <p class="lede dropcap" data-fade>Since 1995 we have cooked quality Indian and Punjabi dishes for the biggest days in families’ lives, blessing weddings with an inventive menu of delights.</p>
       <p class="lede" data-fade>Our team works with one mission: to uphold the values of every family we cook for. We use fresh ingredients from trusted suppliers, including small local family farms.</p>
       <p class="pull" data-fade>“There is no sincerer love than the love of food.”<small>George Bernard Shaw</small></p>
     </div>
@@ -553,7 +592,7 @@ ABOUT = f'''{phero("Our story", "Love for food, <em>since 1995.</em>", "A Glasgo
   </div>
 </section>
 
-<section class="sec">
+<section class="sec paper">{ORN}
   <div class="wrap center">
     <p class="eyebrow" data-fade>Why families choose us</p>
     <h2 class="h2" data-fade>Three promises, <em>since 1995.</em></h2>
@@ -565,7 +604,7 @@ ABOUT = f'''{phero("Our story", "Love for food, <em>since 1995.</em>", "A Glasgo
   </div>
 </section>
 
-{process("From first call <em>to final course.</em>")}
+{process("From first call <em>to final course.</em>", paper=False)}
 
 {quotes()}
 
@@ -623,7 +662,7 @@ SERVICES = f'''{phero("Weddings &amp; events", "Every tradition, <em>beautifully
   </div>
 </section>
 
-<section class="sec">
+<section class="sec paper">''' + ORN + '''
   <div class="wrap">
     <div class="center"><p class="eyebrow" data-fade>Every occasion</p><h2 class="h2" data-fade>Every chapter <em>deserves a feast.</em></h2></div>
     <ul class="occ">
@@ -647,7 +686,7 @@ SIG = [("s-butter-chicken", "The Classic", "Aloo papdi chaat · Chicken tikka &a
 
 MENUS = f'''{phero("Menus", "Start with a classic, <em>make it yours.</em>", "Four signature menus our families return to, and every dish we cook, ready to mix and match.", "s-buffet-guests", "")}
 
-<section class="sec">
+<section class="sec paper">{ORN}
   {rose("tr")}
   <div class="wrap center">
     <p class="eyebrow" data-fade>Signature menus</p>
@@ -712,7 +751,7 @@ CONTACT = f'''{phero("Contact", "Is your date <em>still available?</em>", "Weddi
   </div>
 </section>
 
-<section class="sec sand">
+<section class="sec paper">''' + ORN + '''
   <div class="wrap center">
     <p class="eyebrow" data-fade>Questions</p>
     <h2 class="h2" data-fade>Families often <em>ask us.</em></h2>
@@ -736,7 +775,6 @@ if THEME == "b":
     # the old thali page now forwards to the new one, so links already shared keep working
     SITE["thali.html"] = ("Design Your Thali — Apna Catering", "Prepare your own wedding thalis.", '<section class="sec"><div class="wrap"><p class="lede">Taking you to <a href="thali-new.html">Prepare your thali</a>…</p></div></section><script>location.replace("thali-new.html")</script>', '<meta http-equiv="refresh" content="0; url=thali-new.html">')
 
-NIGHT = {"b-hall": "gw-buffet", "p-banquet": "gw-buffet", "p-henna": "gw-sikh", "b-mandap": "gw-mandap", "p-mandap": "gw-mandap"}
 
 
 def night(html):
@@ -769,10 +807,19 @@ if __name__ == "__main__":
             if fn.endswith((".html", ".css", ".js")):
                 used |= set(re.findall(r"img/[A-Za-z0-9._/-]+?\.(?:webp|png|jpg)", open(os.path.join(OUT, fn)).read()))
         os.makedirs(os.path.join(OUT, "img", "cut"), exist_ok=True)
+        graded = 0
         for u in sorted(used):
-            if os.path.exists(u):
-                os.makedirs(os.path.dirname(os.path.join(OUT, u)), exist_ok=True)
-                shutil.copy(u, os.path.join(OUT, u))
-            else:
+            if not os.path.exists(u):
                 print("missing", u)
+                continue
+            dst = os.path.join(OUT, u)
+            os.makedirs(os.path.dirname(dst), exist_ok=True)
+            if is_photo(u):
+                newest = max(os.path.getmtime(u), os.path.getmtime("grade.py"))
+                if not os.path.exists(dst) or os.path.getmtime(dst) < newest:
+                    grade(Image.open(u)).save(dst, "WEBP", quality=82, method=6)
+                    graded += 1
+            else:
+                shutil.copy(u, dst)
+        print("graded", graded, "photos")
         print("copied", len(used), "images")
