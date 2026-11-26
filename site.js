@@ -189,14 +189,37 @@
       if (!(f.get('phone') || '').toString().trim()) return 'Please add a phone number so we can call you back.';
       return '';
     };
-    $$('[data-send]', form).forEach((b) => b.addEventListener('click', () => {
+    // with a form key, every enquiry is emailed to the caterer and kept on record, even if the visitor goes on to WhatsApp
+    const key = form.dataset.key;
+    const record = (via) => {
+      if (!key) return Promise.resolve(false);
+      const f = new FormData(form), val = (k) => (f.get(k) || '').toString().trim();
+      if (f.get('botcheck')) return Promise.resolve(true);
+      return fetch('https://api.web3forms.com/submit', {
+        method: 'POST', keepalive: true, headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({ access_key: key, subject: `Website enquiry: ${val('occasion') || 'catering'}, ${val('name')}`, from_name: 'Apna Catering website',
+          name: val('name'), phone: val('phone'), email: val('email'), replyto: val('email'), sent_via: via, enquiry: build() }),
+      }).then((r) => r.json()).then((j) => !!j.success).catch(() => false);
+    };
+    const done = (msg) => { $('.form-done-msg', wrap).textContent = msg; wrap.classList.add('sent'); wrap.scrollIntoView({ behavior: 'smooth', block: 'center' }); };
+    $$('[data-send]', form).forEach((b) => b.addEventListener('click', async (e) => {
+      e.preventDefault();
       const m = check(); err.textContent = m; if (m) return;
       const text = build();
+      if (b.dataset.send === 'form') {
+        b.disabled = true; const label = b.innerHTML; b.textContent = 'Sending…';
+        const ok = await record('website form');
+        b.disabled = false; b.innerHTML = label;
+        if (ok) done('We have your enquiry and will call you within one working day.');
+        else err.textContent = 'Sorry, that did not go through. Please use “Send on WhatsApp” or call 07818 478036.';
+        return;
+      }
+      if (b.dataset.send === 'whatsapp') record('WhatsApp');
       const url = b.dataset.send === 'whatsapp'
         ? 'https://wa.me/447818478036?text=' + encodeURIComponent(text)
         : 'mailto:hello@apnacatering.co.uk?subject=' + encodeURIComponent('Catering enquiry') + '&body=' + encodeURIComponent(text);
       window.open(url, b.dataset.send === 'whatsapp' ? '_blank' : '_self');
-      wrap.classList.add('sent');
+      done(key ? 'We have your details and will be in touch within one working day.' : 'Your message is ready to send. We’ll be in touch within one working day.');
     }));
   }
 })();

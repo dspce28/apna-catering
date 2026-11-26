@@ -354,3 +354,4 @@ p+p{margin-top:1em}
   .display{font-size:clamp(44px,12vw,64px)}
   .phero::before{background:linear-gradient(180deg,rgba(250,245,236,.75) 0%,rgba(250,245,236,.55) 40%,rgba(250,245,236,.9) 70%,var(--ivory) 100%)}
 }
+.hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}

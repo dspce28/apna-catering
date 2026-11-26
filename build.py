@@ -7,6 +7,8 @@ import re
 import shutil
 import sys
 
+# Web3Forms access key: each enquiry is emailed to the client and kept on record. Empty = WhatsApp/email only.
+FORM_KEY = ""
 THEME = "b"  # the approved design (Version 2, Candlelit Durbar). Version 1 was retired.
 OUT = "durbar"
 
@@ -540,13 +542,13 @@ ABOUT = f'''{phero("Our story", "Love for food, <em>since 1995.</em>", "A Glasgo
 
 <section class="sec sand">
   <div class="wrap center">
-    <p class="eyebrow" data-fade>The people behind the plates</p>
+    <p class="eyebrow" data-fade>How we work</p>
     <h2 class="h2" data-fade>From our kitchen <em>to your table.</em></h2>
     <div class="team">
-      <figure>{arch("team-waiter", "An Apna waiter carrying plated dishes", "(max-width: 900px) 45vw, 22vw")}<figcaption>Served with care</figcaption></figure>
-      <figure>{arch("team-chef", "An Apna chef plating at the pass", "(max-width: 900px) 45vw, 22vw", d=.1)}<figcaption>Finished by hand</figcaption></figure>
-      <figure>{arch("team-pass", "Apna chefs preparing dishes together", "(max-width: 900px) 45vw, 22vw", d=.2)}<figcaption>One team</figcaption></figure>
-      <figure>{arch("team-wok", "An Apna chef cooking over a live flame", "(max-width: 900px) 45vw, 22vw", d=.3)}<figcaption>Cooked fresh</figcaption></figure>
+      <figure>{arch("team-waiter", "A waiter carrying plated dishes", "(max-width: 900px) 45vw, 22vw")}<figcaption>Served with care</figcaption></figure>
+      <figure>{arch("team-chef", "A chef plating dishes at the pass", "(max-width: 900px) 45vw, 22vw", d=.1)}<figcaption>Finished by hand</figcaption></figure>
+      <figure>{arch("team-pass", "Chefs preparing dishes together in a kitchen", "(max-width: 900px) 45vw, 22vw", d=.2)}<figcaption>Prepared together</figcaption></figure>
+      <figure>{arch("team-wok", "A chef cooking over a live flame", "(max-width: 900px) 45vw, 22vw", d=.3)}<figcaption>Cooked fresh</figcaption></figure>
     </div>
   </div>
 </section>
@@ -687,7 +689,7 @@ CONTACT = f'''{phero("Contact", "Is your date <em>still available?</em>", "Weddi
       </div>
     </div>
     <div class="form" data-fade style="--d:.15s">
-      <form id="enquiry" novalidate onsubmit="return false">
+      <form id="enquiry" novalidate onsubmit="return false" data-key="''' + FORM_KEY + '''"><input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
         <fieldset><legend>What are you celebrating?</legend><div class="chips">''' + "".join(
     f'<label><input type="radio" name="occasion" value="{o}"><span>{OCC_LABEL.get(o, o)}</span></label>' for o in OCCASIONS) + '''</div></fieldset>
         <fieldset><legend>The details</legend>
@@ -703,9 +705,9 @@ CONTACT = f'''{phero("Contact", "Is your date <em>still available?</em>", "Weddi
         </fieldset>
         <p class="form-picks"></p>
         <p class="form-err" role="alert"></p>
-        <div class="form-actions"><button type="button" class="btn" data-send="whatsapp">Send on WhatsApp <i>→</i></button><button type="button" class="btn line" data-send="email">Send by email</button></div>
+        <div class="form-actions">''' + ('<button type="submit" class="btn" data-send="form">Send enquiry <i>→</i></button><button type="button" class="btn line" data-send="whatsapp">Send on WhatsApp</button>' if FORM_KEY else '<button type="button" class="btn" data-send="whatsapp">Send on WhatsApp <i>→</i></button><button type="button" class="btn line" data-send="email">Send by email</button>') + '''</div>
       </form>
-      <div class="form-done"><h3 class="h2" style="font-size:44px">Thank you.</h3><p class="lede" style="margin:0 auto">Your message is ready to send. We’ll be in touch within one working day.</p></div>
+      <div class="form-done"><h3 class="h2" style="font-size:44px">Thank you.</h3><p class="lede form-done-msg" style="margin:0 auto">Your message is ready to send. We’ll be in touch within one working day.</p></div>
     </div>
   </div>
 </section>
