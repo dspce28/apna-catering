@@ -1,0 +1,142 @@
+<title>Apna Photo Drop</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<style>
+/* Layout: single centred column — drop zone on top, uploaded-photo grid below. Brand: burgundy, ivory, antique gold. */
+:root{
+  --bg:#F6EFE3; --card:#FFFDF8; --ink:#2E1A1C; --muted:#7A6458; --burg:#5E0B1E; --gold:#B08D57; --line:#E4D6BF; --ok:#2F6B3A; --bad:#A3122A;
+  --display:'Cormorant Garamond',Georgia,serif; --ui:Inter,system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#1E1416;--card:#2A1C1F;--ink:#F3E7DA;--muted:#B8A39A;--burg:#E9B7C1;--gold:#D2B07A;--line:#3D2A31;--ok:#7CC48A;--bad:#F08A9A;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#1E1416;--card:#2A1C1F;--ink:#F3E7DA;--muted:#B8A39A;--burg:#E9B7C1;--gold:#D2B07A;--line:#3D2A31;--ok:#7CC48A;--bad:#F08A9A;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:15px/1.55 var(--ui);padding-block:32px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+main{max-width:760px;margin:0 auto;display:grid;gap:22px}
+h1{font:500 clamp(30px,6vw,42px)/1.1 var(--display);margin:0;color:var(--burg);text-wrap:balance}
+.eyebrow{font:600 11px var(--ui);letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin:0 0 6px}
+p{margin:0;max-width:62ch;color:var(--muted)}
+.drop{border:1.5px dashed var(--gold);border-radius:14px;background:var(--card);padding:34px 20px;text-align:center;display:grid;gap:12px;justify-items:center;transition:background .2s,border-color .2s}
+.drop.over{background:color-mix(in srgb,var(--gold) 12%,var(--card));border-style:solid}
+.drop b{font:500 22px var(--display);color:var(--ink)}
+.btn{font:600 14px var(--ui);background:var(--burg);color:var(--bg);border:0;border-radius:999px;padding:11px 22px;cursor:pointer}
+.btn:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.btn[disabled]{opacity:.5;cursor:default}
+.small{font-size:13px;color:var(--muted)}
+#status{min-height:1.4em;font-weight:500}
+#status.ok{color:var(--ok)}#status.bad{color:var(--bad)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+figure{margin:0;background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+figure img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;background:var(--line)}
+figcaption{padding:8px 10px;font-size:12px;line-height:1.35;min-width:0;overflow-wrap:anywhere}
+figcaption span{display:block;color:var(--muted)}
+.empty{padding:22px;border:1px solid var(--line);border-radius:10px;background:var(--card);text-align:center}
+.notice{padding:14px 16px;border-radius:10px;border:1px solid var(--line);background:var(--card)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<main>
+  <header>
+    <p class="eyebrow">Apna Catering · Brochure photos</p>
+    <h1>Photo drop for the client's images</h1>
+  </header>
+  <p>Drop the photos from the client's email here, either the images themselves or the whole <strong>.zip</strong> file. Zips are unpacked in your browser and every photo inside is saved. Then tell Claude "photos uploaded".</p>
+
+  <div class="notice" id="noUpload" hidden>Uploading is only available to the owner of this page. Open it signed in as the owner.</div>
+
+  <label class="drop" id="drop" for="file">
+    <b>Drag photos or a zip here</b>
+    <span class="small">JPG, PNG, WebP or ZIP · up to 20 MB per photo</span>
+    <span class="btn" role="button">Choose files</span>
+    <input id="file" type="file" accept="image/jpeg,image/png,image/webp,.zip,application/zip" multiple hidden>
+  </label>
+  <div id="status" role="status" aria-live="polite"></div>
+
+  <section>
+    <p class="eyebrow">Uploaded so far</p>
+    <div class="grid" id="grid"></div>
+    <div class="empty small" id="empty">No photos yet. Uploaded photos appear here with their file names.</div>
+  </section>
+</main>
+
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const grid = $('grid'), statusEl = $('status');
+  let assets = null, db = null;
+  const IMG = /\.(jpe?g|png|webp)$/i;
+  const TYPE = { jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', webp: 'image/webp' };
+  function status(t, cls) { statusEl.textContent = t; statusEl.className = cls || ''; }
+  function tile(p) {
+    const f = document.createElement('figure');
+    const img = document.createElement('img'); img.alt = p.name; img.loading = 'lazy'; img.src = '/_blob/' + p.asset;
+    img.onerror = () => { img.removeAttribute('src'); };
+    const c = document.createElement('figcaption'); c.textContent = p.name;
+    const s = document.createElement('span'); s.textContent = (p.from ? 'from ' + p.from + ' · ' : '') + Math.round((p.size || 0) / 1024) + ' KB'; c.appendChild(s);
+    f.append(img, c); return f;
+  }
+  function render(list) {
+    grid.innerHTML = ''; list.forEach((p) => grid.appendChild(tile(p)));
+    $('empty').hidden = list.length > 0;
+  }
+
+  async function saveOne(blob, name, from) {
+    const ext = (name.split('.').pop() || '').toLowerCase();
+    const type = TYPE[ext] || blob.type;
+    const r = await assets.upload(blob, { type });
+    const doc = { name, asset: r.id, size: r.sizeBytes, from: from || '', at: new Date().toISOString() };
+    if (db) { try { await db.collection('photos').doc(r.id).set(doc); } catch (e) {} }
+    return doc;
+  }
+
+  async function handle(files) {
+    if (!assets) { status('Uploading is not available in this view.', 'bad'); return; }
+    const jobs = [];
+    for (const f of files) {
+      if (/\.zip$/i.test(f.name) || f.type === 'application/zip') {
+        status('Unpacking ' + f.name + '…');
+        try {
+          const zip = await JSZip.loadAsync(f);
+          for (const entry of Object.values(zip.files)) {
+            const base = entry.name.split('/').pop();
+            if (entry.dir || !IMG.test(base) || entry.name.includes('__MACOSX') || base.startsWith('.')) continue;
+            jobs.push({ get: () => entry.async('blob'), name: base, from: f.name });
+          }
+        } catch (e) { status('Could not open ' + f.name + '. Is it a valid zip file?', 'bad'); }
+      } else if (IMG.test(f.name)) jobs.push({ get: async () => f, name: f.name, from: '' });
+    }
+    if (!jobs.length) { status('No JPG, PNG or WebP photos found in what you dropped.', 'bad'); return; }
+    let done = 0, failed = [];
+    const added = [];
+    for (const j of jobs) {
+      status(`Uploading ${done + 1} of ${jobs.length}: ${j.name}`);
+      try { added.push(await saveOne(await j.get(), j.name, j.from)); done++; }
+      catch (e) { failed.push(j.name + (e && e.code === 'too_large' ? ' (over 20 MB)' : '')); }
+    }
+    if (!db) render(added.concat([...grid.querySelectorAll('figure')].length ? [] : []));
+    status(failed.length ? `Saved ${done} photo(s). Not saved: ${failed.join(', ')}` : `Saved ${done} photo${done === 1 ? '' : 's'}. Tell Claude "photos uploaded".`, failed.length ? 'bad' : 'ok');
+    if (!db) added.forEach((p) => grid.appendChild(tile(p))), ($('empty').hidden = true);
+  }
+
+  const drop = $('drop');
+  ['dragenter', 'dragover'].forEach((ev) => drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.add('over'); }));
+  ['dragleave', 'drop'].forEach((ev) => drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.remove('over'); }));
+  drop.addEventListener('drop', (e) => handle([...e.dataTransfer.files]));
+  $('file').addEventListener('change', (e) => { handle([...e.target.files]); e.target.value = ''; });
+
+  (async function boot() {
+    for (let i = 0; i < 40 && !(window.claude && window.claude.use); i++) await new Promise((r) => setTimeout(r, 100));
+    if (!(window.claude && window.claude.use)) { $('noUpload').hidden = false; drop.hidden = true; return; }
+    const [a, d] = await Promise.all([window.claude.use('assets'), window.claude.use('db')]);
+    assets = a; db = d;
+    if (!assets) { $('noUpload').hidden = false; drop.hidden = true; }
+    if (db) {
+      const t = setTimeout(() => status('Still loading the uploaded list…'), 10000);
+      db.collection('photos').orderBy('at').onSnapshot((snap) => {
+        clearTimeout(t); if (statusEl.textContent.startsWith('Still loading')) status('');
+        render(snap.docs.map((d) => d.data()));
+      }, () => { clearTimeout(t); });
+    }
+  })();
+})();
+</script>
