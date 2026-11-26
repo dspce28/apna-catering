@@ -323,3 +323,12 @@ h1,h2,h3,h4{font-weight:400;letter-spacing:0}
 
 .bk-sec .center{margin-bottom:6px}
 .bk-sec{padding-top:clamp(50px,6vw,80px);padding-bottom:clamp(40px,5vw,70px)}
+/* phones: the menu book shows one full-width page at a time and slides to follow the page being read */
+@media (max-width:700px){
+  .bk-sec{--pw:min(88vw,calc((100svh - 230px) / 1.4))}
+  .bk-wrap{width:var(--pw);margin:0 auto;overflow:clip;padding:10px 0 34px}
+  .book{flex:none}
+  .book[data-side=R]{transform:translateX(calc(var(--pw) * -.5)) rotateX(var(--tilt))}
+  .book[data-side=L]{transform:translateX(calc(var(--pw) * .5)) rotateX(var(--tilt))}
+  .book::after{left:30%;right:30%}
+}

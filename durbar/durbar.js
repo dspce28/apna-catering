@@ -351,31 +351,48 @@
         if ((i < prev) !== f && !reduce) { l.style.zIndex = n + 5; setTimeout(() => { l.style.zIndex = z(i); }, 1150); } else l.style.zIndex = z(i);
       });
       book.dataset.state = k === 0 ? 'closed' : k === n ? 'end' : 'open';
-      at.textContent = labels[k]; prevB.disabled = k === 0; nextB.disabled = k === n;
+      at.textContent = labels[k]; buttons();
     };
-    prevB.addEventListener('click', () => set(cur - 1));
-    nextB.addEventListener('click', () => set(cur + 1));
+    /* phones: one page at a time. Views run cover, then left and right page of each spread, then the back cover. */
+    const phone = matchMedia('(max-width: 700px)');
+    let v = 0;
+    const show = (nv) => {
+      v = Math.max(0, Math.min(2 * n - 1, nv));
+      const k = v === 0 ? 0 : Math.ceil(v / 2);
+      book.dataset.side = v === 0 || v % 2 === 0 ? 'R' : 'L';
+      if (k !== cur) set(k); else buttons();
+    };
+    function buttons() {
+      if (phone.matches) { prevB.disabled = v === 0; nextB.disabled = v === 2 * n - 1; }
+      else { prevB.disabled = cur === 0; nextB.disabled = cur === n; }
+    }
+    const step = (d) => (phone.matches ? show(v + d) : set(cur + d));
+    phone.addEventListener('change', () => { if (phone.matches) show(cur === 0 ? 0 : 2 * cur - 1); else { delete book.dataset.side; buttons(); } });
+    if (phone.matches) book.dataset.side = 'R';
+    prevB.addEventListener('click', () => step(-1));
+    nextB.addEventListener('click', () => step(1));
     let sx = null, swiped = false;
     book.addEventListener('pointerdown', (e) => { sx = e.clientX; swiped = false; });
     book.addEventListener('pointerup', (e) => {
       if (sx === null) return; const dx = e.clientX - sx; sx = null;
-      if (Math.abs(dx) > 45) { swiped = true; set(cur + (dx < 0 ? 1 : -1)); }
+      if (Math.abs(dx) > 45) { swiped = true; step(dx < 0 ? 1 : -1); }
     });
     book.addEventListener('click', (e) => {
       if (swiped || e.target.closest('a,button')) return;
+      if (phone.matches) { const r = book.parentElement.getBoundingClientRect(); step(e.clientX < r.left + r.width / 3 ? -1 : 1); return; }
       const leaf = e.target.closest('.leaf'); if (!leaf) return;
       set(leaf.classList.contains('flipped') ? cur - 1 : cur + 1);
     });
     book.addEventListener('keydown', (e) => {
-      if (e.key === 'ArrowRight') { e.preventDefault(); set(cur + 1); }
-      if (e.key === 'ArrowLeft') { e.preventDefault(); set(cur - 1); }
+      if (e.key === 'ArrowRight') { e.preventDefault(); step(1); }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); step(-1); }
     });
     // the book lies tilted, settles flat as it comes into view, then the cover opens
     if (!reduce) {
       book.classList.add('pre');
       new IntersectionObserver((es, o) => es.forEach((e) => {
         if (!e.isIntersecting) return; o.disconnect();
-        book.classList.remove('pre'); setTimeout(() => { if (cur === 0) set(1); }, 1000);
+        book.classList.remove('pre'); setTimeout(() => { if (cur === 0) step(1); }, 1000);
       }), { threshold: .5 }).observe(book);
     }
     $$('.bk-filter button', sec).forEach((b) => b.addEventListener('click', () => {
