@@ -409,11 +409,11 @@ img[style*="background-image"]{background-size:cover;background-position:center;
 .glass.petal-cursor .glass-toggle,.glass.petal-cursor .glass-toggle *{cursor:pointer}
 .glass-cursor{position:absolute;left:0;top:0;z-index:5;width:0;height:0;pointer-events:none;opacity:0;transition:opacity .25s}
 .glass-cursor.on{opacity:1}.glass-cursor.off{opacity:0}
-.glass-cursor svg{position:absolute;left:-10px;top:-14px;filter:drop-shadow(0 3px 4px rgba(30,0,6,.45))}
-.glass-cursor svg:nth-child(2){left:2px;top:-8px}.glass-cursor svg:nth-child(3){left:-6px;top:0}
+.petal-sprite{display:block;background:url(img/petals.webp) 0 0/2400% 100% no-repeat;filter:drop-shadow(1px 4px 4px rgba(30,0,6,.45))}
+.glass-cursor .petal-sprite{position:absolute;left:-16px;top:-18px}.glass-cursor .petal-sprite:nth-child(2){left:-2px;top:-10px}.glass-cursor .petal-sprite:nth-child(3){left:-12px;top:-2px}
 .glass-cursor{animation:petal-bob 2.4s ease-in-out infinite}
 @keyframes petal-bob{50%{rotate:12deg}}
-.petal-fly{position:absolute;z-index:4;pointer-events:none;line-height:0;filter:drop-shadow(0 4px 5px rgba(30,0,6,.4))}
+.petal-fly{position:absolute;z-index:4;pointer-events:none;line-height:0}
 
 /* ---- Home gallery: a fan of cards in an arch (ivory) ---- */
 .hgal{overflow:clip}
@@ -455,3 +455,21 @@ img[style*="background-image"]{background-size:cover;background-position:center;
 .pins.dark .pin-no{display:block;margin-top:16px;font-size:11px;letter-spacing:.2em;color:var(--gold)}
 @media (max-width:900px){.pins.dark{grid-template-columns:1fr 1fr;max-width:none}.beam{width:90%;left:calc((var(--c) % 2 + .5) * 50%)}.beam:nth-child(n+3){display:none}}
 @media (max-width:560px){.pins.dark{grid-template-columns:1fr;max-width:340px;margin-left:auto;margin-right:auto}.pins.dark .pin-card:nth-of-type(even){margin-top:0}.beam:nth-child(n+2){display:none}.beam{left:50%;width:120%}}
+
+/* ---- Home steps: one ceiling lamp whose beam follows the pointer (replaces the four fixed beams) ---- */
+.sec.sboard{background:radial-gradient(60% 40% at 50% 0%,#3a0a15,#1f050b 70%)}
+.sec.sboard .h2,.sec.sboard .eyebrow{position:relative;z-index:2}
+.beams{display:none}
+.lamp{position:absolute;left:50%;top:0;width:0;height:0;z-index:1;pointer-events:none}
+.lamp .fixture{position:absolute;left:-26px;top:-6px;width:52px;height:22px;border-radius:0 0 26px 26px;background:linear-gradient(#5a1a22,#24070c);box-shadow:inset 0 -2px 0 rgba(212,168,90,.6)}
+.lamp .bulb{position:absolute;left:-13px;top:4px;width:26px;height:26px;border-radius:50%;background:radial-gradient(circle,#fffaf0,#ffe1a8 40%,rgba(255,210,140,0) 72%);box-shadow:0 0 50px 22px rgba(255,214,150,.38)}
+.lamp .cone{position:absolute;left:0;top:14px;width:600px;height:900px;translate:-50% 0;transform-origin:50% 0;mix-blend-mode:screen;filter:blur(10px);
+  background:linear-gradient(180deg,rgba(255,236,196,.5),rgba(255,222,172,.16) 55%,rgba(255,214,160,0) 92%);clip-path:polygon(47% 0,53% 0,100% 100%,0 100%)}
+.pool{position:absolute;left:0;top:0;z-index:1;width:620px;height:420px;margin:-210px 0 0 -310px;pointer-events:none;mix-blend-mode:screen;
+  background:radial-gradient(closest-side,rgba(255,226,178,.32),rgba(255,214,160,.08) 60%,transparent)}
+.pins.dark{z-index:1}
+.pins.dark .pin-card{filter:brightness(calc(.5 + var(--lit,0) * .62));transition:opacity .3s,box-shadow .4s}
+.sec.sboard .pins-ghost{font-family:var(--sans);font-style:normal;font-weight:800;text-transform:uppercase;letter-spacing:-.02em;line-height:.9;white-space:normal;text-align:center;
+  font-size:clamp(70px,10vw,170px);color:rgba(246,234,210,.06);top:48%}
+@media (max-width:900px){.pool{width:440px;height:320px;margin:-160px 0 0 -220px}}
+@media (max-width:900px){.pins.dark .pin-card{filter:brightness(calc(.72 + var(--lit,0) * .4))}}

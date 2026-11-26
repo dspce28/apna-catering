@@ -93,11 +93,24 @@
     c.strokeStyle = 'rgba(80,0,10,.18)'; c.lineWidth = Math.max(0.6, len * 0.05); c.beginPath(); c.moveTo(0, -len * 0.7); c.quadraticCurveTo(len * 0.08, 0, 0, len * 0.8); c.stroke();
     c.restore();
   };
+  const SHEET = new Image(), TILES = 24, TS = 128; SHEET.src = 'img/petals.webp';
   const strew = (c, W, H, dpr) => {
-    const n = Math.round((W * H) / (dpr * dpr * 2100));
-    c.shadowColor = 'rgba(40,0,8,.35)'; c.shadowBlur = 3 * dpr; c.shadowOffsetY = 1.5 * dpr;
-    for (let i = 0; i < n; i++) drawPetal(c, Math.random() * W, Math.random() * H, (11 + Math.random() * 12) * dpr, Math.random() * Math.PI * 2, PETALS[(Math.random() * PETALS.length) | 0]);
+    const n = Math.round((W * H) / (dpr * dpr * 1900)), ready = SHEET.complete && SHEET.naturalWidth;
+    c.shadowColor = 'rgba(30,0,6,.45)'; c.shadowBlur = 5 * dpr; c.shadowOffsetX = 1.5 * dpr; c.shadowOffsetY = 3 * dpr;
+    for (let i = 0; i < n; i++) {
+      const x = Math.random() * W, y = Math.random() * H, rot = Math.random() * Math.PI * 2;
+      if (!ready) { drawPetal(c, x, y, (11 + Math.random() * 12) * dpr, rot, PETALS[(Math.random() * PETALS.length) | 0]); continue; }
+      const k = (Math.random() * TILES) | 0, sz = (30 + Math.random() * 26) * dpr;
+      c.save(); c.translate(x, y); c.rotate(rot); c.scale(Math.random() < .5 ? -1 : 1, 1);
+      c.drawImage(SHEET, k * TS, 0, TS, TS, -sz / 2, -sz / 2, sz, sz); c.restore();
+    }
     c.shadowColor = 'transparent';
+  };
+  const spriteEl = (size, rot) => {
+    const k = (Math.random() * TILES) | 0, e = document.createElement('i');
+    e.className = 'petal-sprite'; e.style.width = e.style.height = size + 'px';
+    e.style.backgroundPosition = `${(k / (TILES - 1)) * 100}% 0`; e.style.transform = `rotate(${rot}deg)`;
+    return e;
   };
   const petalSVG = (col, rot, size) => `<svg viewBox="-12 -16 24 32" width="${size}" height="${size * 1.33}" style="transform:rotate(${rot}deg)"><defs><linearGradient id="pg${col[0].slice(1)}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${col[1]}"/><stop offset="1" stop-color="${col[0]}"/></linearGradient></defs><path d="M0-14C9-9 8 8 0 14C-8 8-9-9 0-14Z" fill="url(#pg${col[0].slice(1)})"/></svg>`;
   const glass = $('.glass');
@@ -106,6 +119,7 @@
     const imgs = $$('.glass-img', glass), texts = $$('[data-kind-text]', glass), tabs = $$('.glass-toggle button', glass);
     let kind = 'indoor', frost = null, W = 0, H = 0, dpr = 1, last = null, holdUntil = 0;
     const current = () => imgs.find((im) => im.dataset.kind === kind);
+    SHEET.addEventListener('load', () => { if (frost) build(); }, { once: true });
     const build = () => {
       const im = current();
       if (!im.complete || !im.naturalWidth) { im.addEventListener('load', build, { once: true }); return; }
@@ -134,14 +148,13 @@
     };
     // the pointer becomes a little cluster of petals; brushed petals tumble away as you go
     const cursor = $('.glass-cursor', glass), fine = matchMedia('(pointer: fine)').matches, calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (cursor) cursor.innerHTML = petalSVG(PETALS[0], -30, 22) + petalSVG(PETALS[2], 25, 20) + petalSVG(PETALS[4], 95, 17);
+    if (cursor) [[-30, 30], [28, 26], [100, 22]].forEach(([r, sz]) => cursor.appendChild(spriteEl(sz, r)));
     if (fine) glass.classList.add('petal-cursor');
     let fly = 0, lastFly = null;
     const tumble = (x, y, dx, dy) => {
       if (calm || fly > 36) return;
       const el = document.createElement('i'); el.className = 'petal-fly';
-      const size = 12 + Math.random() * 12, col = PETALS[(Math.random() * PETALS.length) | 0];
-      el.innerHTML = petalSVG(col, Math.random() * 360, size); el.style.left = x + 'px'; el.style.top = y + 'px';
+      el.appendChild(spriteEl(26 + Math.random() * 22, Math.random() * 360)); el.style.left = x + 'px'; el.style.top = y + 'px';
       glass.appendChild(el); fly++;
       const sx = dx * (0.6 + Math.random() * 0.8) + (Math.random() - 0.5) * 60, fall = 120 + Math.random() * 160, spin = (Math.random() - 0.5) * 720;
       const a = el.animate([

@@ -488,14 +488,36 @@
     };
     addEventListener('scroll', () => { if (!raf) raf = requestAnimationFrame(upd); }, { passive: true }); upd();
   });
-  // the spotlight over a step card brightens while you are on that card
-  document.querySelectorAll('.pins.dark').forEach((board) => {
-    const beams = [...board.querySelectorAll('.beam')];
-    board.querySelectorAll('.pin-card').forEach((c, i) => {
-      c.addEventListener('pointerenter', () => beams[i] && beams[i].classList.add('lit'));
-      c.addEventListener('pointerleave', () => beams[i] && beams[i].classList.remove('lit'));
-      c.addEventListener('focus', () => beams[i] && beams[i].classList.add('lit'));
-      c.addEventListener('blur', () => beams[i] && beams[i].classList.remove('lit'));
-    });
+  // one ceiling lamp: its beam swings to follow the pointer and lights the cards it falls on
+  document.querySelectorAll('[data-lamp]').forEach((sec) => {
+    const lamp = sec.querySelector('.lamp'), cone = sec.querySelector('.cone'), pool = sec.querySelector('.pool');
+    const cards = [...sec.querySelectorAll('.pin-card')];
+    let tx = 0, ty = 0, cx = 0, cy = 0, pointer = false, raf = 0, on = false, t0 = performance.now(), tapAt = 0;
+    const origin = () => { const r = sec.getBoundingClientRect(), l = lamp.getBoundingClientRect(); return [l.left - r.left, l.top - r.top, r]; };
+    const idle = (t) => {                                      // no pointer: the light drifts slowly from card to card
+      const [, , r] = origin(), k = (Math.sin((t - t0) / 2600) + 1) / 2;
+      const a = cards[0].getBoundingClientRect(), z = cards[cards.length - 1].getBoundingClientRect();
+      tx = (a.left + a.width / 2 - r.left) + k * ((z.left + z.width / 2) - (a.left + a.width / 2));
+      ty = (a.top + a.height * 0.45 - r.top) + k * (z.top - a.top);
+    };
+    const frame = (t) => {
+      raf = 0; if (!on) return;
+      if (!pointer && !reduce && t - tapAt > 2500) idle(t);
+      cx += (tx - cx) * 0.09; cy += (ty - cy) * 0.09;
+      const [lx, ly, r] = origin(), dx = cx - lx, dy = Math.max(40, cy - ly), len = Math.hypot(dx, dy) + 160;
+      cone.style.height = len + 'px'; cone.style.width = len * 0.62 + 'px';
+      cone.style.rotate = (-Math.atan2(dx, dy) * 57.2958).toFixed(2) + 'deg';
+      pool.style.transform = `translate(${cx.toFixed(1)}px, ${cy.toFixed(1)}px)`;
+      cards.forEach((c) => {
+        const b = c.getBoundingClientRect(), d = Math.hypot(b.left + b.width / 2 - r.left - cx, b.top + b.height / 2 - r.top - cy);
+        c.style.setProperty('--lit', Math.max(0, 1 - d / Math.max(r.width * 0.32, b.height * 0.9)).toFixed(3));
+      });
+      raf = requestAnimationFrame(frame);
+    };
+    const go = () => { if (!raf) raf = requestAnimationFrame(frame); };
+    sec.addEventListener('pointermove', (e) => { if (e.pointerType !== 'mouse') return; const r = sec.getBoundingClientRect(); pointer = true; tx = e.clientX - r.left; ty = e.clientY - r.top; go(); });
+    sec.addEventListener('pointerleave', () => { pointer = false; });
+    cards.forEach((c) => c.addEventListener('pointerdown', (e) => { if (e.pointerType === 'mouse') return; const r = sec.getBoundingClientRect(), b = c.getBoundingClientRect(); tx = b.left + b.width / 2 - r.left; ty = b.top + b.height * 0.45 - r.top; tapAt = performance.now(); go(); }));
+    new IntersectionObserver((es) => es.forEach((e) => { on = e.isIntersecting; if (on) { if (!cx) { const [lx, ly] = origin(); cx = lx; cy = ly + 300; } idle(performance.now()); go(); } }), { rootMargin: '100px' }).observe(sec);
   });
 })();

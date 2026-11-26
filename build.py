@@ -36,7 +36,7 @@ ORN = ('<svg class="orn" viewBox="0 0 160 44" aria-hidden="true" focusable="fals
        '<path d="M60 40h40"/></g><circle cx="80" cy="26" r="2.2" fill="currentColor"/></svg>')
 
 
-NOT_PHOTOS = ("brocade", "paper", "logo", "favicon")
+NOT_PHOTOS = ("brocade", "paper", "logo", "favicon", "petals")
 
 
 def is_photo(path):
@@ -290,14 +290,13 @@ def process(head_title="Four steps to <em>a perfect day.</em>", paper=True, phot
             f'<article class="pin-card" style="--r:{rests[i]}" tabindex="0"><i class="pin" aria-hidden="true"></i>'
             f'<div class="pc-pic">{img(s[0], "(max-width: 900px) 80vw, 260px", "")}</div><b>0{i + 1}</b><h3>{s[1]}</h3><p>{s[2]}</p><span class="pin-no" aria-hidden="true">[ {i + 1} ]</span></article>'
             for i, s in enumerate(STEPS))
-        beams = "".join(f'<i class="beam" style="--c:{i}"></i>' for i in range(len(STEPS)))
-        return f'''<section class="sec sboard" aria-label="How it works">
+        return f'''<section class="sec sboard" aria-label="How it works" data-lamp>
+  <div class="lamp" aria-hidden="true"><i class="cone"></i><i class="fixture"></i><i class="bulb"></i></div><i class="pool" aria-hidden="true"></i>
   <div class="wrap center">
     <p class="eyebrow" data-fade>How it works</p>
     <h2 class="h2" data-fade>{head_title}</h2>
     <div class="pins dark" data-pins>
-      <div class="beams" aria-hidden="true">{beams}</div>
-      <span class="pins-ghost" aria-hidden="true">a perfect day</span>
+      <span class="pins-ghost" aria-hidden="true">A perfect<br>day</span>
       {cards}
     </div>
   </div>
