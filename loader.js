@@ -30,7 +30,7 @@
     let shown = reduce ? 1 : 0, done = false, skip = false;
     const end = () => { hideNav(false); el.classList.add('fade'); setTimeout(() => el.remove(), 700 * ls); };
     const finish = () => {
-      el.querySelector('.shine').classList.add('go');
+      hideNav(true); el.querySelector('.shine').classList.add('go');
       setTimeout(() => {
         el.classList.add('fly');
         const tgt = getTarget(), a = mark.getBoundingClientRect();

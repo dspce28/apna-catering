@@ -100,7 +100,7 @@ def head(title, desc, preload=""):
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="{FONTS}" rel="stylesheet">
 {preload}
-<link rel="stylesheet" href="site.css">{'<link rel="stylesheet" href="durbar.css">' if THEME == "b" else ""}
+<link rel="stylesheet" href="site.css">{'<link rel="stylesheet" href="durbar.css">' if THEME == "b" else ""}<link rel="stylesheet" href="loader.css">
 <script type="application/ld+json">
 {{"@context":"https://schema.org","@type":"FoodEstablishment","name":"Apna Catering","servesCuisine":["Indian","Punjabi"],"foundingDate":"1995","telephone":["+447818478036","+447828218002"],"email":"hello@apnacatering.co.uk","areaServed":"Scotland","address":{{"@type":"PostalAddress","streetAddress":"4 Glebe Street","addressLocality":"East Kilbride, Glasgow","addressRegion":"Scotland","postalCode":"G74 4LY","addressCountry":"GB"}},"url":"https://apnacatering.co.uk"}}
 </script>
@@ -141,7 +141,7 @@ def footer():
 
 
 def page(active, title, desc, body, preload=""):
-    return (head(title, desc, preload) + f'<body>\n{nav(active)}<main>\n{body}\n</main>\n{footer()}{B_SPINE if THEME == "b" else ""}'
+    return (head(title, desc, preload) + f'<body>\n<script src="loader.js"></script>\n{nav(active)}<main>\n{body}\n</main>\n{footer()}{B_SPINE if THEME == "b" else ""}'
             '<script src="site.js" defer></script>' + ('<script src="durbar.js" defer></script>' if THEME == "b" else '') + '\n</body>\n</html>\n')
 
 
@@ -902,7 +902,7 @@ if __name__ == "__main__":
         print("wrote", os.path.join(OUT, fn))
     if THEME == "b":
         # a self-contained folder: its own copies of the code and only the images it uses
-        for f in ("site.css", "site.js", "durbar.css", "durbar.js", "thali-new.css", "thali-new.js", "hall.css", "hall.js"):
+        for f in ("site.css", "site.js", "durbar.css", "durbar.js", "thali-new.css", "thali-new.js", "hall.css", "hall.js", "loader.css", "loader.js"):
             shutil.copy(f, os.path.join(OUT, f))
         used = set()
         for fn in os.listdir(OUT):
