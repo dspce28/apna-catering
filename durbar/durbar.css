@@ -399,3 +399,5 @@ img[style*="background-image"]{background-size:cover;background-position:center;
 @media (prefers-reduced-motion:reduce){.team.deal figure,.team.deal figcaption{opacity:1;transform:none;transition:none}}
 .sec.paper .pins-ghost{color:rgba(154,107,34,.15)}
 .steps.text .step,.steps.text .step:nth-child(n){margin-top:0;transform:none}
+/* footer ornament: its own centred row above the columns, never over the text */
+.foot>.orn{position:static;display:block;width:170px;margin:-20px auto 46px;transform:none;color:var(--gold)}
