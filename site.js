@@ -93,14 +93,14 @@
     c.strokeStyle = 'rgba(80,0,10,.18)'; c.lineWidth = Math.max(0.6, len * 0.05); c.beginPath(); c.moveTo(0, -len * 0.7); c.quadraticCurveTo(len * 0.08, 0, 0, len * 0.8); c.stroke();
     c.restore();
   };
-  const SHEET = new Image(), TILES = 24, TS = 128; SHEET.src = 'img/petals.webp';
+  const SHEET = new Image(), TILES = 12, TS = 128; SHEET.src = 'img/petals.webp';
   const strew = (c, W, H, dpr) => {
     const n = Math.round((W * H) / (dpr * dpr * 1900)), ready = SHEET.complete && SHEET.naturalWidth;
     c.shadowColor = 'rgba(30,0,6,.45)'; c.shadowBlur = 5 * dpr; c.shadowOffsetX = 1.5 * dpr; c.shadowOffsetY = 3 * dpr;
     for (let i = 0; i < n; i++) {
       const x = Math.random() * W, y = Math.random() * H, rot = Math.random() * Math.PI * 2;
       if (!ready) { drawPetal(c, x, y, (11 + Math.random() * 12) * dpr, rot, PETALS[(Math.random() * PETALS.length) | 0]); continue; }
-      const k = (Math.random() * TILES) | 0, sz = (30 + Math.random() * 26) * dpr;
+      const k = (Math.random() * TILES) | 0, sz = (34 + Math.random() * 30) * dpr;
       c.save(); c.translate(x, y); c.rotate(rot); c.scale(Math.random() < .5 ? -1 : 1, 1);
       c.drawImage(SHEET, k * TS, 0, TS, TS, -sz / 2, -sz / 2, sz, sz); c.restore();
     }
@@ -148,32 +148,58 @@
     };
     // the pointer becomes a little cluster of petals; brushed petals tumble away as you go
     const cursor = $('.glass-cursor', glass), fine = matchMedia('(pointer: fine)').matches, calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (cursor) [[-30, 30], [28, 26], [100, 22]].forEach(([r, sz]) => cursor.appendChild(spriteEl(sz, r)));
+    if (cursor && fine) cursor.innerHTML = `<svg viewBox="-50 -42 100 84" aria-hidden="true"><defs><linearGradient id="bfw" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fbe6ef"/><stop offset=".45" stop-color="#fffaf6"/><stop offset=".75" stop-color="#e6effa"/><stop offset="1" stop-color="#f5dcea"/></linearGradient><linearGradient id="bfg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6dc9c"/><stop offset=".5" stop-color="#c9a25a"/><stop offset="1" stop-color="#8a6626"/></linearGradient></defs><g class="bw bwl"><path d="M-2-4C-14-34-44-38-46-20C-48-6-30 2-4 0Z" fill="url(#bfw)" stroke="url(#bfg)" stroke-width="1.4"/><path d="M-3 2C-26 4-38 18-30 30C-22 40-8 26-2 6Z" fill="url(#bfw)" stroke="url(#bfg)" stroke-width="1.4"/><path d="M-4-2L-30-24M-4-2L-42-14M-16-12L-24-30M-4 4L-24 22M-12 10L-28 14" stroke="#e2c58a" stroke-width=".6" fill="none" opacity=".8"/><path d="M-30-24L-38-26L-34-18ZM-24 22L-28 28L-20 26Z" fill="#dbe8f7" opacity=".9"/></g><g class="bw bwr"><path d="M2-4C14-34 44-38 46-20C48-6 30 2 4 0Z" fill="url(#bfw)" stroke="url(#bfg)" stroke-width="1.4"/><path d="M3 2C26 4 38 18 30 30C22 40 8 26 2 6Z" fill="url(#bfw)" stroke="url(#bfg)" stroke-width="1.4"/><path d="M4-2L30-24M4-2L42-14M16-12L24-30M4 4L24 22M12 10L28 14" stroke="#e2c58a" stroke-width=".6" fill="none" opacity=".8"/><path d="M30-24L38-26L34-18ZM24 22L28 28L20 26Z" fill="#f7dbe7" opacity=".9"/></g><ellipse cx="0" cy="2" rx="2.6" ry="17" fill="url(#bfg)"/><circle cx="0" cy="-12" r="3" fill="#f6dc9c" stroke="#8a6626" stroke-width=".6"/><circle cx="0" cy="-2" r="1.1" fill="#fff"/><circle cx="0" cy="4" r="1.1" fill="#fff"/><circle cx="0" cy="10" r=".9" fill="#fff"/><path d="M-1-14C-4-24-8-28-12-30M1-14C4-24 8-28 12-30" stroke="#b8924a" stroke-width=".9" fill="none"/><circle cx="-12" cy="-30" r="1.3" fill="#f6dc9c"/><circle cx="12" cy="-30" r="1.3" fill="#f6dc9c"/></svg>`;
     if (fine) glass.classList.add('petal-cursor');
-    let fly = 0, lastFly = null;
+    let flying = 0, lastFly = null;
+    const fly = { x: 0, y: 0, tx: 0, ty: 0, a: 0, raf: 0, seen: false, spark: 0 };
+    const sparkle = (x, y) => {
+      if (calm) return;
+      const s = document.createElement('i'); s.className = 'bf-spark'; s.style.left = x + 'px'; s.style.top = y + 'px'; glass.appendChild(s);
+      s.animate([{ transform: 'translate(-50%,-50%) scale(.2) rotate(0deg)', opacity: 1 }, { transform: `translate(calc(-50% + ${(Math.random() - .5) * 30}px), calc(-50% + ${10 + Math.random() * 30}px)) scale(1) rotate(90deg)`, opacity: 0 }],
+        { duration: 900 + Math.random() * 500, easing: 'ease-out' }).onfinish = () => s.remove();
+    };
+    const flyTick = (t) => {
+      fly.raf = 0;
+      if (!fly.seen) { fly.x = fly.tx; fly.y = fly.ty; fly.seen = true; }
+      const dx = fly.tx - fly.x, dy = fly.ty - fly.y, sp = Math.hypot(dx, dy);
+      fly.x += dx * 0.16; fly.y += dy * 0.16;
+      if (sp > 2) { let want = Math.atan2(dy, dx) * 57.2958 + 90, d = ((want - fly.a + 540) % 360) - 180; fly.a += d * 0.14; }
+      else { fly.a += ((((0 - fly.a) + 540) % 360) - 180) * 0.03; }
+      const bob = calm ? 0 : Math.sin(t / 260) * 3;
+      cursor.style.transform = `translate(${fly.x.toFixed(1)}px, ${(fly.y + bob).toFixed(1)}px) rotate(${fly.a.toFixed(1)}deg)`;
+      cursor.style.setProperty('--flap', (sp > 3 ? Math.max(0.12, 0.34 - sp / 260) : 1.1).toFixed(2) + 's');
+      if (sp > 18 && t - fly.spark > 110) { fly.spark = t; sparkle(fly.x - dx * 0.3, fly.y - dy * 0.3); }
+      if (sp > 0.3 || !calm) fly.raf = requestAnimationFrame(flyTick);
+    };
+    const flyGo = () => { if (!fly.raf) fly.raf = requestAnimationFrame(flyTick); };
+    glass.addEventListener('click', (e) => {
+      if (!cursor || e.target.closest('.glass-toggle')) return;
+      cursor.classList.remove('flutter'); void cursor.offsetWidth; cursor.classList.add('flutter');
+      for (let k = 0; k < 6; k++) setTimeout(() => sparkle(fly.x + (Math.random() - .5) * 40, fly.y + (Math.random() - .5) * 30), k * 60);
+    });
     const tumble = (x, y, dx, dy) => {
-      if (calm || fly > 36) return;
+      if (calm || flying > 36) return;
       const el = document.createElement('i'); el.className = 'petal-fly';
       el.appendChild(spriteEl(26 + Math.random() * 22, Math.random() * 360)); el.style.left = x + 'px'; el.style.top = y + 'px';
-      glass.appendChild(el); fly++;
+      glass.appendChild(el); flying++;
       const sx = dx * (0.6 + Math.random() * 0.8) + (Math.random() - 0.5) * 60, fall = 120 + Math.random() * 160, spin = (Math.random() - 0.5) * 720;
       const a = el.animate([
         { transform: 'translate(-50%,-50%) rotate(0deg) scale(1)', opacity: 1 },
         { transform: `translate(calc(-50% + ${sx * 0.6}px), calc(-50% + ${dy * 0.3 - 30}px)) rotate(${spin * 0.4}deg) scale(1.05)`, opacity: 1, offset: 0.3 },
         { transform: `translate(calc(-50% + ${sx}px), calc(-50% + ${fall}px)) rotate(${spin}deg) scale(.8)`, opacity: 0 },
       ], { duration: 1300 + Math.random() * 900, easing: 'cubic-bezier(.3,.6,.4,1)' });
-      a.onfinish = () => { el.remove(); fly--; };
+      a.onfinish = () => { el.remove(); flying--; };
     };
     glass.addEventListener('pointermove', (e) => {
       const r = glass.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
       const onToggle = !!e.target.closest('.glass-toggle');
-      if (cursor) { cursor.style.transform = `translate(${x}px, ${y}px)`; cursor.classList.toggle('off', onToggle); }
+      if (cursor) { fly.tx = x; fly.ty = y; flyGo(); cursor.classList.toggle('off', onToggle); }
       if (onToggle) { last = null; lastFly = null; return; }
       wipe(x * dpr, y * dpr);
       if (lastFly) { const d = Math.hypot(x - lastFly[0], y - lastFly[1]); if (d > 26) { tumble(x, y, x - lastFly[0], y - lastFly[1]); if (d > 70) tumble(x, y, x - lastFly[0], y - lastFly[1]); lastFly = [x, y]; } } else lastFly = [x, y];
     });
     glass.addEventListener('pointerenter', () => cursor && cursor.classList.add('on'));
-    glass.addEventListener('pointerleave', () => { last = null; lastFly = null; if (cursor) cursor.classList.remove('on'); });
+    glass.addEventListener('pointerleave', () => { last = null; lastFly = null; fly.seen = false; if (cursor) cursor.classList.remove('on'); });
     (function refrost(t) {
       if (frost && t > holdUntil) { ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = .02; ctx.drawImage(frost, 0, 0); ctx.globalAlpha = 1; }
       requestAnimationFrame(refrost);
