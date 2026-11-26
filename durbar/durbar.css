@@ -526,3 +526,32 @@ img[style*="background-image"]{background-size:cover;background-position:center;
   background:radial-gradient(circle,#fff 0 18%,transparent 20%),conic-gradient(from 45deg,transparent 0 20%,#fff6dc 22% 28%,transparent 30% 45%,#fff6dc 47% 53%,transparent 55% 70%,#fff6dc 72% 78%,transparent 80% 95%,#fff6dc 97%);
   clip-path:polygon(50% 0,60% 40%,100% 50%,60% 60%,50% 100%,40% 60%,0 50%,40% 40%);filter:drop-shadow(0 0 4px rgba(255,236,200,.9))}
 @media (prefers-reduced-motion:reduce){.glass-cursor .bw{animation:none}}
+/* the light comes from above the screen: no visible fixture, just a soft glow at the top and a diffused beam */
+.lamp .fixture,.lamp .bulb{display:none}
+.sec.sboard .lamp{top:-70px}
+.lamp::before{content:"";position:absolute;left:-110px;top:40px;width:220px;height:120px;border-radius:50%;background:radial-gradient(closest-side,rgba(255,236,206,.42),rgba(255,226,186,.12) 55%,transparent);filter:blur(8px)}
+.lamp .cone{top:40px;filter:blur(18px);background:linear-gradient(180deg,rgba(255,236,206,.34),rgba(255,222,180,.12) 50%,rgba(255,214,160,0) 90%);clip-path:polygon(40% 0,60% 0,100% 100%,0 100%)}
+
+/* ===================== one type scale for the whole site =====================
+   Display (page title) · H2 section heading · H3 feature title · H4 card title · H5 small title
+   Lede (section intro) · Body (card / paragraph text) · Small (hints, notes) · Eyebrow (labels)
+   Headings: Playfair Display 400, ivory on wine / ink on ivory. Body: Manrope 400, muted. */
+:root{--t-h1:clamp(48px,7.4vw,107px);--t-h2:clamp(36px,5.3vw,76px);--t-h3:clamp(28px,2.8vw,40px);--t-h4:clamp(22px,1.85vw,27px);--t-h5:clamp(19px,1.45vw,22px);
+  --t-lede:clamp(16px,1.25vw,18px);--t-body:15px;--t-small:13px}
+/* section headings */
+.stage .h2,.glass-copy .h2,.sb-copy .h2,.tn-top .display,.hall-head .h2,.hall-end .h2{font-size:var(--t-h2);line-height:1.05}
+/* feature titles */
+.st-card h3,.occ h3,h3.h2,.form-done .h2{font-family:var(--serif);font-weight:400;font-size:var(--t-h3)!important;line-height:1.1}
+/* card titles */
+.station h3,.sig h3,.pins .pin-card h3,.sec.paper .pin-card h3,.step h3,.steps.text .step h3,.faq summary,.tn-title,.pins.dark .pin-card h3{font-family:var(--serif);font-weight:400;font-size:var(--t-h4);line-height:1.2}
+/* small titles */
+.pl-card h4,.planner h4,.team figcaption,.tn-plate figcaption,.sb-board .note h3,.tz h3{font-family:var(--serif);font-weight:400;font-size:var(--t-h5);line-height:1.2}
+.sb-board .note h3{text-align:right;max-width:10ch}
+/* body text */
+.st-card p:not(.st-no),.station p,.sig p,.values p,.pin-card p,.step p,.faq details p,.planner p:not(.pl-note):not(.eyebrow):not(.lede),.sb-foot,.hall-head p:not(.eyebrow),.hgal .lede~p{font-size:var(--t-body);line-height:1.65}
+.sb-lede{font-size:var(--t-lede);line-height:1.6}
+.st-card p:not(.st-no),.station p,.step p,.planner p:not(.eyebrow),.sb-foot,.sb-lede,.pins.dark .pin-card p{color:var(--mute)}
+.sec.paper .station p,.sec.paper .sig p,.sec.paper .values p,.sec.paper .pin-card p,.sec.paper .step p,.sec.paper details p{color:#5a3b32}
+/* small text */
+.sb-board .note p{font-size:var(--t-small);line-height:1.5;color:var(--mute)}
+.tn-hint,.pl-note,.tn-msg{font-size:var(--t-small)}
