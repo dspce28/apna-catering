@@ -18,7 +18,16 @@
 </head>
 <body>
 <iframe src="index.html" title="Homepage behind the loader"></iframe>
-<div class="demo-bar"><button type="button" onclick="apnaLoader.play(false)">Replay</button><button type="button" onclick="apnaLoader.play(true)">Slow motion</button></div>
+<div class="demo-bar"><button type="button" onclick="run(false)">Replay</button><button type="button" onclick="run(true)">Slow motion</button></div>
 <script src="loader.js" data-always></script>
+<script>
+  // the demo shows the homepage in a frame, so the loader flies to the logo inside that frame
+  const fr = document.querySelector('iframe');
+  const target = () => fr.contentDocument && fr.contentDocument.querySelector('.nav .brand img');
+  target.offset = () => { const r = fr.getBoundingClientRect(); return { x: r.left, y: r.top }; };
+  const run = (slow) => apnaLoader.play(slow, target, () => fr.contentDocument || document);
+  fr.addEventListener('load', () => { try { fr.contentWindow.scrollTo(0, 0); } catch (e) {} }, { once: true });
+  run(false);
+</script>
 </body>
 </html>
