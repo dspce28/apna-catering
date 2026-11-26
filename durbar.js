@@ -498,12 +498,12 @@
       const [, , r] = origin(), k = (Math.sin((t - t0) / 2600) + 1) / 2;
       const a = cards[0].getBoundingClientRect(), z = cards[cards.length - 1].getBoundingClientRect();
       tx = (a.left + a.width / 2 - r.left) + k * ((z.left + z.width / 2) - (a.left + a.width / 2));
-      ty = (a.top + a.height * 0.45 - r.top) + k * (z.top - a.top);
+      ty = (a.top + a.height * 0.5 - r.top) + k * (z.top - a.top);
     };
     const frame = (t) => {
       raf = 0; if (!on) return;
       if (!pointer && !reduce && t - tapAt > 2500) idle(t);
-      cx += (tx - cx) * 0.09; cy += (ty - cy) * 0.09;
+      cx += (tx - cx) * 0.055; cy += (ty - cy) * 0.055;
       const [lx, ly, r] = origin(), dx = cx - lx, dy = Math.max(40, cy - ly), len = Math.hypot(dx, dy) + 160;
       cone.style.height = len + 'px'; cone.style.width = len * 0.62 + 'px';
       cone.style.rotate = (-Math.atan2(dx, dy) * 57.2958).toFixed(2) + 'deg';

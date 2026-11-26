@@ -285,19 +285,24 @@ STEPS = [("team-waiter", "Tell us your date", "Share your date, venue, guest num
 
 def process(head_title="Four steps to <em>a perfect day.</em>", paper=True, photos=True, board=False):
     if board:
-        rests = [-5, 4, -3, 6]
+        # one screen, like a pin board: four square notes scattered under a lamp, the story on the right
+        place = [(0, 6, -7), (27, 36, 5), (53, 8, -3), (77, 40, 6)]   # left %, top %, tilt
         cards = "".join(
-            f'<article class="pin-card" style="--r:{rests[i]}" tabindex="0"><i class="pin" aria-hidden="true"></i>'
-            f'<div class="pc-pic">{img(s[0], "(max-width: 900px) 80vw, 260px", "")}</div><b>0{i + 1}</b><h3>{s[1]}</h3><p>{s[2]}</p><span class="pin-no" aria-hidden="true">[ {i + 1} ]</span></article>'
-            for i, s in enumerate(STEPS))
+            f'<article class="pin-card note" style="--r:{r};left:{x}%;top:{y}%" tabindex="0"><i class="pin" aria-hidden="true"></i>'
+            f'<p>{s[2]}</p><h3>{s[1]}</h3><span class="pin-no" aria-hidden="true">[ {i + 1} ]</span></article>'
+            for i, (s, (x, y, r)) in enumerate(zip(STEPS, place)))
         return f'''<section class="sec sboard" aria-label="How it works" data-lamp>
   <div class="lamp" aria-hidden="true"><i class="cone"></i><i class="fixture"></i><i class="bulb"></i></div><i class="pool" aria-hidden="true"></i>
-  <div class="wrap center">
-    <p class="eyebrow" data-fade>How it works</p>
-    <h2 class="h2" data-fade>{head_title}</h2>
-    <div class="pins dark" data-pins>
-      <span class="pins-ghost" aria-hidden="true">A perfect<br>day</span>
-      {cards}
+  <span class="sb-ghost" aria-hidden="true">Four steps<br>to a perfect<br>day</span>
+  <div class="wrap sb-grid">
+    <div class="sb-board" data-pins>{cards}</div>
+    <div class="sb-copy">
+      <p class="sb-marks" aria-hidden="true">× × ×</p>
+      <p class="eyebrow">How it works</p>
+      <h2 class="h2">{head_title}</h2>
+      <p class="sb-lede">From the first call to the last plate, one family team plans, tastes, cooks and serves with you.</p>
+      <p class="sb-foot">Tell us your date and we reply within <em>one working day</em>, with a free tasting for your family.</p>
+      <a class="link" href="contact.html">Check your date <span>→</span></a>
     </div>
   </div>
 </section>'''
