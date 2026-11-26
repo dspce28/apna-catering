@@ -284,6 +284,19 @@ STEPS = [("team-waiter", "Tell us your date", "Share your date, venue, guest num
 
 
 def process(head_title="Four steps to <em>a perfect day.</em>", paper=True, photos=True, board=False):
+    if not photos:
+        # About: a horizontal progress timeline; the step in view glows, its description is revealed on hover
+        steps = "".join(
+            f'<li class="ptl-step" style="--i:{i}" tabindex="0"><span class="ptl-num">0{i + 1}<i class="ptl-ring" aria-hidden="true"></i></span>'
+            f'<div class="ptl-body"><h3>{s[1]}</h3><p>{s[2]}</p></div></li>'
+            for i, s in enumerate(STEPS))
+        return f'''<section class="sec ptl-sec">
+  <div class="wrap center">
+    <p class="eyebrow" data-fade>How it works</p>
+    <h2 class="h2" data-fade>{head_title}</h2>
+    <ol class="ptl" data-ptl>{steps}</ol>
+  </div>
+</section>'''
     if board:
         # one screen, like a pin board: four square notes scattered under a lamp, the story on the right
         place = [(0, 6, -7), (27, 36, 5), (53, 8, -3), (77, 40, 6)]   # left %, top %, tilt

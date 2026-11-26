@@ -521,3 +521,50 @@
     new IntersectionObserver((es) => es.forEach((e) => { on = e.isIntersecting; if (on) { if (!cx) { const [lx, ly] = origin(); cx = lx; cy = ly + 300; } idle(performance.now()); go(); } }), { rootMargin: '100px' }).observe(sec);
   });
 })();
+
+/* =========================================================
+   ABOUT: progress timeline. Steps slide in, the step in view is active (glow + ripple),
+   the connectors fill in gold up to it, and hover reveals each description.
+   ========================================================= */
+(() => {
+  document.querySelectorAll('[data-ptl]').forEach((tl) => {
+    const steps = [...tl.querySelectorAll('.ptl-step')];
+    new IntersectionObserver((es, o) => es.forEach((e) => { if (e.isIntersecting) { tl.classList.add('in'); o.disconnect(); } }), { threshold: 0.2 }).observe(tl);
+    let raf = 0;
+    const set = (k) => steps.forEach((s, i) => { s.classList.toggle('active', i === k); s.classList.toggle('done', i < k); s.style.setProperty('--f', i < k ? 1 : 0); });
+    const upd = () => {
+      raf = 0; const r = tl.getBoundingClientRect(), vh = innerHeight;
+      if (r.bottom < 0 || r.top > vh) return;
+      // progress through the section as it rises from the lower third to the upper third of the screen
+      const p = Math.min(1, Math.max(0, (vh * 0.78 - r.top) / (vh * 0.62)));
+      set(Math.min(steps.length - 1, Math.floor(p * steps.length)));
+    };
+    addEventListener('scroll', () => { if (!raf) raf = requestAnimationFrame(upd); }, { passive: true }); upd();
+    steps.forEach((s, i) => { s.addEventListener('mouseenter', () => set(i)); s.addEventListener('focus', () => set(i)); });
+  });
+})();
+
+/* =========================================================
+   PAGE TRANSITION: a wine curtain with the emblem covers the page on leaving and lifts on arrival
+   ========================================================= */
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const pt = document.createElement('div'); pt.className = 'pt'; pt.setAttribute('aria-hidden', 'true'); document.body.appendChild(pt);
+  let arriving = false; try { arriving = sessionStorage.getItem('apna-pt') === '1'; sessionStorage.removeItem('apna-pt'); } catch (e) { /* private mode */ }
+  if (arriving && !document.querySelector('.ld')) {
+    pt.style.transition = 'none'; pt.classList.add('cover'); void pt.offsetWidth; pt.style.transition = '';
+    requestAnimationFrame(() => setTimeout(() => { pt.classList.add('leave'); setTimeout(() => pt.classList.remove('cover', 'leave'), 700); }, 120));
+  }
+  document.addEventListener('click', (e) => {
+    const a = e.target.closest('a[href]'); if (!a || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    if (a.target === '_blank' || a.hasAttribute('download')) return;
+    const url = new URL(a.href, location.href);
+    if (url.origin !== location.origin || (url.pathname === location.pathname && url.hash) || /^(mailto|tel):/.test(a.href)) return;
+    e.preventDefault();
+    try { sessionStorage.setItem('apna-pt', '1'); } catch (er) { /* private mode */ }
+    pt.classList.remove('leave'); pt.classList.add('cover');
+    setTimeout(() => { location.href = url.href; }, reduce ? 150 : 520);
+  });
+  // coming back with the browser's back button: never leave the curtain down
+  addEventListener('pageshow', (e) => { if (e.persisted) pt.classList.remove('cover', 'leave'); });
+})();

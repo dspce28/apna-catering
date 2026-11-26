@@ -555,3 +555,45 @@ img[style*="background-image"]{background-size:cover;background-position:center;
 /* small text */
 .sb-board .note p{font-size:var(--t-small);line-height:1.5;color:var(--mute)}
 .tn-hint,.pl-note,.tn-msg{font-size:var(--t-small)}
+
+/* ---- About: progress timeline (horizontal, number glow, hover reveal) ---- */
+.ptl{position:relative;display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:64px 0 0;padding:0;list-style:none;text-align:center;--done:0}
+.ptl-step{position:relative;padding:0 14px;outline:none;opacity:0;transform:translateY(26px);transition:opacity .7s ease calc(var(--i) * .12s),transform .8s cubic-bezier(.2,.75,.2,1) calc(var(--i) * .12s)}
+.ptl.in .ptl-step{opacity:1;transform:none}
+/* connector between this step and the next: grey track, gold fill */
+.ptl-step:not(:last-child)::before,.ptl-step:not(:last-child)::after{content:"";position:absolute;top:32px;left:calc(50% + 40px);right:calc(-50% + 40px);height:1px;background:rgba(212,168,90,.2)}
+.ptl-step:not(:last-child)::after{background:linear-gradient(90deg,#9a6b22,#f0d28e);box-shadow:0 0 8px rgba(240,210,142,.55);transform-origin:0 50%;transform:scaleX(var(--f,0));transition:transform .7s cubic-bezier(.6,0,.2,1)}
+.ptl-num{position:relative;display:grid;place-items:center;width:64px;height:64px;margin:0 auto 22px;border-radius:50%;font-family:var(--serif);font-size:24px;color:rgba(246,234,210,.45);
+  font-variant-numeric:oldstyle-nums;background:rgb(var(--bg-rgb));box-shadow:inset 0 0 0 1px rgba(212,168,90,.3);transition:color .5s,box-shadow .5s,text-shadow .5s,background .5s}
+.ptl-step.done .ptl-num{color:var(--gold-lt);box-shadow:inset 0 0 0 1px rgba(212,168,90,.7)}
+.ptl-step.active .ptl-num{color:#fff5dc;background:radial-gradient(circle,#6e1a2c,rgb(var(--bg-rgb)) 70%);box-shadow:inset 0 0 0 1px #f0d28e,0 0 26px 2px rgba(240,210,142,.45);text-shadow:0 0 14px rgba(255,226,170,.9)}
+.ptl-ring{position:absolute;inset:0;border-radius:50%;box-shadow:0 0 0 1px rgba(240,210,142,.7);opacity:0;pointer-events:none}
+.ptl-step.active .ptl-ring{animation:ptl-ripple 2.2s ease-out infinite}
+@keyframes ptl-ripple{0%{transform:scale(1);opacity:.8}100%{transform:scale(1.9);opacity:0}}
+.ptl-body h3{font-family:var(--serif);font-weight:400;font-size:var(--t-h4);color:rgba(246,234,210,.7);transition:color .5s}
+.ptl-step.active .ptl-body h3,.ptl-step:hover .ptl-body h3,.ptl-step:focus-visible .ptl-body h3{color:#f6ead2}
+/* hover reveal: the description slides up only on interaction (or for the step in view on touch screens) */
+.ptl-body p{margin:10px auto 0;max-width:28ch;font-size:var(--t-body);line-height:1.65;color:var(--mute);opacity:0;transform:translateY(12px);transition:opacity .45s,transform .5s cubic-bezier(.2,.75,.2,1)}
+.ptl-step:hover .ptl-body p,.ptl-step:focus-visible .ptl-body p{opacity:1;transform:none}
+@media (hover:none){.ptl-step.active .ptl-body p{opacity:1;transform:none}}
+.ptl-step:hover .ptl-num{box-shadow:inset 0 0 0 1px #f0d28e,0 0 18px rgba(240,210,142,.35)}
+/* under 768px it becomes vertical */
+@media (max-width:767px){
+  .ptl{grid-template-columns:1fr;max-width:420px;margin:44px auto 0;text-align:left}
+  .ptl-step{display:grid;grid-template-columns:64px 1fr;gap:0 18px;padding:0 0 34px}
+  .ptl-num{margin:0}
+  .ptl-step:not(:last-child)::before,.ptl-step:not(:last-child)::after{top:72px;bottom:8px;left:32px;right:auto;width:1px;height:auto}
+  .ptl-step:not(:last-child)::after{transform-origin:50% 0;transform:scaleY(var(--f,0));background:linear-gradient(180deg,#9a6b22,#f0d28e)}
+  .ptl-body{padding-top:14px}.ptl-body p{margin-left:0}
+}
+@media (prefers-reduced-motion:reduce){.ptl-step{opacity:1;transform:none;transition:none}.ptl-step.active .ptl-ring{animation:none}}
+
+/* ---- page transition: a wine curtain with the emblem between pages ---- */
+.pt{position:fixed;inset:0;z-index:9998;display:grid;place-items:center;pointer-events:none;background:radial-gradient(60% 55% at 50% 50%,#4a0b18,#2c050e 62%,#1c030a);
+  clip-path:inset(100% 0 0 0);transition:clip-path .55s cubic-bezier(.7,0,.2,1)}
+.pt::before{content:"";width:74px;aspect-ratio:1;background:url(img/logo-mark.png) center/contain no-repeat;opacity:0;scale:.9;transition:opacity .3s .15s,scale .45s .15s}
+.pt.cover{clip-path:inset(0 0 0 0);pointer-events:auto}
+.pt.cover::before{opacity:1;scale:1}
+.pt.leave{clip-path:inset(0 0 100% 0);transition-duration:.65s}
+.pt.leave::before{opacity:0;transition-delay:0s}
+@media (prefers-reduced-motion:reduce){.pt{transition:opacity .25s;clip-path:none;opacity:0}.pt.cover{opacity:1}.pt.leave{opacity:0}}
