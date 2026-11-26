@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Loader demo — Apna Catering</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600&family=Playfair+Display:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="loader.css">
+<style>
+  html,body{margin:0;height:100%;background:#2a050c}
+  iframe{position:fixed;inset:0;width:100%;height:100%;border:0}
+  .demo-bar{position:fixed;left:50%;bottom:22px;z-index:10000;translate:-50% 0;display:flex;gap:8px;padding:6px;border-radius:99px;background:rgba(20,3,7,.85);box-shadow:0 0 0 1px rgba(212,168,90,.45),0 14px 30px -10px #000;font:600 11px/1 Manrope,sans-serif;letter-spacing:.16em;text-transform:uppercase}
+  .demo-bar button{padding:12px 18px;border:0;border-radius:99px;background:none;color:#e9cf94;cursor:pointer;font:inherit;letter-spacing:inherit}
+  .demo-bar button:first-child{background:#d4a85a;color:#2a050c}
+</style>
+</head>
+<body>
+<iframe src="index.html" title="Homepage behind the loader"></iframe>
+<div class="demo-bar"><button type="button" onclick="apnaLoader.play(false)">Replay</button><button type="button" onclick="apnaLoader.play(true)">Slow motion</button></div>
+<script src="loader.js" data-always></script>
+</body>
+</html>
